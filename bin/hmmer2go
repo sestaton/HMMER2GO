@@ -2,11 +2,11 @@
 
 =head1 NAME 
                                                                        
- hmm2go.pl - Map PFAM IDs from HMMscan search to GO terms 
+ hmmer2go - Map PFAM IDs from HMMscan search to GO terms 
 
 =head1 SYNOPSIS    
 
- hmm2go.pl -i seqs_hmmscan.tblout -p pfam2go -o seqs_hmmscan_goterms.tsv --map 
+ hmmer2go -i seqs_hmmscan.tblout -p pfam2go -o seqs_hmmscan_goterms.tsv --map 
 
 =head1 DESCRIPTION
                                                                    
@@ -77,12 +77,14 @@ Print the full documentation.
 ##      3) Add 'generate_association' method
 
 ## Includes
-use 5.010;
+
+use 5.012;
 use utf8;
 use charnames qw(:full :short);
 use strict; 
 use warnings;
 use warnings FATAL => "utf8";
+use HMMER2GO;
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename;
