@@ -1,0 +1,30 @@
+class HMM2GO {
+      use Moops;   
+      use MooseX::Types::Path::Class;
+
+      role File using Moose {
+      	   has 'file' => (
+      	       is       => 'ro',
+      	       isa      => 'Path::Class::File',
+      	       required => 1,
+      	       coerce   => 1,
+      	   );
+
+      	   has 'dir' => (
+      	       is       => 'ro',
+      	       isa      => 'Path::Class::Dir',
+      	       required => 0,
+      	       coerce   => 1,
+     	   );
+
+     	   has 'fh' => (
+     	       is         => 'ro',
+     	       isa        => 'IO::File',
+     	       lazy_build => 1,
+     	   );
+      }
+}
+
+class Getorf extends HMMER2GO {
+
+}
