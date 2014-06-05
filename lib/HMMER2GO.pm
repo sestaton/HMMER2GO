@@ -3,7 +3,7 @@ package HMMER2GO;
 use 5.012;
 use Moo;
 use MooX::Options
-use namespace::autoclean;
+use namespace::clean;
 
 
 =head1 NAME

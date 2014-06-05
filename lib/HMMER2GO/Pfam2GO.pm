@@ -2,7 +2,7 @@ package Pfam2GO;
 
 use Moo;
 use LWP::UserAgent;
-
+use namespace::clean;
 
 ## fetch pfam2go file http://www.geneontology.org/external2go/pfam2go
 my $pfam2go = 'pfam2go';
