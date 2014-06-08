@@ -1,9 +1,21 @@
-Build.PL
+Makefile.PL
+LICENSE
 Changes
 README.md
+cpanfile
 bin/hmmer2go
+lib/HMMER2GO.pm
+lib/HMMER2GO/Command.pm
+lib/HMMER2GO/Command/fetch.pm
+lib/HMMER2GO/Command/getorf.pm
+lib/HMMER2GO/Command/mapterms.pm
+lib/HMMER2GO/Command/search.pm
+t/test_data/t_seqs_nt.fas
 t/00-load.t
-t/manifest.t
-t/pod-coverage.t
-t/pod.t
+t/01-fetch.t
+t/02-getorf.t
+t/03-mapterms.t
+t/04-search.t
+t/06-allok.t
+
 
