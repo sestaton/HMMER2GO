@@ -14,8 +14,8 @@ t/test_data/t_seqs_nt.fas
 t/00-load.t
 t/01-fetch.t
 t/02-getorf.t
-t/03-mapterms.t
-t/04-search.t
+t/03-search.t
+t/04-mapterms.t
 t/06-allok.t
 xt/pod.t
 xt/pod-coverage.t
