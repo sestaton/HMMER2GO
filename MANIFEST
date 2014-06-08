@@ -17,5 +17,6 @@ t/02-getorf.t
 t/03-mapterms.t
 t/04-search.t
 t/06-allok.t
-
+xt/pod.t
+xt/pod-coverage.t
 
