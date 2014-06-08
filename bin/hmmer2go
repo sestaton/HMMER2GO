@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use HMMER2GO;
 
+our $VERSION = '0.01';
+
 HMMER2GO->run;
 
 =pod
