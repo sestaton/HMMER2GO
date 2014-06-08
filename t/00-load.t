@@ -1,15 +1,30 @@
-#!perl -T
+#!/usr/bin/env perl
+
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
-use Test::More;
-
-plan tests => 3;
+use IPC::System::Simple qw(capture);
+use Test::More tests => 3;
 
 BEGIN {
-    use_ok( 'BlastQueue::Role::File' ) || print "Bail out!\n";
-    use_ok( 'BlastQueue::Run::WuBlast' ) || print "Bail out!\n";
-    use_ok( 'BlastQueue' ) || print "Bail out!\n";
+    use_ok( 'HMMER2GO' ) || print "Bail out!\n";
 }
 
-diag( "Testing BlastQueue::Role::File $BlastQueue::Role::File::VERSION, Perl $], $^X" );
+diag( "Testing HMMER2GO $HMMER2GO::VERSION, Perl $], $^X" );
+
+my $hmmer2go = "bin/hmmer2go";
+ok(-x $hmmer2go, 'Can execute hmmer2go');
+
+my @menu = capture([0..5], "bin/hmmer2go help");
+
+my $progs = 0;
+for my $command (@menu) {
+    next if $command =~ /^ *$|^Available/;
+    $command =~ s/^\s+//;
+    my ($prog, $desc) = split /\:/, $command;
+    ++$progs if $prog;
+}
+
+is ($progs, 6, 'Correct number of subcommands listed');
+
+done_testing();
