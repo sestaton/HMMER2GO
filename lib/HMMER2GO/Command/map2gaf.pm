@@ -10,8 +10,7 @@ use File::Basename;
 
 sub opt_spec {
     return (    
-        [ "infile|i=s",  "Tab-delimited file containing gene => GO term mappings (GO terms
-                          should be separated by commas)."                                       ],
+        [ "infile|i=s",  "Tab-delimited file containing gene -> GO term mappings (GO terms should be separated by commas)." ],
         [ "outfile|o=s", "File name for the association file."                                   ],
         [ "species|s=s", "The species name to be used in the association file."                  ],
 	[ "gofile|g=s",  "GO.terms_alt_ids file containing the one letter code for each term."   ],
@@ -41,9 +40,14 @@ sub _generate_go_association {
     $gofile = _get_term_file() if !$gofile;
 
     open my $in, '<', $infile or die "\nERROR: Could not open file: $infile\n";
-    open my $go, '<', $gofile or die "\nERROR: Could not open file: $GOfile\n";
+    open my $go, '<', $gofile or die "\nERROR: Could not open file: $gofile\n";
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
 
+    ## NB: This approach was inspired by some Python code posted by 
+    ##     Damian Kao on his blog: http://blog.nextgenetics.net. 
+    ##     That is where the hardcoded fields below come from, which works fine with
+    ##     Ontologizer, though we may want to make this an option for other
+    ##     purposes.
     say $out "!gaf-version: 2.0";
 
     my %gohash;
@@ -51,6 +55,7 @@ sub _generate_go_association {
 	chomp;
 	next if /^!/;
 	my @go_data = split;
+	next unless defined $go_data[0] && defined $go_data[-1];
 	next if $go_data[-1] eq "obs";
 	$gohash{$go_data[0]} = $go_data[-1];
     }
