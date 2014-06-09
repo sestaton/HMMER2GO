@@ -3,6 +3,8 @@ HMMER2GO
 
 Annotate DNA sequences for Gene Ontology terms
 
+[![Build Status](https://travis-ci.org/sestaton/HMMER2GO.svg?branch=master)](https://travis-ci.org/sestaton/HMMER2GO)
+
 **DEPENDENCIES**
 
 EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installing dependencies](https://github.com/sestaton/HMMER2GO/wiki/Installing-dependencies) wiki page for instructions how to install these programs.
