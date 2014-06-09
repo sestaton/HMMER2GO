@@ -2,7 +2,6 @@ requires 'LWP::UserAgent, '>= 6.05';
 requires 'IPC::System::Simple', '>= 1.21';
 requires 'App::Cmd';
 requires 'IO::Uncompress::Gunzip';
-requires 'LWP::UserAgent';
 requires 'File::Copy';
 requires 'Capture::Tiny';
 
