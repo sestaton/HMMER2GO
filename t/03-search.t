@@ -11,13 +11,12 @@ use Test::More tests => 4;
 
 my @menu = capture([0..5], "bin/hmmer2go help search");
 
-my ($opts, $orfs) = (0, 0);
+my $opts      = 0;
+my $full_test = 0;
 my $infile    = "t/test_data/t_orfs.faa";
 my $outfile   = "t_orfs_hmmscan-pfamA.out";
 my $domtblout = "t_orfs_hmmscan-pfamA.domtblout";
 my $tblout    = "t_orfs_hmmscan-pfamA.tblout";
-
-my $db = _fetch_db();
 
 for my $opt (@menu) {
     next if $opt =~ /^Err|^Usage|^hmmer2go|^ *$/;
@@ -29,14 +28,19 @@ for my $opt (@menu) {
 
 is($opts, 3, 'Correct number of options for hmmer2go search');
 
-my @result = capture([0..5], "bin/hmmer2go search -i $infile -d $db");
-ok(-e $outfile,   'Expected raw output of HMMscan from hmmer2go search');
-ok(-e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search');
-ok(-e $tblout,    'Expected hit table output of HMMscan from hmmer2go search');
+SKIP: {
+    skip 'skip lengthy tests', 3 unless $full_test; 
+    my $db = _fetch_db();
 
-unlink $outfile;
-unlink $domtblout;
-move $tblout, "t/test_data/$tblout";
+    my @result = capture([0..5], "bin/hmmer2go search -i $infile -d $db");
+    ok(-e $outfile,   'Expected raw output of HMMscan from hmmer2go search');
+    ok(-e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search');
+    ok(-e $tblout,    'Expected hit table output of HMMscan from hmmer2go search');
+
+    unlink $outfile;
+    unlink $domtblout;
+    move $tblout, "t/test_data/$tblout";
+};
 
 done_testing();
 
@@ -50,27 +54,27 @@ sub _fetch_db {
 
     diag("Fetching database for testing. This could take a few minutes...");
  
-    #my $ua = LWP::UserAgent->new;
+    my $ua = LWP::UserAgent->new;
 
-    #my $response = $ua->get($endpoint);
+    my $response = $ua->get($endpoint);
 
-    #unless ($response->is_success) {
-    #    die "Can't get url $endpoint -- ", $response->status_line;
-    #}
+    unless ($response->is_success) {
+        die "Can't get url $endpoint -- ", $response->status_line;
+    }
 
-    #open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    #say $out $response->content;
-    #close $out;
+    open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
+    say $out $response->content;
+    close $out;
 
     diag("Done fetching database. Uncompressing database for testing...");
 
-    #my $status = gunzip $outfile => $flatdb
-    #    or die "gunzip failed: $GunzipError\n";
+    my $status = gunzip $outfile => $flatdb
+        or die "gunzip failed: $GunzipError\n";
 
-    #unlink $outfile;
+    unlink $outfile;
 
     diag("Done uncompressing database. Running hmmpress on database. This will take a few minutes...");
-    #my $db = _run_hmmpress($flatdb);
+    my $db = _run_hmmpress($flatdb);
 
     diag("Done running hmmpress on database. Now testing hmmer2go search.");
     return $flatdb;
