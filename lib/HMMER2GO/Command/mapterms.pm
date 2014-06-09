@@ -8,8 +8,6 @@ use warnings FATAL => "utf8";
 use HMMER2GO -command;
 use utf8;
 use charnames qw(:full :short);
-use Getopt::Long;
-use Pod::Usage;
 use File::Basename;
 
 sub opt_spec {
