@@ -6,11 +6,6 @@ use HMMER2GO -command;
 use LWP::UserAgent;
 use File::Basename;
 
-# given/when emits warnings in v5.18+
-no if $] >= 5.018, 'warnings', "experimental::smartmatch";
-
-#sub usage_desc { "getorf_app_cmd.pl %o [somefile ...]" }
-
 sub opt_spec {
     return (    
 	[ "outfile|o=s",  "A file to place the Pfam2GO mappings" ],
