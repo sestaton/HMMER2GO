@@ -12,6 +12,7 @@ my @menu = capture([0..5], "bin/hmmer2go help getorf");
 my ($opts, $orfs) = (0, 0);
 my $infile  = "t/test_data/t_seqs_nt.fas";
 my $outfile = "t/test_data/t_orfs.faa";
+unlink $outfile if -e $outfile;
 
 for my $opt (@menu) {
     next if $opt =~ /^Err|^Usage|^hmmer2go|^ *$/;
