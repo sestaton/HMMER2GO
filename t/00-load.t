@@ -25,6 +25,6 @@ for my $command (@menu) {
     ++$progs if $prog;
 }
 
-is ($progs, 6, 'Correct number of subcommands listed');
+is ($progs, 7, 'Correct number of subcommands listed');
 
 done_testing();
