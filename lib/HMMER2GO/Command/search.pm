@@ -1,7 +1,9 @@
 package HMMER2GO::Command::search;
 # ABSTRACT: Run HMMscan on translated ORFs against Pfam database.
 
-use 5.014;
+use 5.012;
+use strict;
+use warnings;
 use HMMER2GO -command;
 use Cwd;
 use IPC::System::Simple qw(capture system);
@@ -81,7 +83,7 @@ sub _find_prog {
 	    say "Using hmmscan located at: $path";
 	    return $path;
 	}
-	elsif (/^-bash: \/usr\/local\/hmmer\/latest\/bin\/hmmscan\: No such file or directory$/) { 
+	elsif (/No such file or directory$/) { 
 	    die "Could not find hmmscan. Exiting.\n"; 
 	}
 	elsif ('') { 
@@ -109,10 +111,16 @@ __END__
  hmmer2go search -i seqs.fas -db Pfam-A.hmm -n 4
 
 =head1 DESCRIPTION
-                                                                   
+  
+ This command runs the HMMER program 'hmmscan' against a set of profile HMMs. The input
+ is a set of amino acid sequences, typically translated open reading frames. The set of HMMs
+ to search against is optional but the most common usage would be to use the Pfam-A set. Additional
+ arguments to 'hmmscan' such as the number of CPUs to use for the search may be passed to hmmer2go search.
 
 =head1 DEPENDENCIES
 
+ HMMER version 3+ is required for this command to work.
+ (The latest is v3.1b1 as of this writing)
 
 =head1 AUTHOR 
 
