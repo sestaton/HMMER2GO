@@ -1,16 +1,15 @@
 package HMMER2GO::Command::getorf;
 # ABSTRACT: Run EMBOSS getorf and extract longest reading frames.
 
-use 5.014;
+use 5.012;
+use strict;
+use warnings;
 use HMMER2GO -command;
 use Cwd;
 use Capture::Tiny qw(:all);
 use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
-
-# given/when emits warnings in v5.18+
-no if $] >= 5.018, 'warnings', "experimental::smartmatch";
 
 sub opt_spec {
     return (    
@@ -308,7 +307,7 @@ __END__
 
 =head1 DEPENDENCIES
 
- This script uses EMBOSS, so it must be installed. 
+ This command uses EMBOSS, so it must be installed. 
  (The latest is v6.5.7 as of this writing).
 
 =head1 AUTHOR 
