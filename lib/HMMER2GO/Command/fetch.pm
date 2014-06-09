@@ -36,7 +36,7 @@ sub _fetch_mappings {
 
     my $ua = LWP::UserAgent->new;
 
-    my $urlbase = 'http://www.geneontology.org/external2go/pfam2go';
+    my $urlbase = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
     my $response = $ua->get($urlbase);
 
     #

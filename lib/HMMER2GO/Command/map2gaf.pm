@@ -80,7 +80,7 @@ sub _generate_go_association {
 }
 
 sub _get_term_file {
-    my $url      = 'http://www.geneontology.org/doc';
+    my $url      = 'ftp://ftp.geneontology.org/pub/go/doc';
     my $file     = 'GO.terms_alt_ids';
     my $endpoint = $url."/$file";
  
