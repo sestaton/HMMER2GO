@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-use 5.014;
+use 5.012;
 use strict;
 use warnings;
 use HMMER2GO;
@@ -11,7 +11,7 @@ HMMER2GO->run;
 
 =pod
 
-=head1
+=head1 NAME
 
 hmmer2go - Locate ORFs in DNA sequences and map GO terms to Pfam domain matches 
 
