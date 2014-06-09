@@ -26,7 +26,7 @@ If any Perl dependencies are listed after running this command, install them thr
 
 **USAGE**
 
-Starting with a file of DNA sequences, we first want to get the longest open reading frame for each gene and translate those sequences.
+Starting with a file of DNA sequences, we first want to get the longest open reading frame (ORF) for each gene and translate those sequences.
 
     hmmer2go getorf -i genes.fasta -o genes_orfs.faa
 
@@ -34,18 +34,23 @@ Next, we search our ORFs for coding domains.
 
     hmmer2go search -i genes_orfs.faa -d Pfam-A.hmm 
 
-The above command will create three files: genes_orfs_hmmscan-pfamA.out, genes_orfs_hmmscan-pfamA.domtblout, and genes_orfs_hmmscan-pfamA.tblout
+The above command will create three files: genes_orfs_hmmscan-pfamA.out, 
+	                                   genes_orfs_hmmscan-pfamA.domtblout, 
+ 	                                   and genes_orfs_hmmscan-pfamA.tblout
+
 We will now use the table of domain matches to map GO terms. To do this we first need to download the Pfam->Gene Ontology mappings. This can be done with a single command:
 
     hmmer2go fetch
 
 The above command creates the file: pfam2go.
 
-Now we can map out protein domain matches to GO terms.
+Now we can map the protein domain matches to GO terms.
 
     hmmer2go mapterms -i genes_orfs_hmmscan-pfamA.tblout -p pfam2go -o genes_orfs_hmmscan-pfamA_GO.tsv --map
 
-This last command will create two output files: genes_orfs_hmmscan-pfamA_GO.tsv, and genes_orfs_hmmscan-pfamA_GO_GOterm_mapping.tblout
+This last command will create two output files: genes_orfs_hmmscan-pfamA_GO.tsv, 
+                                                and genes_orfs_hmmscan-pfamA_GO_GOterm_mapping.tblout
+
 The first output file is a tab-delimited table with a description of each domain, including the GO terms and the associated functions. The last file is a two column table with the sequence name in the first column and the GO terms associated with that sequence in the second column.
 
 **DOCUMENTATION**
@@ -56,9 +61,7 @@ Each subcommand can be executed with no arguments to generate a help menu. Alter
 
 **ISSUES**
 
-Report any issues at the Pairfq issue tracker: https://github.com/sestaton/Pairfq/issues
-
-Be aware that Pairfq will not work for every data set given the wide range of FASTA/Q formats. Feel free to fork the project and modify the code to your needs, or submit code changes if you find any bugs. 
+Report any issues at the HMMER2GO issue tracker: https://github.com/sestaton/HMMER2GO/issues
 
 **ATTRIBUTION**
 
