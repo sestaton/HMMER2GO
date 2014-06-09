@@ -196,7 +196,7 @@ sub _seqct {
 	if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
 	    die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
 	}
-	elsif ('') { 
+	elsif ($name eq '') { 
 	    say 'WARNING: Sequences appear to have no identifiers. Continuing.'; 
 	}
 	$seqhash{$name} = $seq;
