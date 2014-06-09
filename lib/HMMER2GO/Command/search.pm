@@ -4,14 +4,8 @@ package HMMER2GO::Command::search;
 use 5.014;
 use HMMER2GO -command;
 use Cwd;
-#use Capture::Tiny qw(:all);
 use IPC::System::Simple qw(capture system);
 use File::Basename;
-
-# given/when emits warnings in v5.18+
-#no if $] >= 5.018, 'warnings', "experimental::smartmatch";
-
-#sub usage_desc { "getorf_app_cmd.pl %o [somefile ...]" }
 
 sub opt_spec {
     return (    
