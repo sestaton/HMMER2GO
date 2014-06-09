@@ -21,8 +21,10 @@ sub opt_spec {
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
+    my $command = __FILE__;
     if ($self->app->global_options->{man}) {
-        pod2usage( -verbose => 2 );
+        #pod2usage( -verbose => 2 );
+	system([0..5], "perldoc $command") and exit(0);
     }
     else {
 	$self->usage_error("Too few arguments.") 
