@@ -21,7 +21,7 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 6, 'Correct number of options for hmmer2go getorf');
+is($opts, 7, 'Correct number of options for hmmer2go getorf');
 
 my @result = capture([0..5], "bin/hmmer2go getorf -i $infile -o $outfile -t 0");
 
