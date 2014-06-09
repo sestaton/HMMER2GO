@@ -39,9 +39,10 @@ sub _run_hmmscan {
     my ($hmmscan, $infile, $database, $cpus) = @_;
 
     my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
-    my $outfile   = $iname."_hmmscan-pfamA.out";
-    my $domtblout = $iname."_hmmscan-pfamA.domtblout";
-    my $tblout    = $iname."_hmmscan-pfamA.tblout";
+    my ($dname, $dpath, $dsuffix) = fileparse($database, qr/\.[^.]*/);
+    my $outfile   = $iname."_".$dname.".out";
+    my $domtblout = $iname."_".$dname.".domtblout";
+    my $tblout    = $iname."_".$dname.".tblout";
 
     $cpus //= 1;
 
