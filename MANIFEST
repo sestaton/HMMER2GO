@@ -9,6 +9,7 @@ lib/HMMER2GO/Command.pm
 lib/HMMER2GO/Command/fetch.pm
 lib/HMMER2GO/Command/getorf.pm
 lib/HMMER2GO/Command/mapterms.pm
+lib/HMMER2GO/Command/map2gaf.pm
 lib/HMMER2GO/Command/search.pm
 t/test_data/t_seqs_nt.fas
 t/test_data/t_orfs_hmmscan-pfamA.tblout
@@ -17,6 +18,7 @@ t/01-fetch.t
 t/02-getorf.t
 t/03-search.t
 t/04-mapterms.t
+t/05-map2gaf.t
 xt/pod.t
 xt/pod-coverage.t
 

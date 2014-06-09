@@ -34,9 +34,9 @@ Next, we search our ORFs for coding domains.
 
     hmmer2go search -i genes_orfs.faa -d Pfam-A.hmm 
 
-The above command will create three files: genes_orfs_hmmscan-pfamA.out, 
-	                                   genes_orfs_hmmscan-pfamA.domtblout, 
- 	                                   and genes_orfs_hmmscan-pfamA.tblout
+The above command will create three files: genes_orfs_Pfam-A.out, 
+	                                   genes_orfs_Pfam-A.domtblout, 
+ 	                                   and genes_orfs_Pfam-A.tblout
 
 We will now use the table of domain matches to map GO terms. To do this we first need to download the Pfam->Gene Ontology mappings. This can be done with a single command:
 
@@ -48,8 +48,8 @@ Now we can map the protein domain matches to GO terms.
 
     hmmer2go mapterms -i genes_orfs_hmmscan-pfamA.tblout -p pfam2go -o genes_orfs_hmmscan-pfamA_GO.tsv --map
 
-This last command will create two output files: genes_orfs_hmmscan-pfamA_GO.tsv, 
-                                                and genes_orfs_hmmscan-pfamA_GO_GOterm_mapping.tblout
+This last command will create two output files: genes_orfs_Pfam-A_GO.tsv, 
+                                                and genes_orfs_Pfam-A_GO_GOterm_mapping.tsv
 
 The first output file is a tab-delimited table with a description of each domain, including the GO terms and the associated functions. The last file is a two column table with the sequence name in the first column and the GO terms associated with that sequence in the second column.
 
