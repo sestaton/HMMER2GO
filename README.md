@@ -59,6 +59,8 @@ Each subcommand can be executed with no arguments to generate a help menu. Alter
 
     hmmer2go help search
 
+More information about each command is available on the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki).
+
 **ISSUES**
 
 Report any issues at the HMMER2GO issue tracker: https://github.com/sestaton/HMMER2GO/issues
