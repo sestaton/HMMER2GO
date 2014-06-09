@@ -5,13 +5,12 @@ use 5.014;
 use HMMER2GO -command;
 use Cwd;
 use Capture::Tiny qw(:all);
+use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
 
 # given/when emits warnings in v5.18+
 no if $] >= 5.018, 'warnings', "experimental::smartmatch";
-
-#sub usage_desc { "getorf_app_cmd.pl %o [somefile ...]" }
 
 sub opt_spec {
     return (    
@@ -150,24 +149,31 @@ sub _readfq {
 
 sub _find_prog {
     my $prog = shift;
-    my ($path, $err) = capture { system("which $prog"); };
+    my ($path, $err) = capture { system([0..5], "which $prog"); };
     chomp $path;
     
-    if ($path !~ /getorf$/) {
-	say 'Couldn\'t find getorf in PATH. Will keep looking.';
+    if ($path !~ /$prog$/) {
+	say "Couldn\'t find $prog in PATH. Will keep looking.";
 	$path = "/usr/local/emboss/latest/bin/getorf";           # path at zcluster
     }
 
     # Instead of just testing if getorf exists and is executable 
     # we want to make sure we have permissions, so we try to 
     # invoke getorf and examine the output. 
-    my ($getorf_path, $getorf_err) = capture { system("$path --help"); };
+    my ($getorf_path, $getorf_err) = capture { system([0..5], "$path --help"); };
 
-    given ($getorf_err) {
-	when (/Version\: EMBOSS/) { say "Using getorf located at: $path"; }
-	when (/^-bash: \/usr\/local\/emboss\/bin\/getorf\: No such file or directory$/) { die "Could not find getorf. Exiting.\n"; }
-	when ('') { die "Could not find getorf. Exiting.\n"; }
-	default { die "Could not find getorf. Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n"; }
+    if ($getorf_err =~ /Version\: EMBOSS/) { 
+	say "Using getorf located at: $path"; 
+    }
+    elsif ($getorf_err =~ /^-bash: \/usr\/local\/emboss\/bin\/getorf\: No such file or directory$/) { 
+	die "Could not find getorf. Exiting.\n"; 
+    }
+    elsif ($getorf_err eq '') { 
+	die "Could not find getorf. Exiting.\n"; 
+    }
+    else { 
+	die "Could not find getorf. ".
+	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n"; 
     }
     return $path;
 }
@@ -184,9 +190,11 @@ sub _seqct {
 	# EMBOSS uses characters in identifiers as delimiters, which can produce some
         # unexpected renaming of sequences, so warn that it's not this script doing
         # the renaming.
-	given ($name) {
-	    when (/\:|\;|\||\(|\)|\.|\s/) { die "WARNING: Identifiers such as '$name' will produce unexpected renaming with EMBOSS."; }
-	    when ('') { say 'WARNING: Sequences appear to have no identifiers. Continuing.'; }
+	if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
+	    die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
+	}
+	elsif ('') { 
+	    say 'WARNING: Sequences appear to have no identifiers. Continuing.'; 
 	}
 	$seqhash{$name} = $seq;
     }
@@ -256,8 +264,8 @@ sub _getorf {
 	$getorfcmd .= "-nomethionine";
     }
 
-    my ($stdout, $stderr, @res) = capture { system($getorfcmd); };
-    
+    my ($stdout, $stderr, @res) = capture { system([0..5], $getorfcmd); };
+
     unlink $fname;
 
     return $orffile;
