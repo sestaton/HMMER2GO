@@ -33,7 +33,6 @@ my @result2 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile -p $
 ok(-e $outfile, 'Expected output from hmmer2go mapterms with mapping');
 ok(-e $mapfile, 'Expected GO term mapping file produced with hmmer2go mapterms');
 unlink $outfile;
-unlink $mapfile;
 unlink $pfam2go;
 
 done_testing();
