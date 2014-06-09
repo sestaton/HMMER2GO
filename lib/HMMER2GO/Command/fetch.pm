@@ -1,7 +1,9 @@
 package HMMER2GO::Command::fetch;
 # ABSTRACT: Download the latest Pfam2GO mappings.
 
-use 5.014;
+use 5.012;
+use strict;
+use warnings;
 use HMMER2GO -command;
 use LWP::UserAgent;
 use File::Basename;
@@ -62,13 +64,14 @@ __END__
 
 =head1 SYNOPSIS    
 
- hmmer2go search -o pfam2go
+ hmmer2go fetch -o pfam2go
 
 =head1 DESCRIPTION
                                                                    
-
-=head1 DEPENDENCIES
-
+ The Gene Ontology frequently updates the Pfam to Gene Ontology term mappings,
+ and it is a good idea to start with the most recent mapping file. This command
+ will download the latest mappings, by default creating the file "pfam2go" or
+ the user may specify a custom file name.
 
 =head1 AUTHOR 
 

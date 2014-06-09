@@ -1,19 +1,16 @@
 package HMMER2GO::Command::mapterms;
 # ABSTRACT: Map PFAM IDs from HMMscan search to GO terms.
 
-use 5.014;
-use HMMER2GO -command;
-use utf8;
-use charnames qw(:full :short);
+use 5.012;
 use strict; 
 use warnings;
 use warnings FATAL => "utf8";
+use HMMER2GO -command;
+use utf8;
+use charnames qw(:full :short);
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename;
-
-# given/when emits warnings in v5.18+
-no if $] >= 5.018, 'warnings', "experimental::smartmatch";
 
 sub opt_spec {
     return (    
@@ -84,9 +81,9 @@ sub _map_go_terms {
 	    my $go_term = $4;
 	    $pf_name =~ s/\s.*//;
 	    $pf_desc =~ s/\s\;//;
-	    for my $key (keys %pfamids) { ##TODO: As below, be more expressive
-		my ($query, $e_val, $desc) = mk_vec($key);
-		if ($pfamids{$key} eq $pf) {
+	    for my $id_desc (keys %pfamids) {
+		my ($query, $e_val, $desc) = mk_vec($id_desc);
+		if ($pfamids{$id_desc} eq $pf) {
 		    say $out join "\t", $query, $pf, $pf_name, $pf_desc, $go_term, $desc;
 		    if ($mapping) {
 			if (exists $goterms{$query}) {
@@ -105,9 +102,9 @@ sub _map_go_terms {
     close $out;
 
     if ($map) {
-	while (my ($key, $value) = each %goterms) { ##TODO: Be more expressive than key/value
+	while (my ($seqid, $terms) = each %goterms) {
 	    $map_ct++;
-	    say $map_fh join "\t", $key, $value;
+	    say $map_fh join "\t", $seqid, $terms;
 	}
 	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
     }
@@ -124,7 +121,7 @@ __END__
 
 =head1 NAME 
                                                                        
- hmmer2go mapterms - Map PFAM IDs from HMMscan search to GO terms 
+ hmmer2go mapterms - Map Pfam IDs from HMMER search to GO terms from the Gene Ontology
 
 =head1 SYNOPSIS    
 
@@ -132,16 +129,9 @@ __END__
 
 =head1 DESCRIPTION
                                                                    
- This script takes the table output of HMMscan and maps go terms to your
+ This command takes the table output of HMMscan and maps go terms to your
  significant hits using the GO->PFAM mappings provided by the Gene Ontology
  (geneontology.org).
-
-=head1 TESTED WITH:
-
-=over
-
-=item *
-Perl 5.14.1 (Red Hat Enterprise Linux Server release 5.7 (Tikanga))
 
 =head1 AUTHOR
  
