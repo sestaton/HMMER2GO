@@ -1,0 +1,26 @@
+#                                                                                       --- full sequence ---- --- best 1 domain ---- --- domain number estimation ----
+# target name        accession  query name                                   accession    E-value  score  bias   E-value  score  bias   exp reg clu  ov env dom rep inc description of target
+#------------------- ----------                         -------------------- ---------- --------- ------ ----- --------- ------ -----   --- --- --- --- --- --- --- --- ---------------------
+Phage_connect_1      PF05135.8  sunf_NODE_1382672_length_702_cov_5_594017_11_1 -              0.002   18.2   0.8    0.0026   17.8   0.8   1.1   1   0   0   1   1   1   1 Phage gp6-like head-tail connector protein
+DUF4546              PF15079.1  sunf_NODE_1382672_length_702_cov_5_594017_11_1 -             0.0069   15.5   2.1    0.0071   15.5   2.1   1.0   1   0   0   1   1   1   1 Domain of unknown function (DUF4546)
+Seryl_tRNA_N         PF02403.17 sunf_NODE_1382672_length_702_cov_5_594017_11_1 -             0.0079   16.1   0.8    0.0094   15.9   0.8   1.2   1   0   0   1   1   1   1 Seryl-tRNA synthetase N-terminal domain
+Terpene_synth_C      PF03936.11 sunf_NODE_1382672_length_702_cov_5_594017_11_1 -              0.019   14.1   0.9     0.022   14.0   0.9   1.1   1   0   0   1   1   1   0 Terpene synthase family, metal binding domain
+U1snRNP70_N          PF12220.3  sunf_NODE_1382672_length_702_cov_5_594017_11_1 -              0.025   14.9   2.9     0.036   14.3   2.9   1.2   1   0   0   1   1   1   0 U1 small nuclear ribonucleoprotein of 70kDa MW N terminal
+DUF2664              PF10867.3  sunf_NODE_1382672_length_702_cov_5_594017_11_1 -              0.074   13.6   0.0       0.1   13.1   0.0   1.2   1   0   0   1   1   1   0 Protein of unknown function (DUF2664)
+SCAMP                PF04144.8  sunf_NODE_1382672_length_702_cov_5_594017_11_1 -              0.095   12.5   0.2      0.16   11.8   0.2   1.3   1   0   0   1   1   1   0 SCAMP family
+zf-RVT               PF13966.1  sunf_NODE_3334_length_166_cov_6_662651_6_1 -            8.5e-06   25.9   0.0   9.6e-06   25.8   0.0   1.0   1   0   0   1   1   1   1 zinc-binding in reverse transcriptase
+VSP                  PF03302.8  sunf_NODE_442315_length_351_cov_9_507122_6_1 -                4.6    5.7   5.5         5    5.6   5.5   1.1   1   0   0   1   1   1   0 Giardia variant-specific surface protein
+LRR_6                PF13516.1  sunf_NODE_626818_length_211_cov_6_417062_4_1 -              0.002   17.9   0.0       3.1    8.1   0.0   3.1   3   0   0   3   3   3   1 Leucine Rich repeat
+LRR_4                PF12799.2  sunf_NODE_626818_length_211_cov_6_417062_4_1 -              0.011   15.3   0.0       3.8    7.2   0.0   2.2   1   1   1   2   2   2   0 Leucine Rich repeats (2 copies)
+LRR_1                PF00560.28 sunf_NODE_626818_length_211_cov_6_417062_4_1 -              0.043   13.8   0.0        22    5.6   0.0   3.0   2   1   1   3   3   3   0 Leucine Rich Repeat
+LRR_8                PF13855.1  sunf_NODE_626818_length_211_cov_6_417062_4_1 -              0.073   12.8   0.0      0.14   11.8   0.0   1.7   1   1   0   1   1   1   0 Leucine rich repeat
+#
+# Program:         hmmscan
+# Version:         3.1b1 (May 2013)
+# Pipeline mode:   SCAN
+# Query file:      t/test_data/t_orfs.faa
+# Target file:     t/test_data/Pfam-A.hmm
+# Option settings: /usr/local/hmmer/latest/bin/hmmscan -o t_orfs_hmmscan-pfamA.out --tblout t_orfs_hmmscan-pfamA.tblout --domtblout t_orfs_hmmscan-pfamA.domtblout --acc --noali --cpu 1 t/test_data/Pfam-A.hmm t/test_data/t_orfs.faa 
+# Current dir:     /panfs/pstor.storage/grphomes/jmblab/statonse/github/HMMER2GO
+# Date:            Mon Jun  9 10:01:50 2014
+# [ok]
