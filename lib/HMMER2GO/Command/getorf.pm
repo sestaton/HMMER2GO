@@ -10,6 +10,7 @@ use Capture::Tiny qw(:all);
 use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
+use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -25,8 +26,13 @@ sub opt_spec {
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
-       
-    $self->usage_error("Too few arguments.") unless $opt->{infile} && $opt->{outfile};
+
+    if ($self->app->global_options->{man}) {
+	pod2usage( -verbose => 2 );
+    }
+    else {
+	$self->usage_error("Too few arguments.") unless $opt->{infile} && $opt->{outfile};
+    }
 } 
 
 sub execute {

@@ -14,6 +14,10 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+sub global_opt_spec {
+    [ 'man' => "Get the manual entry for a command" ];
+}
+
 =head1 AUTHOR
 
 S. Evan Staton, C<< <statonse at gmail.com> >>

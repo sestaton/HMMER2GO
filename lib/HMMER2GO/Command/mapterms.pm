@@ -9,6 +9,7 @@ use HMMER2GO -command;
 use utf8;
 use charnames qw(:full :short);
 use File::Basename;
+use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -21,8 +22,14 @@ sub opt_spec {
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
-       
-    $self->usage_error("Too few arguments.") unless $opt->{infile} && $opt->{outfile} && $opt->{pfam2go};
+
+    if ($self->app->global_options->{man}) {
+        pod2usage( -verbose => 2 );
+    }
+    else {
+	$self->usage_error("Too few arguments.") 
+	    unless $opt->{infile} && $opt->{outfile} && $opt->{pfam2go};
+    }
 } 
 
 sub execute {

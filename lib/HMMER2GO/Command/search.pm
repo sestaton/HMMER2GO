@@ -8,6 +8,7 @@ use HMMER2GO -command;
 use Cwd;
 use IPC::System::Simple qw(capture system);
 use File::Basename;
+use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -19,8 +20,14 @@ sub opt_spec {
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
-       
-    $self->usage_error("Too few arguments.") unless $opt->{infile} && $opt->{database};
+
+    if ($self->app->global_options->{man}) {
+        pod2usage( -verbose => 2 );
+    }
+    else {
+	$self->usage_error("Too few arguments.") 
+	    unless $opt->{infile} && $opt->{database};
+    }
 } 
 
 sub execute {
