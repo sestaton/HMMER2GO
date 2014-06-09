@@ -42,6 +42,7 @@ SKIP: {
     move $tblout, "t/test_data/$tblout";
 };
 
+unlink $infile; 
 done_testing();
 
 # methods
