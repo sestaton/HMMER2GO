@@ -20,6 +20,7 @@ sub opt_spec {
 	[ "translate|t", "Determines what to report for each ORF"                 ],
 	[ "sameframe|s", "Report all ORFs in the same (sense) frame"              ],
 	[ "nomet|nm",    "Do not report only those ORFs starting with Methionine" ],
+	[ "verbose|v",   "Print results to the terminal"                          ],
     );
 }
 
@@ -38,14 +39,15 @@ sub execute {
     my $find    = $opt->{translate};
     my $nomet   = $opt->{nomet};
     my $sense   = $opt->{sameframe};
+    my $verbose = $opt->{verbose};
 
     my $getorf = _find_prog("getorf");
 
-    my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense);
+    my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense, $verbose);
 }
 
 sub _run_getorf {
-    my ($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense) = @_;
+    my ($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense, $verbose) = @_;
 
     if (-e $outfile) { 
         # Because we are appending the ORFs from each sequence to the same output,
@@ -64,7 +66,7 @@ sub _run_getorf {
     my ($fasnum, $seqhash) = _seqct($infile);
 
     if ($$fasnum >= 1) {
-	say "\n========== Searching for ORFs with minimum length of $orflen.";
+	say "\n========== Searching for ORFs with minimum length of $orflen." if $verbose;
     } 
     else {
 	die "\nERROR: No sequences were found! Check input. Exiting.\n";
@@ -94,10 +96,12 @@ sub _run_getorf {
     }
     close $out;
 
-    my $with_orfs_perc = sprintf("%.2f",$orfseqstot/$$fasnum);
-    say "\n========== $fcount and $$fasnum sequences in $infile.";
-    say "\n========== $orfseqstot sequences processed with ORFs above $orflen.";
-    say "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.";
+    if ($verbose) {
+	my $with_orfs_perc = sprintf("%.2f",$orfseqstot/$$fasnum);
+	say "\n========== $fcount and $$fasnum sequences in $infile.";
+	say "\n========== $orfseqstot sequences processed with ORFs above $orflen.";
+	say "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.";
+    }
 }
 
 sub _readfq {
