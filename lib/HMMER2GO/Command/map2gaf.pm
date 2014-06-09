@@ -6,7 +6,6 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use LWP::UserAgent;
-use Pod::Usage;
 use File::Basename;
 
 sub opt_spec {
@@ -71,6 +70,8 @@ sub _generate_go_association {
     }
     close $in;
     close $out;
+
+    unlink $gofile;
 }
 
 sub _get_term_file {
@@ -123,7 +124,7 @@ separated by commas in the second column.
 
 =item -o, --outfile
 
-The file GO Annotation File (GAF) to be created by this command. See http://www.geneontology.org/GO.format.gaf-2_0.shtml
+The file GO Annotation Format (GAF) file to be created by this command. See http://www.geneontology.org/GO.format.gaf-2_0.shtml
 for the specifications on this format.
 
 =item -s, --species
