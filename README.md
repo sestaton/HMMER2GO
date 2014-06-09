@@ -26,7 +26,7 @@ If any Perl dependencies are listed after running this command, install them thr
     make test
     make install
 
-**USAGE**
+**BRIEF USAGE**
 
 Starting with a file of DNA sequences, we first want to get the longest open reading frame (ORF) for each gene and translate those sequences.
 
@@ -36,11 +36,7 @@ Next, we search our ORFs for coding domains.
 
     hmmer2go search -i genes_orfs.faa -d Pfam-A.hmm 
 
-The above command will create three files: genes_orfs_Pfam-A.out, 
-	                                   genes_orfs_Pfam-A.domtblout, 
- 	                                   and genes_orfs_Pfam-A.tblout
-
-We will now use the table of domain matches to map GO terms. To do this we first need to download the Pfam->Gene Ontology mappings. This can be done with a single command:
+To map the domain matches to GO terms we first need to download the Pfam to Gene Ontology mappings. This can be done with a single command:
 
     hmmer2go fetch
 
@@ -48,12 +44,13 @@ The above command creates the file: pfam2go.
 
 Now we can map the protein domain matches to GO terms.
 
-    hmmer2go mapterms -i genes_orfs_hmmscan-pfamA.tblout -p pfam2go -o genes_orfs_hmmscan-pfamA_GO.tsv --map
+    hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -p pfam2go -o genes_orfs_Pfam-A_GO.tsv --map
 
-This last command will create two output files: genes_orfs_Pfam-A_GO.tsv, 
-                                                and genes_orfs_Pfam-A_GO_GOterm_mapping.tsv
+If we want to perform a statistical analysis on the GO mappings, it may be necessary to create a GAF file.
 
-The first output file is a tab-delimited table with a description of each domain, including the GO terms and the associated functions. The last file is a two column table with the sequence name in the first column and the GO terms associated with that sequence in the second column.
+    hmmer2go map2gaf -i genes_orfs_Pfam-A_GO_GOterm_mapping.tsv -o genes_orfs_Pfam-A_GO_GOterm_mapping.gaf -s 'Helianthus annuus'
+
+For a full explanation of these commands, see the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki). In particular, see the [tutorial]((https://github.com/sestaton/HMMER2GO/wiki/Tutorial) page for a walk-through of all the commands.
 
 **DOCUMENTATION**
 
@@ -61,7 +58,11 @@ Each subcommand can be executed with no arguments to generate a help menu. Alter
 
     hmmer2go help search
 
-More information about each command is available on the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki).
+More information about each command is available by accessing the full documentation at the command line. For example,
+
+    hmmer2go getorf --man
+
+Also, the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki) is a source of online documentation.
 
 **ISSUES**
 
