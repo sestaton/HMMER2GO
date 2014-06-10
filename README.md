@@ -60,7 +60,7 @@ Each subcommand can be executed with no arguments to generate a help menu. Alter
 
 More information about each command is available by accessing the full documentation at the command line. For example,
 
-    hmmer2go getorf --man
+    hmmer2go search --man
 
 Also, the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki) is a source of online documentation.
 
