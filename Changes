@@ -1,6 +1,17 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.02	06/10/2014	Athens, GA
+
+- Change name of 'fetch' command to 'fetchmap' to be
+  more expressive.
+- Make option to specify a file	mandatory for the
+  'fetchmap' command so	there is a consist usage for
+  all commands.
+- Add documentation for main application.
+- Add short option for getting documentation for all
+  commands.
+
 0.01    06/09/2014	Athens, GA
 
 - Initial release.
