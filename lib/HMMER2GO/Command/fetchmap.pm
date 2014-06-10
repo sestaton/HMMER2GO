@@ -1,4 +1,4 @@
-package HMMER2GO::Command::fetch;
+package HMMER2GO::Command::fetchmap;
 # ABSTRACT: Download the latest Pfam2GO mappings.
 
 use 5.012;
@@ -23,7 +23,7 @@ sub validate_args {
 	system([0..5], "perldoc $command");
     }
     else {
-	$self->usage_error("Too many arguments.") if @$args;
+	$self->usage_error("Too few arguments.") unless $opt->{outfile};
     }
 } 
 
@@ -68,11 +68,11 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go fetch - Download the latest Pfam2GO mappings
+ hmmer2go fetchmap - Download the latest Pfam2GO mappings
 
 =head1 SYNOPSIS    
 
- hmmer2go fetch -o pfam2go
+ hmmer2go fetchmap -o pfam2go
 
 =head1 DESCRIPTION
                                                                    
@@ -99,7 +99,7 @@ A file to place the Pfam2GO mappings
 
 =over 2
 
-=item -h, --help
+=item help
 
 Print a usage statement. 
 
