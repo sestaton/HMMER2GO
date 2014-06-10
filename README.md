@@ -50,7 +50,7 @@ If we want to perform a statistical analysis on the GO mappings, it may be neces
 
     hmmer2go map2gaf -i genes_orfs_Pfam-A_GO_GOterm_mapping.tsv -o genes_orfs_Pfam-A_GO_GOterm_mapping.gaf -s 'Helianthus annuus'
 
-For a full explanation of these commands, see the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki). In particular, see the [tutorial]((https://github.com/sestaton/HMMER2GO/wiki/Tutorial) page for a walk-through of all the commands.
+For a full explanation of these commands, see the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki). In particular, see the [tutorial](https://github.com/sestaton/HMMER2GO/wiki/Tutorial) page for a walk-through of all the commands.
 
 **DOCUMENTATION**
 
