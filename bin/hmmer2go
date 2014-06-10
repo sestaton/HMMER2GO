@@ -9,10 +9,111 @@ our $VERSION = '0.01';
 
 HMMER2GO->run;
 
-=pod
+__END__
 
 =head1 NAME
 
-hmmer2go - Locate ORFs in DNA sequences and map GO terms to Pfam domain matches 
+hmmer2go - Locate ORFs in DNA sequences and map Gene Ontology (GO) terms to Pfam domain matches 
+
+=head1 SYNOPSIS    
+
+## Finding Open Reading Frames (ORFs) and translating them
+
+ hmmer2go getorf -i genes.fasta -o genes_orfs.faa --verbose
+
+## Find domain matches
+
+ hmmer2go search -i genes_orfs.faa -d Pfam-A.hmm
+
+## Download Pfam to Gene Ontology ID mappings
+
+ hmmer2go fetch
+
+## Map Pfam domain matches to Gene Ontology terms
+
+ hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -p pfam2go -o genes_orfs_Pfam-A_GO.tsv --map
+
+## Create GAF file from Gene Ontology mappings
+
+ hmmer2go map2gaf -i genes_orfs_Pfam-A_GO_GOterm_mapping.tsv -o genes_orfs_Pfam-A_GO_GOterm_mapping.gaf -s 'Helianthus annuus'
+
+=head1 DESCRIPTION
+     
+ This tool accelerates finding GO associations for a gene set, and it should be
+ more sensitive than using GO term mappings obtained from DNA->DNA comparisons using BLAST.
+
+=head1 DEPENDENCIES
+
+The modules App::Cmd, LWP::UserAgent, IPC::System::Simple, and Capture::Tiny are required. See below for information
+on which Perls have been tested.
+
+=head1 LICENSE
+ 
+The MIT License should included with the project. 
+If not, it can be found at: L<http://opensource.org/licenses/mit-license.php>
+
+Copyright (C) 2014 S. Evan Staton
+ 
+=head1 TESTED WITH:
+
+=over
+
+=item *
+Perl 5.12.5 (Ubuntu 12.04.3 LTS)
+
+=item *
+Perl 5.14.2 (Red Hat Enterprise Linux Desktop release 6.2 (Santiago); Fedora 17)
+
+=item *
+Perl 5.14.4 (Ubuntu 12.04.3 LTS)
+
+=item *
+Perl 5.16.3 (Ubuntu 12.04.3 LTS)
+
+=item *
+Perl 5.18.0 (Red Hat Enterprise Linux Server release 5.9 (Tikanga))
+
+=item *
+Perl 5.18.1 (Ubuntu 12.04.3 LTS)
+
+=item *
+Perl 5.20 (Red Hat Enterprise Linux Server release 5.9 (Tikanga))
+
+=back
+
+=head1 AUTHOR 
+
+S. Evan Staton, C<< <statonse at gmail.com> >>
+
+=head1 REQUIRED ARGUMENTS
+
+=over 2
+
+=item The method to perform. Must be one of the following:
+
+   commands: list the application's commands
+       help: display a command's help screen
+ 
+      fetch: Download the latest Pfam2GO mappings.
+     getorf: Run EMBOSS getorf and extract longest reading frames.
+    map2gaf: Generate association file for gene and GO term mappings.
+   mapterms: Map PFAM IDs from HMMscan search to GO terms.
+     search: Run HMMscan on translated ORFs against Pfam database.
+
+=back
+
+=head1 OPTIONS
+
+=over 2
+
+=item help
+
+  Print a usage statement for a specific command. 
+
+=item --man
+  
+  Print the full documentation for a specific command.
+
+=back
 
 =cut
