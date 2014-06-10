@@ -6,10 +6,10 @@ use strict;
 use warnings;
 use warnings FATAL => "utf8";
 use HMMER2GO -command;
+use IPC::System::Simple qw(system);
 use utf8;
 use charnames qw(:full :short);
 use File::Basename;
-use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -23,8 +23,9 @@ sub opt_spec {
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
+    my $command = __FILE__;
     if ($self->app->global_options->{man}) {
-        pod2usage( -verbose => 2 );
+	system([0..5], "perldoc $command");
     }
     else {
 	$self->usage_error("Too few arguments.") 
@@ -35,6 +36,7 @@ sub validate_args {
 sub execute {
     my ($self, $opt, $args) = @_;
 
+    exit(0) if $self->app->global_options->{man};
     my $infile  = $opt->{infile};
     my $pfam2go = $opt->{pfam2go};
     my $outfile = $opt->{outfile};
@@ -140,7 +142,7 @@ __END__
 
 =head1 AUTHOR
  
-statonse at gmail dot com
+S. Evan Staton, C<< <statonse at gmail.com> >>
 
 =head1 REQUIRED ARGUMENTS
 

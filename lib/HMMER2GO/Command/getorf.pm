@@ -10,7 +10,6 @@ use Capture::Tiny qw(:all);
 use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
-use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -27,8 +26,9 @@ sub opt_spec {
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
+    my $command = __FILE__;
     if ($self->app->global_options->{man}) {
-	pod2usage( -verbose => 2 );
+	system([0..5], "perldoc $command");
     }
     else {
 	$self->usage_error("Too few arguments.") unless $opt->{infile} && $opt->{outfile};
@@ -38,6 +38,7 @@ sub validate_args {
 sub execute {
     my ($self, $opt, $args) = @_;
 
+    exit(0) if $self->app->global_options->{man};
     my $infile  = $opt->{infile};
     my $outfile = $opt->{outfile};
     my $orflen  = $opt->{orflen};
@@ -318,11 +319,7 @@ __END__
 
 =head1 AUTHOR 
 
-S. Evan Staton                                                
-
-=head1 CONTACT
- 
-statonse at gmail dot com
+S. Evan Staton, C<< <statonse at gmail.com> >>
 
 =head1 REQUIRED ARGUMENTS
 

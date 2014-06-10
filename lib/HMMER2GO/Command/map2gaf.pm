@@ -5,9 +5,9 @@ use 5.012;
 use strict; 
 use warnings;
 use HMMER2GO -command;
+use IPC::System::Simple qw(system);
 use LWP::UserAgent;
 use File::Basename;
-use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -21,8 +21,9 @@ sub opt_spec {
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
+    my $command = __FILE__;
     if ($self->app->global_options->{man}) {
-        pod2usage( -verbose => 2 );
+	system([0..5], "perldoc $command");
     }
     else {
 	$self->usage_error("Too few arguments.") 
@@ -33,6 +34,7 @@ sub validate_args {
 sub execute {
     my ($self, $opt, $args) = @_;
 
+    exit(0) if $self->app->global_options->{man};
     my $infile  = $opt->{infile};
     my $outfile = $opt->{outfile};
     my $species = $opt->{species};
@@ -118,6 +120,10 @@ __END__
 =head1 SYNOPSIS    
 
  hmmer2go map2gaf -i genes_orfs_GOterm_mapping.tsv -s 'Helianthus annuus' -o genes_orfs_GOterm_mapping.gaf
+
+=head1 AUTHOR
+
+S. Evan Staton, C<< <statonse at gmail.com> >>
 
 =head1 DESCRIPTION
                                                                    

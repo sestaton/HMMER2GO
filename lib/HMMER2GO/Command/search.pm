@@ -8,7 +8,6 @@ use HMMER2GO -command;
 use Cwd;
 use IPC::System::Simple qw(capture system);
 use File::Basename;
-use Pod::Usage;
 
 sub opt_spec {
     return (    
@@ -23,8 +22,7 @@ sub validate_args {
 
     my $command = __FILE__;
     if ($self->app->global_options->{man}) {
-        #pod2usage( -verbose => 2 );
-	system([0..5], "perldoc $command") and exit(0);
+	system([0..5], "perldoc $command");
     }
     else {
 	$self->usage_error("Too few arguments.") 
@@ -35,6 +33,7 @@ sub validate_args {
 sub execute {
     my ($self, $opt, $args) = @_;
 
+    exit(0) if $self->app->global_options->{man};
     my $infile   = $opt->{infile};
     my $database = $opt->{database};
     my $cpus     = $opt->{cpus};
@@ -88,15 +87,15 @@ sub _find_prog {
     # invoke hmmscan and examine the output. 
     my @hmmscan_out = capture([0..5], "$path -h");
 
-    for (@hmmscan_out) {
-	if (/^\# hmmscan/) { 
+    for my $hmm_out (@hmmscan_out) {
+	if ($hmm_out =~ /^\# hmmscan/) { 
 	    say "Using hmmscan located at: $path";
 	    return $path;
 	}
-	elsif (/No such file or directory$/) { 
+	elsif ($hmm_out =~ /No such file or directory$/) { 
 	    die "Could not find hmmscan. Exiting.\n"; 
 	}
-	elsif ('') { 
+	elsif ($hmm_out eq '') { 
 	    die "Could not find hmmscan. Exiting.\n"; 
 	}
 	else { 
@@ -134,11 +133,7 @@ __END__
 
 =head1 AUTHOR 
 
-S. Evan Staton                                                
-
-=head1 CONTACT
- 
-statonse at gmail dot com
+S. Evan Staton, C<< <statonse at gmail.com> >>
 
 =head1 REQUIRED ARGUMENTS
 
