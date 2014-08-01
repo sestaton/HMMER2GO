@@ -358,7 +358,7 @@ A file to place the translated sequences.
  Lowering this value will not likely result in any significant hits 
  from iprscan or other search programs (though there may be a reason to do so).
 
-=itme -a, --all
+=item -a, --all
 
  By default, the 'hmmer2go getorf' command will only return the longest ORF for each input sequence.
  If you have genomic contigs for example, this is not what you want because you would
