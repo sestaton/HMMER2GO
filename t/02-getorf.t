@@ -38,7 +38,7 @@ while (<$longin>) {
 }
 close $longin;
 
-is($orfs, 31, 'Expected number of ORFs found for test data when only keeping longest ORFs');
+is($orfs, 30, 'Expected number of ORFs found for test data when only keeping longest ORFs');
 $orfs = 0;
 
 ## Find all ORFs
@@ -52,7 +52,8 @@ while (<$allin>) {
     ++$orfs if /^>/;
 }
 close $allin;
+unlink $outfile_all;
 
-is($orfs, 53, 'Expected number of ORFs found for test data when keeping all ORFs');
+is($orfs, 52, 'Expected number of ORFs found for test data when keeping all ORFs');
 
 done_testing();
