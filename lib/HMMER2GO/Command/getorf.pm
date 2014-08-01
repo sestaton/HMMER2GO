@@ -321,9 +321,9 @@ __END__
 =head1 DESCRIPTION
                                                                    
  Translate a nucleotide multi-fasta file in all 6 frames and select 
- the longest ORF for each sequence. The ORFs are reported as nucleotide
- sequences by default, but translated may also be reported. The minimum 
- ORF length to report can be given as an option.
+ the longest ORF, by defaul, or all ORFs for each sequence. The ORFs are 
+ reported as nucleotide sequences by default, but translated may also be 
+ reported. The minimum ORF length to report can be given as an option.
 
 =head1 DEPENDENCIES
 
@@ -357,6 +357,13 @@ A file to place the translated sequences.
  The minimum length for which to report an ORF (Default: 80).
  Lowering this value will not likely result in any significant hits 
  from iprscan or other search programs (though there may be a reason to do so).
+
+=itme -a, --all
+
+ By default, the 'hmmer2go getorf' command will only return the longest ORF for each input sequence.
+ If you have genomic contigs for example, this is not what you want because you would
+ miss most of the genes or domains. By specifying this option, you can return all ORFs
+ for each input sequence above a certain length (see the '--orflen' option above).
 
 =item -f, --find
 
