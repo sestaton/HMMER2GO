@@ -1,5 +1,5 @@
 package HMMER2GO::Command::getorf;
-# ABSTRACT: Run EMBOSS getorf and extract longest reading frames.
+# ABSTRACT: Run EMBOSS getorf and extract the reading frames.
 
 use 5.012;
 use strict;
@@ -16,6 +16,7 @@ sub opt_spec {
 	[ "infile|i=s",  "The fasta files to be translated"                       ],
 	[ "outfile|o=s", "A file to place the translated sequences"               ],
 	[ "orflen|l=i",  "The minimum length for which to report an ORF"          ],
+        [ "all|a",       "Annotate all the ORFs, not just the longest one"        ],
 	[ "translate|t", "Determines what to report for each ORF"                 ],
 	[ "sameframe|s", "Report all ORFs in the same (sense) frame"              ],
 	[ "nomet|nm",    "Do not report only those ORFs starting with Methionine" ],
@@ -42,6 +43,7 @@ sub execute {
     my $infile  = $opt->{infile};
     my $outfile = $opt->{outfile};
     my $orflen  = $opt->{orflen};
+    my $allorfs = $opt->{all};
     my $find    = $opt->{translate};
     my $nomet   = $opt->{nomet};
     my $sense   = $opt->{sameframe};
@@ -49,11 +51,13 @@ sub execute {
 
     my $getorf = _find_prog("getorf");
 
-    my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense, $verbose);
+    my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, 
+			     $allorfs, $nomet, $sense, $verbose);
 }
 
 sub _run_getorf {
-    my ($getorf, $infile, $outfile, $find, $orflen, $nomet, $sense, $verbose) = @_;
+    my ($getorf, $infile, $outfile, $find, 
+	$allorfs, $orflen, $nomet, $sense, $verbose) = @_;
 
     if (-e $outfile) { 
         # Because we are appending the ORFs from each sequence to the same output,
@@ -82,19 +86,22 @@ sub _run_getorf {
 
     while (my ($id, $seq) = each %$seqhash) {
 	$fcount++;
-	my $orffile = _getorf($getorf, $iname, $isuffix, $fcount, $id, $seq, $find, $nomet, $orflen);
+	my $orffile = _getorf($getorf, $iname, $isuffix, $fcount, 
+			      $id, $seq, $find, $nomet, $orflen);
 
 	if (-s $orffile) {
 	    $orfseqstot++;
-	    my $longest_seq = _largest_seq($orffile,$sense);
+	    my $seqs = _sort_seqs($orffile, $sense, $allorfs);
 
-	    while (my ($k, $v) = each %$longest_seq) {
+	    # sort to keep seqs with multiple ORFs together in the output
+	    for my $name (sort keys %$seqs) {
+		my $ntseq = $seqs->{$name};
 		if (defined $sense) {
-		    my ($sense_name, $sense_seq) = _revcom($k,$v);
+		    my ($sense_name, $sense_seq) = _revcom($name, $ntseq);
 		    say $out join "\n", ">".$sense_name, $sense_seq;
 		}
 		else {
-		    say $out join "\n", ">".$k, $v;
+		    say $out join "\n", ">".$name, $ntseq;
 		}
 	    }
 	}
@@ -212,8 +219,8 @@ sub _seqct {
     return (\$seqct,\%seqhash);
 }
 
-sub _largest_seq {
-    my ($file, $sense) = @_;
+sub _sort_seqs {
+    my ($file, $sense, $allorfs) = @_;
  
     open my $fh, "<", $file or die "\nERROR: Could not open file: $file\n";
     
@@ -226,24 +233,30 @@ sub _largest_seq {
     }
     close $fh;
 
-    # modified from:
-    # http://stackoverflow.com/a/5958473
-    my $max;
-    my %hash_max;
-    keys %seqhash; # reset iterator
-    while (my ($key, $value) = each %seqhash) {
-	if ( !defined $max || length($value) > $max ) {
-	    %hash_max = ();
-	    $max = length($value);
+    if (!$allorfs) {
+	# modified from:
+	# http://stackoverflow.com/a/5958473
+	my $max;
+	my %hash_max;
+	keys %seqhash; # reset iterator
+	while (my ($key, $value) = each %seqhash) {
+	    if ( !defined $max || length($value) > $max ) {
+		%hash_max = ();
+		$max = length($value);
+	    }
+	    $hash_max{$key} = $value if $max == length($value);
 	}
-	$hash_max{$key} = $value if $max == length($value);
+	
+	return \%hash_max;
     }
-    
-    return \%hash_max;
+    else {
+	return \%seqhash;
+    }
 }
 
 sub _getorf {
-    my ($getorf, $iname, $isuffix, $fcount, $id, $seq, $find, $nomet, $orflen) = @_;
+    my ($getorf, $iname, $isuffix, $fcount, 
+	$id, $seq, $find, $nomet, $orflen) = @_;
     my $tmpiname = $iname."_".$fcount."_XXXX";
     my $cwd = getcwd();
     my $fname = File::Temp->new( TEMPLATE => $tmpiname,
@@ -299,7 +312,7 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go getorf - Run EMBOSS getorf and extract longest reading frames.
+ hmmer2go getorf - Run EMBOSS getorf and extract the reading frames.
 
 =head1 SYNOPSIS    
 
