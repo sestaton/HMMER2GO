@@ -13,7 +13,7 @@ my @menu = capture([0..5], "bin/hmmer2go help search");
 
 my $opts      = 0;
 my $full_test = 0;
-my $infile    = "t/test_data/t_orfs.faa";
+my $infile    = "t/test_data/t_orfs_long.faa";
 my $outfile   = "t_orfs_hmmscan-pfamA.out";
 my $domtblout = "t_orfs_hmmscan-pfamA.domtblout";
 my $tblout    = "t_orfs_hmmscan-pfamA.tblout";
