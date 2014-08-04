@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.03	08/01/2014	Vancouver, BC, Canada
+
+- Add option to find all ORFs, not just the longest.
+- Bug fixes to POD in several modules.
+- Update Wiki and documentation for new option.
+
 0.02	06/10/2014	Athens, GA
 
 - Change name of 'fetch' command to 'fetchmap' to be
