@@ -4,11 +4,8 @@ package HMMER2GO::Command::mapterms;
 use 5.012;
 use strict; 
 use warnings;
-use warnings FATAL => "utf8";
 use HMMER2GO -command;
 use IPC::System::Simple qw(system);
-use utf8;
-use charnames qw(:full :short);
 use File::Basename;
 
 sub opt_spec {
@@ -67,10 +64,17 @@ sub _map_go_terms {
 	next if /^\#/;
 	my ($target_name, $accession, $query_name, $accession_q, $E_value_full, 
 	    $score_full, $bias_full, $E_value_best, $score_best, $bias_best, 
-	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, $description_of_target) = split;
-	my $query_eval = mk_key($query_name, $E_value_full, $description_of_target);
-	$accession =~ s/\..*//;
-	$pfamids{$query_eval} = $accession;
+	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, @description_of_target) = split;
+	my $description = join " ", @description_of_target;
+	my $family = $accession;
+	$family =~ s/\..*//;
+	my $query_match_val = mk_key($family, $accession, $E_value_full, $description);
+	if (exists $pfamids{$query_name}) {
+	    push @{$pfamids{$query_name}}, $query_match_val;
+	}
+	else {
+	    $pfamids{$query_name} = [ $query_match_val ];
+	}
     }
     close $in;
 
@@ -82,25 +86,25 @@ sub _map_go_terms {
 	chomp $mapping;
 	next if $mapping =~ /^!/;
 	if ($mapping =~ /Pfam:(\S+) (\S+ \> )(GO\:\S+.*\;) (GO\:\d+)/) {
-	    my $pf = $1;
-	    my $pf_name = $2;
-	    my $pf_desc = $3;
-	    my $go_term = $4;
+	    my ($pf, $pf_name, $pf_desc, $go_term) = ($1, $2, $3, $4);
 	    $pf_name =~ s/\s.*//;
 	    $pf_desc =~ s/\s\;//;
-	    for my $id_desc (keys %pfamids) {
-		my ($query, $e_val, $desc) = mk_vec($id_desc);
-		if ($pfamids{$id_desc} eq $pf) {
-		    say $out join "\t", $query, $pf, $pf_name, $pf_desc, $go_term, $desc;
-		    if ($mapping) {
-			if (exists $goterms{$query}) {
-			    $go_ct++ if defined($go_term);
-			    $goterms{$query} .= ",".$go_term;
-			} else {
-			    $goterms{$query} = $go_term;
+	    for my $query_matches (keys %pfamids) {
+		for my $query (@{$pfamids{$query_matches}}) {
+		    my ($family, $accession, $E_value_full, $description) = mk_vec($query);
+		    if ($family eq $pf) {
+			say $out join "\t", $query_matches, $pf, $pf_name, $pf_desc, $go_term, $description;
+			if ($mapping) {
+			    if (exists $goterms{$query_matches}) {
+				#$go_ct++ if defined($go_term);
+				$goterms{$query_matches} .= ",".$go_term;
+			    } 
+                            else {
+				$goterms{$query_matches} = $go_term;
+			    }
 			}
+			last;
 		    }
-		    last;
 		}
 	    }
 	}
@@ -111,15 +115,17 @@ sub _map_go_terms {
     if ($map) {
 	while (my ($seqid, $terms) = each %goterms) {
 	    $map_ct++;
+	    my $termct = (split /\,/, $terms);
+	    $go_ct += $termct;
 	    say $map_fh join "\t", $seqid, $terms;
 	}
 	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
     }
 }
 
-sub mk_key { join "\N{INVISIBLE SEPARATOR}", @_ }
+sub mk_key { join "~~", @_ }
 
-sub mk_vec { split "\N{INVISIBLE SEPARATOR}", shift }
+sub mk_vec { split /\~\~/, shift }
 
 1;
 __END__
