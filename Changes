@@ -1,7 +1,19 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.03	08/01/2014	Vancouver, BC, Canada
+0.04	08/20/2014	Vancouver, BC
+
+- Fixed bug with not calculating the number of GO terms
+  correctly (was underrepresenting the actual count).
+- Fixed bug with GO description being truncated in the output.
+- Removed use of UTF-8 characters for generating hash keys.
+  - This resulted in speed improvements, and will allow the 
+    Perl version requirement to be lowered in a future release.
+- Add tests to make sure the correct results are reported when
+  mapping GO terms, instead of just testing that there is 
+  output.
+
+0.03	08/01/2014	Vancouver, BC
 
 - Add option to find all ORFs, not just the longest.
 - Bug fixes to POD in several modules.
