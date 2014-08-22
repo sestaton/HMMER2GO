@@ -1,6 +1,7 @@
 package HMMER2GO::Command::fetchmap;
 # ABSTRACT: Download the latest Pfam2GO mappings.
 
+use 5.010;
 use strict;
 use warnings;
 use HMMER2GO -command;
@@ -57,7 +58,7 @@ sub _fetch_mappings {
     # open and parse the results
     #
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    print $out $response->content, "\n";
+    say $out $response->content;
     close $out;
 }
 1;

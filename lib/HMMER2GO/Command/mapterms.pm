@@ -1,6 +1,7 @@
 package HMMER2GO::Command::mapterms;
 # ABSTRACT: Map PFAM IDs from HMMscan search to GO terms.
 
+use 5.010;
 use strict; 
 use warnings;
 use HMMER2GO -command;
@@ -92,7 +93,7 @@ sub _map_go_terms {
 		for my $query (@{$pfamids{$query_matches}}) {
 		    my ($family, $accession, $E_value_full, $description) = mk_vec($query);
 		    if ($family eq $pf) {
-			print $out join "\t", $query_matches, $pf, $pf_name, $pf_desc, $go_term, "$description\n";
+			say $out join "\t", $query_matches, $pf, $pf_name, $pf_desc, $go_term, $description;
 			if ($mapping) {
 			    if (exists $goterms{$query_matches}) {
 				#$go_ct++ if defined($go_term);
@@ -116,9 +117,9 @@ sub _map_go_terms {
 	    $map_ct++;
 	    my $termct = (split /\,/, $terms);
 	    $go_ct += $termct;
-	    print $map_fh join "\t", $seqid, "$terms\n";
+	    say $map_fh join "\t", $seqid, $terms;
 	}
-	print "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n\n";
+	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
     }
 }
 
