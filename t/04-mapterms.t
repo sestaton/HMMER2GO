@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 
-use 5.012;
 use strict;
 use warnings FATAL => 'all';
 use autodie qw(open);
@@ -65,7 +64,7 @@ while (<$map>) {
 	is (@terms, 2, 'Correct number of GO terms mapped');
     }
     else {
-	say "ERROR: Unexpected result: $gene:", scalar(@terms), ". This is a bug, please report it.";
+	print "ERROR: Unexpected result: $gene:", scalar(@terms), ". This is a bug, please report it.\n";
     }
 }
 unlink $pfam2go;

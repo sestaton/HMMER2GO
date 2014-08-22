@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 
-use 5.012;
 use strict;
 use warnings FATAL => 'all';
 use IPC::System::Simple qw(system capture);

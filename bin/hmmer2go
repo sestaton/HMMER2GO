@@ -1,11 +1,10 @@
 #!/usr/bin/env perl
 
-use 5.012;
 use strict;
 use warnings;
 use HMMER2GO;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 HMMER2GO->run;
 

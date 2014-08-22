@@ -1,7 +1,6 @@
 package HMMER2GO::Command::map2gaf;
 # ABSTRACT: Generate association file for gene and GO term mappings.
 
-use 5.012;
 use strict; 
 use warnings;
 use HMMER2GO -command;
@@ -57,7 +56,7 @@ sub _generate_go_association {
     ##     That is where the hardcoded fields below come from, which works fine with
     ##     Ontologizer, though we may want to make this an option for other
     ##     purposes.
-    say $out "!gaf-version: 2.0";
+    print $out "!gaf-version: 2.0\n";
 
     my %gohash;
     while (<$go>) {
@@ -77,8 +76,8 @@ sub _generate_go_association {
 	my @go_terms = split /\,/, $go_mappings[1];
 	for my $term (@go_terms) {
 	    if (exists $gohash{$term}) {
-		    say $out join "\t", $species,$dbstring,$go_mappings[0],"0",$term,"PMID:0000000",
-                    "ISO","0",$gohash{$term},"0","0","gene","taxon:79327","23022011","PFAM";
+		print $out join "\t", $species,$dbstring,$go_mappings[0],"0",$term,"PMID:0000000",
+		    "ISO","0",$gohash{$term},"0","0","gene","taxon:79327","23022011","PFAM\n";
 		}
 	}
     }
@@ -102,7 +101,7 @@ sub _get_term_file {
     }
 
     open my $out, '>', $file or die "\nERROR: Could not open file: $!\n";
-    say $out $response->content;
+    print $out $response->content, "\n";
     close $out;
 
     return $file;

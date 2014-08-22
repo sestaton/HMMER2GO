@@ -1,7 +1,6 @@
 package HMMER2GO::Command::search;
 # ABSTRACT: Run HMMscan on translated ORFs against Pfam database.
 
-use 5.012;
 use strict;
 use warnings;
 use HMMER2GO -command;
@@ -78,7 +77,7 @@ sub _find_prog {
     chomp $path;
     
     if ($path !~ /$prog$/) {
-	say 'Couldn\'t find hmmscan in PATH. Will keep looking.';
+	print "Could not find hmmscan in PATH. Will keep looking.\n";
 	$path = "/usr/local/hmmer/latest/bin/hmmscan";           # path at work
     }
 
@@ -89,7 +88,7 @@ sub _find_prog {
 
     for my $hmm_out (@hmmscan_out) {
 	if ($hmm_out =~ /^\# hmmscan/) { 
-	    say "Using hmmscan located at: $path";
+	    print "Using hmmscan located at: $path\n";
 	    return $path;
 	}
 	elsif ($hmm_out =~ /No such file or directory$/) { 

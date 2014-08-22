@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 
-use 5.012;
 use strict;
 use warnings FATAL => 'all';
 use IPC::System::Simple qw(system capture);
@@ -64,7 +63,7 @@ sub _fetch_db {
     }
 
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    say $out $response->content;
+    print $out $response->content, "\n";
     close $out;
 
     diag("Done fetching database. Uncompressing database for testing...");

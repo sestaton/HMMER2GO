@@ -1,7 +1,6 @@
 package HMMER2GO::Command::getorf;
 # ABSTRACT: Run EMBOSS getorf and extract the reading frames.
 
-use 5.012;
 use strict;
 use warnings;
 use HMMER2GO -command;
@@ -76,7 +75,7 @@ sub _run_getorf {
     my ($fasnum, $seqhash) = _seqct($infile);
 
     if ($$fasnum >= 1) {
-	say "\n========== Searching for ORFs with minimum length of $orflen." if $verbose;
+	print "\n========== Searching for ORFs with minimum length of $orflen.\n" if $verbose;
     } 
     else {
 	die "\nERROR: No sequences were found! Check input. Exiting.\n";
@@ -98,10 +97,10 @@ sub _run_getorf {
 		my $ntseq = $seqs->{$name};
 		if (defined $sense) {
 		    my ($sense_name, $sense_seq) = _revcom($name, $ntseq);
-		    say $out join "\n", ">".$sense_name, $sense_seq;
+		    print $out join "\n", ">".$sense_name, "$sense_seq\n";
 		}
 		else {
-		    say $out join "\n", ">".$name, $ntseq;
+		    print $out join "\n", ">".$name, "$ntseq\n";
 		}
 	    }
 	}
@@ -111,9 +110,9 @@ sub _run_getorf {
 
     if ($verbose) {
 	my $with_orfs_perc = sprintf("%.2f",$orfseqstot/$$fasnum);
-	say "\n========== $fcount and $$fasnum sequences in $infile.";
-	say "\n========== $orfseqstot sequences processed with ORFs above $orflen.";
-	say "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.";
+	print "\n========== $fcount and $$fasnum sequences in $infile.\n";
+	print "\n========== $orfseqstot sequences processed with ORFs above $orflen.\n";
+	print "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.\n";
     }
 }
 
@@ -170,7 +169,7 @@ sub _find_prog {
     chomp $path;
     
     if ($path !~ /$prog$/) {
-	say "Couldn\'t find $prog in PATH. Will keep looking.";
+	print "Couldn\'t find $prog in PATH. Will keep looking.\n";
 	$path = "/usr/local/emboss/latest/bin/getorf";           # path at zcluster
     }
 
@@ -180,7 +179,7 @@ sub _find_prog {
     my ($getorf_path, $getorf_err) = capture { system([0..5], "$path --help"); };
 
     if ($getorf_err =~ /Version\: EMBOSS/) { 
-	say "Using getorf located at: $path"; 
+	print "Using getorf located at: $path\n"; 
     }
     elsif ($getorf_err =~ /^-bash: \/usr\/local\/emboss\/bin\/getorf\: No such file or directory$/) { 
 	die "Could not find getorf. Exiting.\n"; 
@@ -211,7 +210,7 @@ sub _seqct {
 	    die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
 	}
 	elsif ($name eq '') { 
-	    say 'WARNING: Sequences appear to have no identifiers. Continuing.'; 
+	    print "WARNING: Sequences appear to have no identifiers. Continuing.\n"; 
 	}
 	$seqhash{$name} = $seq;
     }
@@ -266,7 +265,7 @@ sub _getorf {
 
     open my $fh, ">", $fname or die "\nERROR: Could not open file: $fname\n";
 
-    say $fh join "\n", ">".$id, $seq;
+    print $fh join "\n", ">".$id, "$seq\n";
 
     close $fh;
 

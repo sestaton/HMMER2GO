@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.05	08/22/2014	Vancouver, BC
+
+- Remove Perl version requirements (was 5.12).
+- Expanded tests to cover newer (i.e., 5.20) and older (i.e,
+  5.10 and 5.8) Perls.
+
 0.04	08/20/2014	Vancouver, BC
 
 - Fixed bug with not calculating the number of GO terms
