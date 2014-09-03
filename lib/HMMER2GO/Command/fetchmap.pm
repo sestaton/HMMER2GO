@@ -39,7 +39,6 @@ sub execute {
 sub _fetch_mappings {
     my ($outfile) = @_;
 
-    ## fetch pfam2go file http://www.geneontology.org/external2go/pfam2go
     $outfile //= 'pfam2go';
 
     my $ua = LWP::UserAgent->new;
@@ -47,20 +46,17 @@ sub _fetch_mappings {
     my $urlbase = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
     my $response = $ua->get($urlbase);
 
-    #
     # check for a response
-    #
     unless ($response->is_success) {
 	die "Can't get url $urlbase -- ", $response->status_line;
     }
 
-    # 
     # open and parse the results
-    #
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
     say $out $response->content;
     close $out;
 }
+
 1;
 __END__
 
