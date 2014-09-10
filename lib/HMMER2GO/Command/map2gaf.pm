@@ -79,7 +79,7 @@ sub _generate_go_association {
 	    if (exists $gohash{$term}) {
 		say $out join "\t", $species,$dbstring,$go_mappings[0],"0",$term,"PMID:0000000",
 		    "ISO","0",$gohash{$term},"0","0","gene","taxon:79327","23022011","PFAM";
-		}
+	    }
 	}
     }
     close $in;
