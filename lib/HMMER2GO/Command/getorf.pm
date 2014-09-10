@@ -316,7 +316,11 @@ __END__
 
 =head1 SYNOPSIS    
 
- hmmer2go getorf -i seqs.fas -o seqs_trans.faa
+ ## get the longest translated ORF between stop codons
+ hmmer2go getorf -i seqs.fas -o seqs_aa.faa
+
+ ## get the nucleotides for the longest ORF between stop codons
+ hmmer2go getorf -i seqs.fas -o seqs_nt.fas -t 2
 
 =head1 DESCRIPTION
                                                                    
