@@ -9,7 +9,7 @@ use LWP::UserAgent;
 use File::Copy qw(move);
 use Test::More tests => 4;
 
-my @menu = capture([0..5], "bin/hmmer2go help search");
+my @menu = capture([0..5], "bin/hmmer2go help run");
 
 my $opts      = 0;
 my $full_test = 0;
@@ -26,13 +26,13 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 3, 'Correct number of options for hmmer2go search');
+is($opts, 4, 'Correct number of options for hmmer2go run');
 
 SKIP: {
     skip 'skip lengthy tests', 3 unless $full_test; 
     my $db = _fetch_db();
 
-    my @result = capture([0..5], "bin/hmmer2go search -i $infile -d $db");
+    my @result = capture([0..5], "bin/hmmer2go run -i $infile -d $db");
     ok(-e $outfile,   'Expected raw output of HMMscan from hmmer2go search');
     ok(-e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search');
     ok(-e $tblout,    'Expected hit table output of HMMscan from hmmer2go search');
