@@ -26,7 +26,7 @@ sub validate_args {
     }
     else {
 	$self->usage_error("Too few arguments.") 
-	    unless $opt->{infile} && $opt->{outfile} && $opt->{pfam2go};
+	    unless $opt->{infile} && $opt->{outfile};
     }
 } 
 
@@ -38,12 +38,18 @@ sub execute {
     my $pfam2go = $opt->{pfam2go};
     my $outfile = $opt->{outfile};
     my $map     = $opt->{map};
+    my $keep    = 1;
 
-    my $result = _map_go_terms($infile, $pfam2go, $outfile, $map);
+    if (!$pfam2go || ! -e $pfam2go) {
+	$pfam2go = _fetch_mappings();
+	$keep--;
+    }
+
+    my $result = _map_go_terms($infile, $pfam2go, $outfile, $map, $keep);
 }
 
 sub _map_go_terms {
-    my ($infile, $pfam2go, $outfile, $map) = @_;
+    my ($infile, $pfam2go, $outfile, $map, $keep) = @_;
 
     ## create filehandles, if possible
     open my $in, '<', $infile or die "\nERROR: Could not open file: $infile\n";
@@ -111,6 +117,7 @@ sub _map_go_terms {
     }
     close $pfams;
     close $out;
+    unlink $pfam2go unless $keep;
 
     if ($map) {
 	while (my ($seqid, $terms) = each %goterms) {
@@ -121,6 +128,28 @@ sub _map_go_terms {
 	}
 	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
     }
+}
+
+sub _fetch_mappings {
+    my $outfile = 'pfam2go';
+    unlink $outfile if -e $outfile;
+    
+    my $ua = LWP::UserAgent->new;
+
+    my $urlbase = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
+    my $response = $ua->get($urlbase);
+
+    # check for a response
+    unless ($response->is_success) {
+	die "Can't get url $urlbase -- ", $response->status_line;
+    }
+
+    # open and parse the results
+    open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
+    say $out $response->content;
+    close $out;
+
+    return $outfile;
 }
 
 sub mk_key { join "~~", @_ }
