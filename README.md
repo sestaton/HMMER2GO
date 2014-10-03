@@ -34,7 +34,7 @@ Starting with a file of DNA sequences, we first want to get the longest open rea
 
 Next, we search our ORFs for coding domains. 
 
-    hmmer2go search -i genes_orfs.faa -d Pfam-A.hmm 
+    hmmer2go run -i genes_orfs.faa -d Pfam-A.hmm 
 
 To map the domain matches to GO terms we first need to download the Pfam to Gene Ontology mappings. This can be done with a single command:
 
@@ -54,11 +54,11 @@ For a full explanation of these commands, see the [HMMER2GO wiki](https://github
 
 Each subcommand can be executed with no arguments to generate a help menu. Alternatively, you may specify help message explicitly. For example,
 
-    hmmer2go help search
+    hmmer2go help run
 
 More information about each command is available by accessing the full documentation at the command line. For example,
 
-    hmmer2go search --man
+    hmmer2go run --man
 
 Also, the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki) is a source of online documentation.
 
