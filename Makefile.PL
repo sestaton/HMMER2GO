@@ -14,7 +14,7 @@ BEGIN {
 }
 
 WriteMakefile(
-    NAME             => 'bin/hmmer2go',
+    NAME             => 'HMMER2GO',
     AUTHOR           => q{S. Evan Staton <statonse@gmail.com>},
     VERSION_FROM     => 'bin/hmmer2go',
     LICENSE          => 'MIT',
