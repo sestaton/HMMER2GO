@@ -5,7 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 use autodie qw(open);
 use IPC::System::Simple qw(system capture);
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 my @menu = capture([0..5], "bin/hmmer2go help mapterms");
 
@@ -28,7 +28,7 @@ is($opts, 4, 'Correct number of options for hmmer2go mapterms');
 my @result1 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile -p $pfam2go");
 ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping');
 
-my (%nonmapped, %mapped);
+my (%nonmapped, %mapped, %nomapfile);
 open my $out1, '<', $outfile;
 while (<$out1>) {
     chomp;
@@ -50,7 +50,8 @@ while (<$out2>) {
 }
 close $out2;
 
-is_deeply(\%nonmapped, \%mapped, 'Same genes and GO term numbers returned with either mapping or not mapping option');
+is_deeply(\%nonmapped, \%mapped, 
+	  'Same genes and GO term numbers returned with either mapping or not mapping option');
 unlink $outfile;
 
 open my $map, '<', $mapfile;
@@ -69,5 +70,20 @@ while (<$map>) {
     }
 }
 unlink $pfam2go;
+
+my @result3 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile");
+ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping file');
+
+open my $out3, '<', $outfile;
+while (<$out3>) {
+    chomp;
+    my @f = split;
+    $nomapfile{$f[0]}++;
+}
+close $out3;
+
+is_deeply(\%mapped, \%nomapfile, 
+	  'Same genes and GO term numbers returned with or without user-supplied mapping file');
+unlink $outfile;
 
 done_testing();
