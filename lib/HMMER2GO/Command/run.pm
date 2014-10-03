@@ -1,4 +1,4 @@
-package HMMER2GO::Command::search;
+package HMMER2GO::Command::run;
 # ABSTRACT: Run HMMscan on translated ORFs against Pfam database.
 
 use 5.010;
@@ -11,8 +11,9 @@ use File::Basename;
 
 sub opt_spec {
     return (    
-	[ "infile|i=s",    "The fasta file of translated amino acid sequences"     ],
-	[ "cpus|n=i",      "The number of CPUs to use for the search"              ],
+	[ "program|p=s",  "The program to run for domain identification (NOT IMPLEMENTED: Defaults to hmmscan)"          ],
+	[ "infile|i=s",   "The fasta file of translated amino acid sequences"     ],
+	[ "cpus|n=i",     "The number of CPUs to use for the search"              ],
 	[ "database|d=s", "The database to search against (typically Pfam-A.hmm)" ],
     );
 }
@@ -34,6 +35,7 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     exit(0) if $self->app->global_options->{man};
+    my $program  = $opt->{program};
     my $infile   = $opt->{infile};
     my $database = $opt->{database};
     my $cpus     = $opt->{cpus};
@@ -113,11 +115,11 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go search - Run HMMscan on translated ORFs against Pfam database
+ hmmer2go run - Run HMMscan on translated ORFs against Pfam database
 
 =head1 SYNOPSIS    
 
- hmmer2go search -i seqs.fas -db Pfam-A.hmm -n 4
+ hmmer2go run -i seqs.fas -db Pfam-A.hmm -n 4
 
 =head1 DESCRIPTION
   
@@ -148,6 +150,12 @@ The fasta file to be translated.
 =head1 OPTIONS
 
 =over 2
+
+=item -p, --program
+
+ The domain identification progam to use. Currently, only HMMscan is
+ used. Therefore, this option does nothing at the moment, 
+ though InterProScan (and possibly others) will be added very soon.
 
 =item -n, --cpus
 
