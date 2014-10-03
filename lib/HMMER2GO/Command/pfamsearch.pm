@@ -13,9 +13,10 @@ use HTML::TableExtract;
 
 sub opt_spec {
     return (    
-	[ "terms|t=s",   "The term(s) to search against Pfam entries"                ],
-	[ "outfile|o=s", "The name of a file to write search results"                ],
-	[ "createdb|d",  "A database of HMMs for the search terms should be created" ],
+	[ "terms|t=s",   "The term(s) to search against Pfam entries"                                        ],
+	[ "outfile|o=s", "The name of a file to write search results"                                        ],
+	[ "createdb|d",  "A database of HMMs for the search terms should be created"                         ],
+	[ "dirname|n=s", "The name of the directory to create for storing HMMs from the Pfam search results" ],
     );
 }
 
@@ -39,14 +40,21 @@ sub execute {
     my $terms     = $opt->{terms};
     my $outfile   = $opt->{outfile};
     my $createdb  = $opt->{createdb};
+    my $dirname   = $opt->{dirname};
 
-    my $result = _search_by_keyword($terms, $outfile, $createdb);
+    if ($createdb && -d $dirname) {
+	say "\ERROR: $dirname exists so it will not be overwritten. ".
+	    "Please specify a different directory name. Exiting.\n";
+	exit(1);
+    }
+
+    my $result = _search_by_keyword($terms, $outfile, $createdb, $dirname);
 }
 
 sub _search_by_keyword {
-    my ($terms, $outfile, $createdb) = @_;
+    my ($terms, $outfile, $createdb, $dirname) = @_;
 
-    my $keyword;
+    my ($keyword, $dbname);
     ($keyword = $terms) =~ s/,/+/g;
 
     my $ua = LWP::UserAgent->new;
@@ -65,12 +73,18 @@ sub _search_by_keyword {
     my ($resultnum, $dbnum) = _get_search_results($keyword, $pfamxml);
 
     if ($resultnum > 1) {
-	my $dirname = $keyword; # use expressive variable name
+	$dbname = $keyword if !$dirname; # use expressive variable name
+	$dbname = $dirname if $dirname;
+	if (-d $dbname) {
+	    say "\nERROR: $dbname exists. Please choose a directory name for the database ".
+		"so that no data is destroyed. Exiting.\n";
+	    exit(1);
+	}
 
 	if ($createdb) {
 	    say "Found $resultnum HMMs for $keyword in $dbnum database(s).".
-		" HMMs can be found in the directory: $dirname.";
-	    make_path($dirname, {verbose => 0, mode => 0771,});
+		" HMMs can be found in the directory: $dbname.";
+	    make_path($dbname, {verbose => 0, mode => 0771,});
 	}
 	else {
 	    say "Found $resultnum HMMs for $keyword in $dbnum database(s).";
@@ -86,7 +100,7 @@ sub _search_by_keyword {
 	    for my $row ($ts->rows) {
 		my @elem = grep { defined } @$row;
 		say $out join "\t", @elem[0..2];
-		_fetch_hmm($dirname, \@elem, $createdb) if $createdb;
+		_fetch_hmm($dbname, \@elem, $createdb) if $createdb;
 	    }
 	}
 	close $out;
@@ -114,7 +128,7 @@ sub _get_search_results {
 }
 
 sub _fetch_hmm {
-    my ($dir, $elem) = @_;
+    my ($dbname, $elem) = @_;
 
     my ($accession, $id, $descripton, $seqinfo) = @$elem;
 
@@ -126,7 +140,7 @@ sub _fetch_hmm {
         die "Can't get url $urlbase -- ", $response->status_line;
     }
 
-    my $hmmfile = File::Spec->catfile($dir, $accession.".hmm");
+    my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
     open my $hmmout, '>', $hmmfile;
     say $hmmout $response->content;
     close $hmmout;
@@ -139,16 +153,16 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go pfamsearch
+ hmmer2go pfamsearch - Search terms against Pfam entries and create a custom HMM database
 
 =head1 SYNOPSIS    
 
- hmmer2go pfamsearch
+ hmmer2go pfamsearch -t mads -o mads_pfam_results.txt -d
 
 =head1 DESCRIPTION
-  
-=head1 DEPENDENCIES
 
+ This command will allow one to search Pfam with simple terms like 'transposable element'
+ or 'mads' and optionally create a database of HMMs for each result matching those terms.  
 
 =head1 AUTHOR 
 
@@ -162,15 +176,28 @@ S. Evan Staton, C<< <statonse at gmail.com> >>
 
 The fasta file to be translated.
 
+=item -o, --outfile
+
+The file to write the results to, which will be a tab-delimited file with tree columns
+in the format:
+
+    Pfam-accession Pfam-ID Description
+
 =back
 
 =head1 OPTIONS
 
 =over 2
 
-=item -n, --cpus
+=item -d, --createdb
 
- The number of CPUs to use for the HMMscan search.
+With this option, a database will be created consisting of all the Pfams matching the search terms.
+A separate directory will created from the search terms and the HMMs for each Pfam will be placed
+in that directory (unless a directory name is given).
+
+=item -n, -dirname
+
+A name for database. This will be the name of a directory containing the HMMs from the search results.
 
 =item -h, --help
 
