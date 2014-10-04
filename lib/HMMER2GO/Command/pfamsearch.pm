@@ -42,8 +42,9 @@ sub execute {
     my $createdb  = $opt->{createdb};
     my $dirname   = $opt->{dirname};
 
-    if ($createdb && -d $dirname) {
-	say "\ERROR: $dirname exists so it will not be overwritten. ".
+
+    if ($createdb && $dirname && -d $dirname) {
+	say "\nERROR: $dirname exists so it will not be overwritten. ".
 	    "Please specify a different directory name. Exiting.\n";
 	exit(1);
     }
