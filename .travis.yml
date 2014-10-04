@@ -17,4 +17,5 @@ after_failure: cat /home/travis/.cpanm/build.log
 
 branches:
   only:
-    - topic/add_search_terms
+    - master
+#    - topic/add_search_terms
