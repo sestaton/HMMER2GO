@@ -8,7 +8,7 @@ use IPC::System::Simple qw(system capture);
 use File::Path qw(remove_tree);
 use Test::More tests => 8;
 
-use Data::Dump qw(dd);
+#use Data::Dump qw(dd);
 
 my @menu = capture([0..5], "bin/hmmer2go help pfamsearch");
 
