@@ -3,8 +3,11 @@ Revision history for HMMER2GO
 Version	Date	Location
 0.06	10/03/2014	Vancouver, BC
 
-- Add command for search Pfam for terms, and create a database
-  of HMMs from the search results, optionally.
+- Add command for search Pfam for terms (called 'pfamsearch'),
+  and create a database of HMMs from the search results, optionally.
+- Add method to 'mapterms' class to get pfam to GO mapping file 
+  automatically, thus avoiding the requirement for a user-supplied
+  file.
 - Change name of 'search' command to 'run' and add --program
   option to allow add more domin-finding methods in the future.
 
