@@ -22,7 +22,7 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 3, 'Correct number of options for hmmer2go pfamsearch');
+is($opts, 4, 'Correct number of options for hmmer2go pfamsearch');
 
 my ($hmmnum, $dbnum, $outdir);
 ($outdir = $term) =~ s/,/+/g;
