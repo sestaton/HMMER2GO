@@ -36,13 +36,9 @@ Next, we search our ORFs for coding domains.
 
     hmmer2go run -i genes_orfs.faa -d Pfam-A.hmm 
 
-To map the domain matches to GO terms we first need to download the Pfam to Gene Ontology mappings. This can be done with a single command:
-
-    hmmer2go fetchmap -o pfam2go
-
 Now we can map the protein domain matches to GO terms.
 
-    hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -p pfam2go -o genes_orfs_Pfam-A_GO.tsv --map
+    hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -o genes_orfs_Pfam-A_GO.tsv --map
 
 If we want to perform a statistical analysis on the GO mappings, it may be necessary to create a GAF file.
 
