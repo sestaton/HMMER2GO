@@ -8,6 +8,7 @@ use HMMER2GO -command;
 use Cwd;
 use IPC::System::Simple qw(capture system);
 use File::Basename;
+use Try::Tiny;
 
 sub opt_spec {
     return (    
@@ -60,7 +61,7 @@ sub _run_hmmscan {
 	die "\nERROR: $outfile already exists. Exiting.\n";
     }
     
-    my $hmmscan_cmd = "$hmmscan ".
+    my @hmmscan_cmd = "$hmmscan ".
 	              "-o $outfile ".
 		      "--tblout $tblout ".
 		      "--domtblout $domtblout ".
@@ -70,8 +71,13 @@ sub _run_hmmscan {
 		      "$database ".
 		      "$infile";
 
-    my $result = system([0..5], $hmmscan_cmd);
-    return $result;
+    my $exit_value;
+    try {
+	$exit_value = system([0..5], @hmmscan_cmd);
+    }
+    catch {
+	die "\nERROR: hmmscan exited with exit value $exit_value. Here is the exception: $_\n";
+    }
 }
 
 sub _find_prog {
@@ -80,8 +86,8 @@ sub _find_prog {
     chomp $path;
     
     if ($path !~ /$prog$/) {
-	say "Could not find hmmscan in PATH. Will keep looking.";
-	$path = "/usr/local/hmmer/latest/bin/hmmscan";           # path at work
+	say "Could not find $prog in PATH. Will keep looking.";
+	$path = "/usr/local/hmmer/latest/bin/$prog";           # path at work
     }
 
     # Instead of just testing if hmmscan exists and is executable 
@@ -90,22 +96,21 @@ sub _find_prog {
     my @hmmscan_out = capture([0..5], "$path -h");
 
     for my $hmm_out (@hmmscan_out) {
-	if ($hmm_out =~ /^\# hmmscan/) { 
-	    say "Using hmmscan located at: $path";
+	if ($hmm_out =~ /^\# $prog/) { 
+	    say "Using $prog located at: $path";
 	    return $path;
 	}
 	elsif ($hmm_out =~ /No such file or directory$/) { 
-	    die "Could not find hmmscan. Exiting.\n"; 
+	    die "Could not find $prog. Exiting.\n"; 
 	}
 	elsif ($hmm_out eq '') { 
-	    die "Could not find hmmscan. Exiting.\n"; 
+	    die "Could not find $prog. Exiting.\n"; 
 	}
 	else { 
-	    die "Could not find hmmscan. ".
+	    die "Could not find $prog. ".
 		"Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
 	}
     }
-    #return $path;
 }
 
 1;

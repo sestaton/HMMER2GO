@@ -5,11 +5,15 @@ use 5.010;
 use strict;
 use warnings;
 use HMMER2GO -command;
+use File::Spec;
 use File::Basename;
 use File::Path qw(make_path);
+use File::Find::Rule;
 use LWP::UserAgent;
 use XML::LibXML;
 use HTML::TableExtract;
+use IPC::System::Simple qw(system capture);
+use Try::Tiny;
 
 sub opt_spec {
     return (    
@@ -74,7 +78,7 @@ sub _search_by_keyword {
     my ($resultnum, $dbnum) = _get_search_results($keyword, $pfamxml);
 
     if ($resultnum > 1) {
-	$dbname = $keyword if !$dirname; # use expressive variable name
+	$dbname = $keyword."_hmms" if !$dirname; # use expressive variable name
 	$dbname = $dirname if $dirname;
 	if (-d $dbname) {
 	    say "\nERROR: $dbname exists. Please choose a directory name for the database ".
@@ -107,6 +111,8 @@ sub _search_by_keyword {
 	close $out;
     }
     unlink $pfamxml;
+
+    _run_hmmpress($dbname, $keyword) if $createdb;
 }
     
 sub _get_search_results {
@@ -147,6 +153,66 @@ sub _fetch_hmm {
     close $hmmout;
 }
 
+sub _run_hmmpress {
+    my ($dbname, $keyword) = @_;
+
+    my $hmmpress = _find_prog("hmmpress");
+
+    my $hmmdb    = File::Spec->catfile($dbname, $keyword.".hmm");
+    my @hmmfiles = File::Find::Rule->file->name("*.hmm")->in($dbname);
+
+    open my $hmmout, '>>', $hmmdb or die "\nERROR: Could not open file: $hmmdb\n";
+
+    for my $file (@hmmfiles) {
+	open my $in, '<', $file or die "\nERROR: Could not open file: $file\n";
+	print $hmmout $_ while <$in>;
+	close $in;
+    }
+
+    my @hmm_res;
+    try {
+	@hmm_res = capture([0..5], "$hmmpress $hmmdb");
+    }
+    catch {
+	die "\nERROR: hmmpress exited. Here is the exception: $_\n";
+    };
+
+    return $hmmdb;
+}
+
+sub _find_prog {
+    my $prog = shift;
+    my $path = capture([0..5], "which $prog");
+    chomp $path;
+    
+    if ($path !~ /$prog$/) {
+	say "Could not find $prog in PATH. Will keep looking.";
+	$path = "/usr/local/hmmer/latest/bin/$prog";           # path at work
+    }
+
+    # Instead of just testing if hmmscan exists and is executable 
+    # we want to make sure we have permissions, so we try to 
+    # invoke hmmscan and examine the output. 
+    my @hmmscan_out = capture([0..5], "$path -h");
+
+    for my $hmm_out (@hmmscan_out) {
+	if ($hmm_out =~ /^\# $prog/) { 
+	    #say "Using $prog located at: $path";
+	    return $path;
+	}
+	elsif ($hmm_out =~ /No such file or directory$/) { 
+	    die "Could not find $prog. Exiting.\n"; 
+	}
+	elsif ($hmm_out eq '') { 
+	    die "Could not find $prog. Exiting.\n"; 
+	}
+	else { 
+	    die "Could not find $prog. ".
+		"Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
+	}
+    }
+}
+
 1;
 __END__
 
@@ -154,11 +220,11 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go pfamsearch - Search terms against Pfam entries and create a custom HMM database
+ hmmer2go pfam-search - Search terms against Pfam entries and create a custom HMM database
 
 =head1 SYNOPSIS    
 
- hmmer2go pfamsearch -t mads -o mads_pfam_results.txt -d
+ hmmer2go pfam-search -t mads -o mads_pfam_results.txt -d
 
 =head1 DESCRIPTION
 
