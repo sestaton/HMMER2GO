@@ -20,6 +20,7 @@ t/03-run.t
 t/04-mapterms.t
 t/05-map2gaf.t
 t/06-pfamsearch.t
+t/07-customdb.t
 xt/pod.t
 xt/pod-coverage.t
 
