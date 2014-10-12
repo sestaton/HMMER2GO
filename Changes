@@ -1,6 +1,13 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.07	10/11/2014	Vancouver, BC
+
+- Add method (and tests) for formatting custom HMM database for HMMER.
+- Add better error handling and reporting when running HMMER.
+- Add tests for running HMMER on custom DB created with 'pfamsearch'
+  command.
+
 0.06	10/03/2014	Vancouver, BC
 
 - Add command for search Pfam for terms (called 'pfamsearch'),
