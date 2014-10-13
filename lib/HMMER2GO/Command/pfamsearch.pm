@@ -8,7 +8,7 @@ use HMMER2GO -command;
 use File::Spec;
 use File::Basename;
 use File::Path qw(make_path);
-use File::Find::Rule;
+use File::Find;
 use LWP::UserAgent;
 use XML::LibXML;
 use HTML::TableExtract;
@@ -159,7 +159,11 @@ sub _run_hmmpress {
     my $hmmpress = _find_prog("hmmpress");
 
     my $hmmdb    = File::Spec->catfile($dbname, $keyword.".hmm");
-    my @hmmfiles = File::Find::Rule->file->name("*.hmm")->in($dbname);
+    my @hmmfiles;
+
+    find( sub {
+	push @hmmfiles, $File::Find::name if -f and /\.hmm$/i;
+	  }, $dbname);
 
     open my $hmmout, '>>', $hmmdb or die "\nERROR: Could not open file: $hmmdb\n";
 
