@@ -27,11 +27,11 @@ hmmer2go - Locate ORFs in DNA sequences and map Gene Ontology (GO) terms to Pfam
 
 ## Download Pfam to Gene Ontology ID mappings
 
- hmmer2go fetch
+ hmmer2go fetchmap -o pfam2go
 
 ## Map Pfam domain matches to Gene Ontology terms
 
- hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -p pfam2go -o genes_orfs_Pfam-A_GO.tsv --map
+  hmmer2go mapterms -i genes_orfs_Pfam-A.tblout -p pfam2go -o genes_orfs_Pfam-A_GO.tsv --map
 
 ## Create GAF file from Gene Ontology mappings
 
