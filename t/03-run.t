@@ -5,8 +5,9 @@ use strict;
 use warnings FATAL => 'all';
 use IPC::System::Simple qw(system capture);
 use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
-use HTTP::Tiny;
+use Net::FTP;
 use File::Copy qw(move);
+use File::Spec;
 use Test::More tests => 4;
 
 my @menu = capture([0..5], "bin/hmmer2go help run");
@@ -14,9 +15,9 @@ my @menu = capture([0..5], "bin/hmmer2go help run");
 my $opts      = 0;
 my $full_test = 0;
 my $infile    = "t/test_data/t_orfs_long.faa";
-my $outfile   = "t_orfs_hmmscan-pfamA.out";
-my $domtblout = "t_orfs_hmmscan-pfamA.domtblout";
-my $tblout    = "t_orfs_hmmscan-pfamA.tblout";
+my $outfile   = "t_orfs_long_Pfam-A.out";
+my $domtblout = "t_orfs_long_Pfam-A.domtblout";
+my $tblout    = "t_orfs_long_Pfam-A.tblout";
 
 for my $opt (@menu) {
     next if $opt =~ /^Err|^Usage|^hmmer2go|^ *$/;
@@ -33,13 +34,20 @@ SKIP: {
     my $db = _fetch_db();
 
     my @result = capture([0..5], "bin/hmmer2go run -i $infile -d $db");
-    ok(-e $outfile,   'Expected raw output of HMMscan from hmmer2go search');
-    ok(-e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search');
-    ok(-e $tblout,    'Expected hit table output of HMMscan from hmmer2go search');
+    my $out = File::Spec->catfile('t', 'test_data', $outfile);
+    my $dom = File::Spec->catfile('t', 'test_data', $domtblout);
+    my $tbl = File::Spec->catfile('t', 'test_data', $tblout);
 
-    unlink $outfile;
-    unlink $domtblout;
-    move $tblout, "t/test_data/$tblout";
+    move $outfile,   $out or die "move failed: $!";
+    move $domtblout, $dom or die "move failed: $!";
+    move $tblout,    $tbl or die "move failed: $!";
+
+    ok(-e $out, 'Expected raw output of HMMscan from hmmer2go search');
+    ok(-e $dom, 'Expected domain table output of HMMscan from hmmer2go search');
+    ok(-e $tbl, 'Expected hit table output of HMMscan from hmmer2go search');
+
+    unlink $out;
+    unlink $dom;
 };
 
 unlink $infile; 
@@ -47,24 +55,30 @@ done_testing();
 
 # methods
 sub _fetch_db {
-    my $url      = 'ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release';
-    my $file     = 'Pfam-A.hmm.gz';
-    my $endpoint = $url."/$file";
-    my $outfile  = 't/test_data/Pfam-A.hmm.gz';
-    my $flatdb   = 't/test_data/Pfam-A.hmm';
+    my $host    = "ftp.ebi.ac.uk";
+    my $dir     = "/pub/databases/Pfam/current_release";
+    my $file    = "Pfam-A.hmm.gz";
+    my $outfile = "t/test_data/Pfam-A.hmm.gz";
+    my $flatdb  = "t/test_data/Pfam-A.hmm";
+
+    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
+    or die "Cannot connect to $host: $@";
+
+    $ftp->login or die "Cannot login ", $ftp->message;
+
+    $ftp->cwd($dir)
+        or die "Cannot change working directory ", $ftp->message;
 
     diag("Fetching database for testing. This could take a few minutes...");
- 
-    my $response = HTTP::Tiny->new->get($endpoint);
+    
+    $ftp->binary();
+    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
+    $ftp->get($file, $outfile) or die "get failed ", $ftp->message;
+    #sleep 10;
+    my $lsize = -s $outfile;
 
-    # check for a response 
-    unless ($response->{success}) { 
-	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason}; 
-    }   
-
-    open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    print $out $response->{content}, "\n";
-    close $out;
+    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+        unless $rsize == $lsize;
 
     diag("Done fetching database. Uncompressing database for testing...");
 

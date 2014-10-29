@@ -10,10 +10,10 @@ use Test::More tests => 9;
 my @menu = capture([0..5], "bin/hmmer2go help mapterms");
 
 my ($opts, $orfs) = (0, 0);
-my $infile  = "t/test_data/t_orfs_hmmscan-pfamA.tblout";
+my $infile  = "t/test_data/t_orfs_long_Pfam-A.tblout";
 my $pfam2go = "t/test_data/pfam2go";
-my $outfile = "t/test_data/t_hmmscan-pfamA_mapped_goterms.tsv";
-my $mapfile = "t/test_data/t_hmmscan-pfamA_mapped_goterms_GOterm_mapping.tsv";
+my $outfile = "t/test_data/t_long_Pfam-A_mapped_goterms.tsv";
+my $mapfile = "t/test_data/t_long_Pfam-A_mapped_goterms_GOterm_mapping.tsv";
 
 for my $opt (@menu) {
     next if $opt =~ /^Err|^Usage|^hmmer2go|^ *$/;

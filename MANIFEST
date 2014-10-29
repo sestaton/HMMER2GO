@@ -12,7 +12,7 @@ lib/HMMER2GO/Command/mapterms.pm
 lib/HMMER2GO/Command/map2gaf.pm
 lib/HMMER2GO/Command/run.pm
 t/test_data/t_seqs_nt.fas
-t/test_data/t_orfs_hmmscan-pfamA.tblout
+t/test_data/t_orfs_long_Pfam-A.tblout
 t/00-load.t
 t/01-fetchmap.t
 t/02-getorf.t

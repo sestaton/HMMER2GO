@@ -10,8 +10,8 @@ use Test::More tests => 2;
 my @menu = capture([0..5], "bin/hmmer2go help map2gaf");
 
 my ($opts, $orfs) = (0, 0);
-my $infile  = "t/test_data/t_hmmscan-pfamA_mapped_goterms_GOterm_mapping.tsv";
-my $outfile = "t/test_data/t_hmmscan-pfamA_mapped_goterms_GOterm_mapping.gaf";
+my $infile  = "t/test_data/t_long_Pfam-A_mapped_goterms_GOterm_mapping.tsv";
+my $outfile = "t/test_data/t_long_Pfam-A_mapped_goterms_GOterm_mapping.gaf";
 my $species = "Helianthus annuus";
 
 for my $opt (@menu) {
