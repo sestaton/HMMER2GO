@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use IPC::System::Simple qw(system);
-use LWP::UserAgent;
+use Net::FTP;
 use File::Basename;
 
 sub opt_spec {
@@ -89,21 +89,24 @@ sub _generate_go_association {
 }
 
 sub _get_term_file {
-    my $url      = 'ftp://ftp.geneontology.org/pub/go/doc';
-    my $file     = 'GO.terms_alt_ids';
-    my $endpoint = $url."/$file";
+    my $host = "ftp.geneontology.org";
+    my $dir  = "/pub/go/doc";
+    my $file = "GO.terms_alt_ids";
  
-    my $ua = LWP::UserAgent->new;
+    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
+	or die "Cannot connect to $host: $@";
 
-    my $response = $ua->get($endpoint);
+    $ftp->login or die "Cannot login ", $ftp->message;
 
-    unless ($response->is_success) {
-        die "Can't get url $endpoint -- ", $response->status_line;
-    }
+    $ftp->cwd($dir)
+	or die "Cannot change working directory ", $ftp->message;
 
-    open my $out, '>', $file or die "\nERROR: Could not open file: $!\n";
-    say $out $response->content;
-    close $out;
+    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
+    $ftp->get($file) or die "get failed ", $ftp->message;
+    my $lsize = -s $file;
+
+    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+	unless $rsize == $lsize;
 
     return $file;
 }
