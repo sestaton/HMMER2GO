@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.09	10/29/2014	Vancouver, BC
+
+- Remove use of libwww in favor of http-tiny, which
+  has not dependencies.
+- Fix dependencies listed in cpanfile and Makefile.
+
 0.08	10/13/2014	Vancouver, BC
 
 - Modify method for formatting HMM database to use core
