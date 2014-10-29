@@ -9,7 +9,7 @@ use File::Spec;
 use File::Basename;
 use File::Path qw(make_path);
 use File::Find;
-use LWP::UserAgent;
+use HTTP::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
 use IPC::System::Simple qw(system capture);
@@ -62,17 +62,16 @@ sub _search_by_keyword {
     my ($keyword, $dbname);
     ($keyword = $terms) =~ s/,/+/g;
 
-    my $ua = LWP::UserAgent->new;
     my $urlbase  = "http://pfam.xfam.org/search/keyword?query=$keyword&submit=Submit";
-    my $response = $ua->get($urlbase);
+    my $response = HTTP::Tiny->new->get($urlbase);
 
-    unless ($response->is_success) {
-	die "Can't get url $urlbase -- ", $response->status_line;
+    unless ($response->{success}) {
+        die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
     }
 
     my $pfamxml = "pfam_search_$keyword".".xml";
     open my $pfout, '>', $pfamxml;
-    say $pfout $response->content;
+    say $pfout $response->{content};
     close $pfout;
 
     my ($resultnum, $dbnum) = _get_search_results($keyword, $pfamxml);
@@ -139,17 +138,16 @@ sub _fetch_hmm {
 
     my ($accession, $id, $descripton, $seqinfo) = @$elem;
 
-    my $ua = LWP::UserAgent->new;
     my $urlbase  = "http://pfam.xfam.org/family/$accession/hmm";
-    my $response = $ua->get($urlbase);
+    my $response = HTTP::Tiny->new->get($urlbase);
 
-    unless ($response->is_success) {
-        die "Can't get url $urlbase -- ", $response->status_line;
+    unless ($response->{success}) {
+        die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
     }
 
     my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
     open my $hmmout, '>', $hmmfile;
-    say $hmmout $response->content;
+    say $hmmout $response->{content};
     close $hmmout;
 }
 
@@ -157,7 +155,6 @@ sub _run_hmmpress {
     my ($dbname, $keyword) = @_;
 
     my $hmmpress = _find_prog("hmmpress");
-
     my $hmmdb    = File::Spec->catfile($dbname, $keyword.".hmm");
     my @hmmfiles;
 
