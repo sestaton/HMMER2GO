@@ -27,9 +27,12 @@ WriteMakefile(
         'Test::More' => 0,
     },
     PREREQ_PM => {
-	'LWP::UserAgent'      => 6.05,       
+	'HTTP::Tiny'          => 0.040,       
         'IPC::System::Simple' => 1.21,
 	'App::Cmd'            => 0.323,
+	'Try::Tiny'           => 0,
+	'Capture::Tiny'       => 0,
+	'HTML::TableExtract'  => 0,
     },
     INST_SCRIPT => 'bin',
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
