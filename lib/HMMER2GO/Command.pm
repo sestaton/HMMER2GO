@@ -8,11 +8,11 @@ HMMER2GO::Command - Control class for setting global options with HMMER2GO
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub opt_spec {
     my ( $class, $app ) = @_;
