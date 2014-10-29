@@ -3,7 +3,7 @@ Revision history for HMMER2GO
 Version	Date	Location
 0.09	10/29/2014	Vancouver, BC
 
-- Remove use of libwww in favor of http-tiny, which
+- Remove use of libwww in favor of net-ftp, which
   has no dependencies.
 - Fix dependencies listed in cpanfile and Makefile.PL.
 
