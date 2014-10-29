@@ -4,8 +4,8 @@ Version	Date	Location
 0.09	10/29/2014	Vancouver, BC
 
 - Remove use of libwww in favor of http-tiny, which
-  has not dependencies.
-- Fix dependencies listed in cpanfile and Makefile.
+  has no dependencies.
+- Fix dependencies listed in cpanfile and Makefile.PL.
 
 0.08	10/13/2014	Vancouver, BC
 
