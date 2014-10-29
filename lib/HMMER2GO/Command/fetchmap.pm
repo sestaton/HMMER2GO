@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use IPC::System::Simple qw(system);
-use LWP::UserAgent;
+use HTTP::Tiny;
 use File::Basename;
 
 sub opt_spec {
@@ -41,19 +41,17 @@ sub _fetch_mappings {
 
     $outfile //= 'pfam2go';
 
-    my $ua = LWP::UserAgent->new;
+    my $urlbase  = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
+    my $response = HTTP::Tiny->new->get($urlbase);
 
-    my $urlbase = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
-    my $response = $ua->get($urlbase);
-
-    # check for a response
-    unless ($response->is_success) {
-	die "Can't get url $urlbase -- ", $response->status_line;
-    }
+    # check for a response 
+    unless ($response->{success}) { 
+	die "Can't get url $urlbase -- Status: ", $response->{status}, "-- Reason: ", $response->{reason}; 
+    }      
 
     # open and parse the results
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    say $out $response->content;
+    say $out $response->{content};
     close $out;
 }
 

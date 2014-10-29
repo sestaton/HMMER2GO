@@ -5,7 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 use IPC::System::Simple qw(system capture);
 use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
-use LWP::UserAgent;
+use HTTP::Tiny;
 use File::Copy qw(move);
 use Test::More tests => 4;
 
@@ -55,16 +55,15 @@ sub _fetch_db {
 
     diag("Fetching database for testing. This could take a few minutes...");
  
-    my $ua = LWP::UserAgent->new;
+    my $response = HTTP::Tiny->new->get($endpoint);
 
-    my $response = $ua->get($endpoint);
-
-    unless ($response->is_success) {
-        die "Can't get url $endpoint -- ", $response->status_line;
-    }
+    # check for a response 
+    unless ($response->{success}) { 
+	die "Can't get url $urlbase -- Status: ", $response->{status}, "-- Reason: ", $response->{reason}; 
+    }   
 
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    print $out $response->content, "\n";
+    print $out $response->{content}, "\n";
     close $out;
 
     diag("Done fetching database. Uncompressing database for testing...");
