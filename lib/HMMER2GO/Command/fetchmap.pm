@@ -6,8 +6,8 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use IPC::System::Simple qw(system);
-use HTTP::Tiny;
 use File::Basename;
+use Net::FTP;
 
 sub opt_spec {
     return (    
@@ -41,18 +41,26 @@ sub _fetch_mappings {
 
     $outfile //= 'pfam2go';
 
-    my $urlbase  = 'ftp://ftp.geneontology.org/pub/go/external2go/pfam2go';
-    my $response = HTTP::Tiny->new->get($urlbase);
+    my $host = "ftp.geneontology.org";
+    my $dir  = "/pub/go/external2go";
+    my $file = "pfam2go";
 
-    # check for a response 
-    unless ($response->{success}) { 
-	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason}; 
-    }      
+    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
+    or die "Cannot connect to $host: $@";
 
-    # open and parse the results
-    open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
-    say $out $response->{content};
-    close $out;
+    $ftp->login or die "Cannot login ", $ftp->message;
+
+    $ftp->cwd($dir)
+	or die "Cannot change working directory ", $ftp->message;
+
+    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
+    $ftp->get($file, $outfile) or die "get failed ", $ftp->message;
+    my $lsize = -s $outfile;
+
+    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+	unless $rsize == $lsize;
+    
+    return $outfile;
 }
 
 1;
