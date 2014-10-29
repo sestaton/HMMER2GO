@@ -29,6 +29,7 @@ WriteMakefile(
     PREREQ_PM => {
         'IPC::System::Simple' => 1.21,
 	'App::Cmd'            => 0.323,
+	'HTTP::Tiny'          => 0,
 	'Try::Tiny'           => 0,
 	'Capture::Tiny'       => 0,
 	'HTML::TableExtract'  => 0,

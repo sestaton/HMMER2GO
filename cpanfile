@@ -3,6 +3,7 @@ requires 'App::Cmd',               '0.323';
 requires 'IO::Uncompress::Gunzip';
 requires 'File::Copy';
 requires 'Capture::Tiny';
+requires 'HTTP::Tiny';
 requires 'XML::LibXML';
 requires 'HTML::TableExtract';
 requires 'Net::FTP';
