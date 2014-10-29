@@ -46,7 +46,7 @@ sub _fetch_mappings {
 
     # check for a response 
     unless ($response->{success}) { 
-	die "Can't get url $urlbase -- Status: ", $response->{status}, "-- Reason: ", $response->{reason}; 
+	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason}; 
     }      
 
     # open and parse the results

@@ -59,7 +59,7 @@ sub _fetch_db {
 
     # check for a response 
     unless ($response->{success}) { 
-	die "Can't get url $urlbase -- Status: ", $response->{status}, "-- Reason: ", $response->{reason}; 
+	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason}; 
     }   
 
     open my $out, '>', $outfile or die "\nERROR: Could not open file: $!\n";
