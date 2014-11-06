@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.10	11/05/2014	Vancouver, BC
+
+- Add methods to automatically retry attempts to fetch
+  mapping file.
+
 0.09	10/29/2014	Vancouver, BC
 
 - Remove use of libwww in favor of net-ftp, which
