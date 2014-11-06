@@ -8,6 +8,7 @@ use HMMER2GO -command;
 use IPC::System::Simple qw(system);
 use Net::FTP;
 use File::Basename;
+use Carp;
 
 sub opt_spec {
     return (    
@@ -35,14 +36,15 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     exit(0) if $self->app->global_options->{man};
-    my $infile  = $opt->{infile};
-    my $pfam2go = $opt->{pfam2go};
-    my $outfile = $opt->{outfile};
-    my $map     = $opt->{map};
-    my $keep    = 1;
+    my $infile   = $opt->{infile};
+    my $pfam2go  = $opt->{pfam2go};
+    my $outfile  = $opt->{outfile};
+    my $map      = $opt->{map};
+    my $keep     = 1;
+    my $attempts = 3;
 
     if (!$pfam2go || ! -e $pfam2go) {
-	$pfam2go = _fetch_mappings();
+	$pfam2go = _retry($attempts, \&_fetch_mappings);
 	$keep--;
     }
 
@@ -131,6 +133,26 @@ sub _map_go_terms {
     }
 }
 
+sub _retry {
+    my ($attempts, $func) = @_;
+  attempt: {
+      my $result;
+
+      # if it works, return the result
+      return $result if eval { $result = $func->(); 1 };
+
+      # if we have 0 remaining attempts, stop trying.
+      last attempt if $attempts < 1;
+
+      # sleep for 1 second, and then try again.
+      sleep 1;
+      $attempts--;
+      redo attempt;
+  }
+
+    croak "\nERROR: Failed to get mapping file after multiple attempts: $@";
+}
+
 sub _fetch_mappings {
     my $outfile = 'pfam2go';
     unlink $outfile if -e $outfile;
@@ -140,21 +162,21 @@ sub _fetch_mappings {
     my $file = "pfam2go";
 
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-    or die "Cannot connect to $host: $@";
+	or warn "Cannot connect to $host: $@ will retry.";
 
-    $ftp->login or die "Cannot login ", $ftp->message;
+    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
 
     $ftp->cwd($dir)
-        or die "Cannot change working directory ", $ftp->message;
+        or warn "Cannot change working directory ", $ftp->message, " will retry.";
 
-    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
-    $ftp->get($file, $outfile) or die "get failed ", $ftp->message;
+    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
+    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
-    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+    warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
         unless $rsize == $lsize;
 
-    return $outfile;
+    return $outfile if $rsize == $lsize;
 }
 
 sub mk_key { join "~~", @_ }

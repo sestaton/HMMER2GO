@@ -8,6 +8,7 @@ use HMMER2GO -command;
 use IPC::System::Simple qw(system);
 use File::Basename;
 use Net::FTP;
+use Carp;
 
 sub opt_spec {
     return (    
@@ -31,9 +32,32 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     exit(0) if $self->app->global_options->{man};
-    my $outfile = $opt->{outfile};
+    my $outfile  = $opt->{outfile};
+    my $attempts = 3;
+ 
+    my $result = _retry($attempts, \&_fetch_mappings, $outfile);
+}
 
-    my $result  = _fetch_mappings($outfile);
+sub _retry {
+    my ($attempts, $func, $outfile) = @_;
+    # this is modified from something by Kent Frederic
+    # http://stackoverflow.com/a/1071877/1543853
+  attempt: {
+      my $result;
+
+      # if it works, return the result
+      return $result if eval { $result = $func->($outfile); 1 };
+
+      # if we have 0 remaining attempts, stop trying.
+      last attempt if $attempts < 1;
+
+      # sleep for 1 second, and then try again.
+      sleep 1;
+      $attempts--;
+      redo attempt;
+  }
+
+    croak "\nERROR: Failed to get mapping file after multiple attempts: $@";
 }
 
 sub _fetch_mappings {
@@ -46,21 +70,21 @@ sub _fetch_mappings {
     my $file = "pfam2go";
 
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-    or die "Cannot connect to $host: $@";
+	or warn "Cannot connect to $host: $@, will retry.";
 
-    $ftp->login or die "Cannot login ", $ftp->message;
+    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
 
     $ftp->cwd($dir)
-	or die "Cannot change working directory ", $ftp->message;
+	or warn "Cannot change working directory ", $ftp->message, " will retry.";
 
-    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
-    $ftp->get($file, $outfile) or die "get failed ", $ftp->message;
+    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
+    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
-    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+    warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
 	unless $rsize == $lsize;
     
-    return $outfile;
+    return 1 if $rsize == $lsize;
 }
 
 1;
