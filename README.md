@@ -7,13 +7,16 @@ Annotate DNA sequences for Gene Ontology terms
 
 **DEPENDENCIES**
 
-EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installing dependencies](https://github.com/sestaton/HMMER2GO/wiki/Installing-dependencies) wiki page for instructions how to install these programs.
+EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installing dependencies](https://github.com/sestaton/HMMER2GO/wiki/Installing-dependencies) wiki page for instructions how to install these programs (or see below for Linux installation).
 
 **INSTALLATION**
 
-Perl must be installed to use HMMER2GO, and there are a couple of external modules required. If you have [cpanminus](https://metacpan.org/pod/App::cpanminus), installation can be done with a single command (note that this requires [git](http://git-scm.com/)):
+Perl must be installed to use HMMER2GO, and there are a couple of external modules required. The nstallation can be done with the following  command (note that this requires [git](http://git-scm.com/)):
 
-    cpanm git://github.com/sestaton/HMMER2GO.git
+For Ubuntu/Debian as the OS:
+
+    apt-get install -y emboss hmmer
+    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 Alternatively, download the latest [release](https://github.com/sestaton/HMMER2GO/releases) and run the following command in the top directory:
 
