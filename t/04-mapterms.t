@@ -69,6 +69,7 @@ while (<$map>) {
 	print "ERROR: Unexpected result: $gene:", scalar(@terms), ". This is a bug, please report it.\n";
     }
 }
+close $map;
 unlink $pfam2go;
 
 my @result3 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile");
