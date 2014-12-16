@@ -10,11 +10,12 @@ use File::Copy qw(move);
 use File::Spec;
 use Test::More tests => 4;
 
-my @menu = capture([0..5], "bin/hmmer2go help run");
+my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my @menu     = capture([0..5], "$hmmer2go help run");
 
 my $opts      = 0;
 my $full_test = 0;
-my $infile    = "t/test_data/t_orfs_long.faa";
+my $infile    = File::Spec->catfile('t', 'test_data', 't_orfs_long.faa');
 my $outfile   = "t_orfs_long_Pfam-A.out";
 my $domtblout = "t_orfs_long_Pfam-A.domtblout";
 my $tblout    = "t_orfs_long_Pfam-A.tblout";
@@ -33,7 +34,7 @@ SKIP: {
     skip 'skip lengthy tests', 3 unless $full_test; 
     my $db = _fetch_db();
 
-    my @result = capture([0..5], "bin/hmmer2go run -i $infile -d $db");
+    my @result = capture([0..5], "$hmmer2go run -i $infile -d $db");
     my $out = File::Spec->catfile('t', 'test_data', $outfile);
     my $dom = File::Spec->catfile('t', 'test_data', $domtblout);
     my $tbl = File::Spec->catfile('t', 'test_data', $tblout);
@@ -58,11 +59,11 @@ sub _fetch_db {
     my $host    = "ftp.ebi.ac.uk";
     my $dir     = "/pub/databases/Pfam/current_release";
     my $file    = "Pfam-A.hmm.gz";
-    my $outfile = "t/test_data/Pfam-A.hmm.gz";
-    my $flatdb  = "t/test_data/Pfam-A.hmm";
+    my $outfile = File::Spec->catfile('t', 'test_data', 'Pfam-A.hmm.gz');
+    my $flatdb  = File::Spec->catfile('t', 'test_data', 'Pfam-A.hmm');
 
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-    or die "Cannot connect to $host: $@";
+	or die "Cannot connect to $host: $@";
 
     $ftp->login or die "Cannot login ", $ftp->message;
 

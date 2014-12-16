@@ -4,16 +4,18 @@ use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use autodie qw(open);
+use File::Spec;
 use IPC::System::Simple qw(system capture);
 use Test::More tests => 9;
 
-my @menu = capture([0..5], "bin/hmmer2go help mapterms");
+my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my @menu     = capture([0..5], "$hmmer2go help mapterms");
 
 my ($opts, $orfs) = (0, 0);
-my $infile  = "t/test_data/t_orfs_long_Pfam-A.tblout";
-my $pfam2go = "t/test_data/pfam2go";
-my $outfile = "t/test_data/t_long_Pfam-A_mapped_goterms.tsv";
-my $mapfile = "t/test_data/t_long_Pfam-A_mapped_goterms_GOterm_mapping.tsv";
+my $infile  = File::Spec->catfile('t', 'test_data', 't_orfs_long_Pfam-A.tblout');
+my $pfam2go = File::Spec->catfile('t', 'test_data', 'pfam2go');
+my $outfile = File::Spec->catfile('t', 'test_data', 't_long_Pfam-A_mapped_goterms.tsv');
+my $mapfile = File::Spec->catfile('t', 'test_data', 't_long_Pfam-A_mapped_goterms_GOterm_mapping.tsv');
 
 for my $opt (@menu) {
     next if $opt =~ /^Err|^Usage|^hmmer2go|^ *$/;
@@ -25,7 +27,7 @@ for my $opt (@menu) {
 
 is($opts, 4, 'Correct number of options for hmmer2go mapterms');
 
-my @result1 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile -p $pfam2go");
+my @result1 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile -p $pfam2go");
 ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping');
 
 my (%nonmapped, %mapped, %nomapfile);
@@ -38,7 +40,7 @@ while (<$out1>) {
 close $out1;
 unlink $outfile;
     
-my @result2 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile -p $pfam2go --map");
+my @result2 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile -p $pfam2go --map");
 ok(-e $outfile, 'Expected output from hmmer2go mapterms with mapping');
 ok(-e $mapfile, 'Expected GO term mapping file produced with hmmer2go mapterms');
 
@@ -72,7 +74,7 @@ while (<$map>) {
 close $map;
 unlink $pfam2go;
 
-my @result3 = capture([0..5], "bin/hmmer2go mapterms -i $infile -o $outfile");
+my @result3 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile");
 ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping file');
 
 open my $out3, '<', $outfile;

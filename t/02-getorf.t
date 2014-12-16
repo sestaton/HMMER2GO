@@ -4,15 +4,17 @@ use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use autodie qw(open);
+use File::Spec;
 use IPC::System::Simple qw(system capture);
 use Test::More tests => 5;
 
-my @menu = capture([0..5], "bin/hmmer2go help getorf");
+my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my @menu     = capture([0..5], "$hmmer2go help getorf");
 
 my ($opts, $orfs) = (0, 0);
-my $infile        = "t/test_data/t_seqs_nt.fas";
-my $outfile_long  = "t/test_data/t_orfs_long.faa";
-my $outfile_all   = "t/test_data/t_orfs_all.faa";
+my $infile        = File::Spec->catfile('t', 'test_data', 't_seqs_nt.fas');
+my $outfile_long  = File::Spec->catfile('t', 'test_data', 't_orfs_long.faa');
+my $outfile_all   = File::Spec->catfile('t', 'test_data', 't_orfs_all.faa');
 unlink $outfile_long if -e $outfile_long;
 unlink $outfile_all  if -e $outfile_all;
 
@@ -27,7 +29,7 @@ for my $opt (@menu) {
 is($opts, 8, 'Correct number of options for hmmer2go getorf');
 
 ## Find longest ORF only
-my @result_long = capture([0..5], "bin/hmmer2go getorf -i $infile -o $outfile_long -t 0");
+my @result_long = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_long -t 0");
 
 ok(-e $outfile_long, 'Successfully ran getorf and produced the expected output');
 
@@ -42,7 +44,7 @@ is($orfs, 30, 'Expected number of ORFs found for test data when only keeping lon
 $orfs = 0;
 
 ## Find all ORFs
-my @result_all = capture([0..5], "bin/hmmer2go getorf -i $infile -o $outfile_all -t 0 -a");
+my @result_all = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_all -t 0 -a");
 
 ok(-e $outfile_all, 'Successfully ran getorf and produced the expected output');
 
