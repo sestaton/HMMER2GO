@@ -62,7 +62,7 @@ sub _search_by_keyword {
     my ($keyword, $dbname);
     ($keyword = $terms) =~ s/,/+/g;
 
-    my $urlbase  = "http://pfam.xfam.org/search/keyword?query=$keyword&submit=Submit";
+    my $urlbase  = "http://pfam.xfam.org/search/keyword?query=$keyword"; #&submit=Submit";
     my $response = HTTP::Tiny->new->get($urlbase);
 
     unless ($response->{success}) {
