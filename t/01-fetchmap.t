@@ -5,6 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 use File::Spec;
 use IPC::System::Simple qw(system capture);
+
 use Test::More tests => 2;
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
@@ -20,10 +21,10 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 1, 'Correct number of options for hmmer2go fetchmap');
+is( $opts, 1, 'Correct number of options for hmmer2go fetchmap' );
 
 my $result = system([0..5], "$hmmer2go fetchmap -o $file");
 
-ok(-e $file, 'Successfully fetched pfam2go mappings');
+ok( -e $file, 'Successfully fetched pfam2go mappings' );
 
 done_testing();

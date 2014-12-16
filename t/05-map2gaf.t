@@ -3,9 +3,10 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
-use autodie qw(open);
 use File::Spec;
+use autodie             qw(open);
 use IPC::System::Simple qw(system capture);
+
 use Test::More tests => 2;
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
@@ -24,10 +25,10 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 4, 'Correct number of options for hmmer2go map2gaf');
+is( $opts, 4, 'Correct number of options for hmmer2go map2gaf' );
 
 my @result1 = capture([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
-ok(-e $outfile, 'Expected output from hmmer2go map2gaf');
+ok( -e $outfile, 'Expected output from hmmer2go map2gaf' );
 unlink $infile;
 unlink $outfile;
 

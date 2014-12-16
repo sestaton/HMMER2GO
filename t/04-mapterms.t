@@ -3,9 +3,10 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
-use autodie qw(open);
 use File::Spec;
+use autodie             qw(open);
 use IPC::System::Simple qw(system capture);
+
 use Test::More tests => 9;
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
@@ -25,10 +26,10 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 4, 'Correct number of options for hmmer2go mapterms');
+is( $opts, 4, 'Correct number of options for hmmer2go mapterms' );
 
 my @result1 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile -p $pfam2go");
-ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping');
+ok( -e $outfile, 'Expected output from hmmer2go mapterms without mapping' );
 
 my (%nonmapped, %mapped, %nomapfile);
 open my $out1, '<', $outfile;
@@ -41,8 +42,8 @@ close $out1;
 unlink $outfile;
     
 my @result2 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile -p $pfam2go --map");
-ok(-e $outfile, 'Expected output from hmmer2go mapterms with mapping');
-ok(-e $mapfile, 'Expected GO term mapping file produced with hmmer2go mapterms');
+ok( -e $outfile, 'Expected output from hmmer2go mapterms with mapping' );
+ok( -e $mapfile, 'Expected GO term mapping file produced with hmmer2go mapterms' );
 
 open my $out2, '<', $outfile;
 while (<$out2>) {
@@ -52,8 +53,8 @@ while (<$out2>) {
 }
 close $out2;
 
-is_deeply(\%nonmapped, \%mapped, 
-	  'Same genes and GO term numbers returned with either mapping or not mapping option');
+is_deeply( \%nonmapped, \%mapped, 
+	  'Same genes and GO term numbers returned with either mapping or not mapping option' );
 unlink $outfile;
 
 open my $map, '<', $mapfile;
@@ -62,10 +63,10 @@ while (<$map>) {
     my ($gene, $goterms) = split;
     my @terms = split /\,/, $goterms;
     if ($gene eq 'sunf_NODE_1382672_length_702_cov_5_594017_11_1') {
-	is (@terms, 5, 'Correct number of GO terms mapped');
+	is ( @terms, 5, 'Correct number of GO terms mapped' );
     }
     elsif ($gene eq 'sunf_NODE_626818_length_211_cov_6_417062_4_1') {
-	is (@terms, 2, 'Correct number of GO terms mapped');
+	is ( @terms, 2, 'Correct number of GO terms mapped' );
     }
     else {
 	print "ERROR: Unexpected result: $gene:", scalar(@terms), ". This is a bug, please report it.\n";
@@ -75,7 +76,7 @@ close $map;
 unlink $pfam2go;
 
 my @result3 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile");
-ok(-e $outfile, 'Expected output from hmmer2go mapterms without mapping file');
+ok( -e $outfile, 'Expected output from hmmer2go mapterms without mapping file' );
 
 open my $out3, '<', $outfile;
 while (<$out3>) {
@@ -85,8 +86,8 @@ while (<$out3>) {
 }
 close $out3;
 
-is_deeply(\%mapped, \%nomapfile, 
-	  'Same genes and GO term numbers returned with or without user-supplied mapping file');
+is_deeply( \%mapped, \%nomapfile, 
+	  'Same genes and GO term numbers returned with or without user-supplied mapping file' );
 unlink $outfile;
 
 done_testing();

@@ -3,10 +3,11 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
-use autodie qw(open);
+use autodie             qw(open);
 use IPC::System::Simple qw(system capture);
-use File::Path qw(remove_tree);
+use File::Path          qw(remove_tree);
 use File::Spec;
+
 use Test::More tests => 5;
 
 my $term      = "mads,mads-box";

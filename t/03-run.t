@@ -3,11 +3,12 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
-use IPC::System::Simple qw(system capture);
+use IPC::System::Simple    qw(system capture);
 use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
-use Net::FTP;
-use File::Copy qw(move);
+use File::Copy             qw(move);
 use File::Spec;
+use Net::FTP;
+
 use Test::More tests => 4;
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
@@ -28,7 +29,7 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 4, 'Correct number of options for hmmer2go run');
+is( $opts, 4, 'Correct number of options for hmmer2go run' );
 
 SKIP: {
     skip 'skip lengthy tests', 3 unless $full_test; 
@@ -43,9 +44,9 @@ SKIP: {
     move $domtblout, $dom or die "move failed: $!";
     move $tblout,    $tbl or die "move failed: $!";
 
-    ok(-e $out, 'Expected raw output of HMMscan from hmmer2go search');
-    ok(-e $dom, 'Expected domain table output of HMMscan from hmmer2go search');
-    ok(-e $tbl, 'Expected hit table output of HMMscan from hmmer2go search');
+    ok( -e $out, 'Expected raw output of HMMscan from hmmer2go search' );
+    ok( -e $dom, 'Expected domain table output of HMMscan from hmmer2go search' );
+    ok( -e $tbl, 'Expected hit table output of HMMscan from hmmer2go search' );
 
     unlink $out;
     unlink $dom;

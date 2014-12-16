@@ -5,6 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 use File::Spec;
 use IPC::System::Simple qw(capture);
+
 use Test::More tests => 3;
 
 BEGIN {
@@ -14,7 +15,7 @@ BEGIN {
 diag( "Testing HMMER2GO $HMMER2GO::VERSION, Perl $], $^X" );
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
-ok(-x $hmmer2go, 'Can execute hmmer2go');
+ok( -x $hmmer2go, 'Can execute hmmer2go' );
 
 my @menu = capture([0..5], "$hmmer2go help");
 
@@ -26,6 +27,6 @@ for my $command (@menu) {
     ++$progs if $prog;
 }
 
-is ($progs, 8, 'Correct number of subcommands listed');
+is ( $progs, 8, 'Correct number of subcommands listed' );
 
 done_testing();

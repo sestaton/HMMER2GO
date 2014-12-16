@@ -3,9 +3,10 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
-use autodie qw(open);
 use File::Spec;
+use autodie             qw(open);
 use IPC::System::Simple qw(system capture);
+
 use Test::More tests => 5;
 
 my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
@@ -26,12 +27,12 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is($opts, 8, 'Correct number of options for hmmer2go getorf');
+is( $opts, 8, 'Correct number of options for hmmer2go getorf' );
 
 ## Find longest ORF only
 my @result_long = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_long -t 0");
 
-ok(-e $outfile_long, 'Successfully ran getorf and produced the expected output');
+ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
 
 open my $longin, '<', $outfile_long;
 
@@ -40,13 +41,13 @@ while (<$longin>) {
 }
 close $longin;
 
-is($orfs, 30, 'Expected number of ORFs found for test data when only keeping longest ORFs');
+is( $orfs, 30, 'Expected number of ORFs found for test data when only keeping longest ORFs' );
 $orfs = 0;
 
 ## Find all ORFs
 my @result_all = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_all -t 0 -a");
 
-ok(-e $outfile_all, 'Successfully ran getorf and produced the expected output');
+ok( -e $outfile_all, 'Successfully ran getorf and produced the expected output' );
 
 open my $allin, '<', $outfile_all;
 
@@ -56,6 +57,6 @@ while (<$allin>) {
 close $allin;
 unlink $outfile_all;
 
-is($orfs, 52, 'Expected number of ORFs found for test data when keeping all ORFs');
+is( $orfs, 52, 'Expected number of ORFs found for test data when keeping all ORFs' );
 
 done_testing();
