@@ -1,5 +1,6 @@
-#!perl -T
-use 5.012;
+#!/usr/bin/env perl
+
+use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use Test::More;
