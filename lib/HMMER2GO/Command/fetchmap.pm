@@ -42,7 +42,7 @@ sub _retry {
     my ($attempts, $func, $outfile) = @_;
     # this is modified from something by Kent Frederic
     # http://stackoverflow.com/a/1071877/1543853
-  attempt: {
+  attempt : {
       my $result;
 
       # if it works, return the result
