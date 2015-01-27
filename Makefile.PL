@@ -32,6 +32,7 @@ WriteMakefile(
 	'HTTP::Tiny'          => 0,
 	'Try::Tiny'           => 0,
 	'Capture::Tiny'       => 0,
+	'XML::LibXML'         => 0,
 	'HTML::TableExtract'  => 0,
     },
     INST_SCRIPT => 'bin',
