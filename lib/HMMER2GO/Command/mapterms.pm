@@ -125,7 +125,8 @@ sub _map_go_terms {
     if ($map) {
 	while (my ($seqid, $terms) = each %goterms) {
 	    $map_ct++;
-	    my $termct = (split /\,/, $terms);
+	    my @terms  = split /\,/, $terms; #bugfix for #4
+            my $termct = @terms;
 	    $go_ct += $termct;
 	    say $map_fh join "\t", $seqid, $terms;
 	}
