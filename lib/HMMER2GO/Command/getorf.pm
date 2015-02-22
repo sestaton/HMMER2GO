@@ -377,15 +377,15 @@ A file to place the translated sequences.
  the same output. N.B. getorf seems to treat [^ATCG] characters differently than
  getorf, so a translation from getorf may be a residue longer in my tests.
 
-=item I<   Argument    Description>
+   Argument    Description
 
- 0           Translation of regions between STOP codons.
- 1           Translation of regions between START and STOP codons.
- 2           Nucleic sequences between STOP codons.
- 3           Nucleic sequences between START and STOP codons.
- 4           Nucleotides flanking START codons.
- 5           Nucleotides flanking initial STOP codons.
- 6           Nucleotides flanking ending STOP codons.
+   0           Translation of regions between STOP codons.
+   1           Translation of regions between START and STOP codons.
+   2           Nucleic sequences between STOP codons.
+   3           Nucleic sequences between START and STOP codons.
+   4           Nucleotides flanking START codons.
+   5           Nucleotides flanking initial STOP codons.
+   6           Nucleotides flanking ending STOP codons.
 
 =item -s, --sameframe
 
