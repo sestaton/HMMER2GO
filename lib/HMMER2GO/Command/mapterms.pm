@@ -125,8 +125,8 @@ sub _map_go_terms {
     if ($map) {
 	while (my ($seqid, $terms) = each %goterms) {
 	    $map_ct++;
-	    my @terms  = split /\,/, $terms;
-	    my $termct = @terms; #(split /\,/, $terms);
+	    my @terms = split /\,/, $terms; #bugfix for #4
+	    my $termct = @terms;
 	    $go_ct += $termct;
 	    say $map_fh join "\t", $seqid, $terms;
 	}
@@ -226,9 +226,9 @@ The file to hold the GO term/description mapping results. The format is tab-deli
 and contains: QueryID, PFAM_ID, PFAM_Name, PFAM_Description, GO_Term, GO_Description. An example
 from grape is below: 
 
-  GSVIVT01018890001PF00004AAAGO:ATP bindingGO:0005524ATPase
-  GSVIVT01000580001PF00005ABC_tranGO:ATP bindingGO:0005524ABC
-  GSVIVT01000580001PF00005ABC_tranGO:ATPase activityGO:0016887ABC
+  GSVIVT01018890001PF00004AAA    GO:ATP binding    GO:0005524    ATPase
+  GSVIVT01000580001PF00005ABC_tran    GO:ATP binding    GO:0005524    ABC
+  GSVIVT01000580001PF00005ABC_tran    GO:ATPase activity    GO:0016887    ABC
 
 =back
 
@@ -240,10 +240,10 @@ from grape is below:
 
 Produce of tab-delimted file of query sequence IDs and GO terms. An example is below:
 
-    sunf|NODE_1172150_length_184_cov_4_472826_5GO:0004553,GO:0005975
-    GSVIVT01027800001GO:0016787
-    sunf|NODE_1444993_length_180_cov_3_405555_4GO:0004672,GO:0005524,GO:0006468
-    saff|NODE_490685_length_227_cov_36_000000_9GO:0005525,GO:0005634,GO:0005737
+    sunf|NODE_1172150_length_184_cov_4_472826_5    GO:0004553,GO:0005975
+    GSVIVT01027800001    GO:0016787
+    sunf|NODE_1444993_length_180_cov_3_405555_4    GO:0004672,GO:0005524,GO:0006468
+    saff|NODE_490685_length_227_cov_36_000000_9    GO:0005525,GO:0005634,GO:0005737
 
 =item -h, --help
 

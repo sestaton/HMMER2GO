@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.11	1/27/2015	Vancouver, BC
+
+- Bugfix for the use of split in the mapterms command class.
+  This fixes #4 on Github.
+
 0.10	11/05/2014	Vancouver, BC
 
 - Add methods to automatically retry attempts to fetch
