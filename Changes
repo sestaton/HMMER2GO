@@ -1,6 +1,13 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.12	3/25/2015	Vancouver, BC
+
+- Add compressed file support in the 'run' and 'getorf' command
+  classes.
+- Bugfixes for the latest GO mappings in the tests for the 'mapterms'
+  command, and a minor fix in testing the output of the main command.
+
 0.11	1/27/2015	Vancouver, BC
 
 - Bugfix for the use of split in the mapterms command class.
