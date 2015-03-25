@@ -22,6 +22,7 @@ my @menu = capture([0..5], "$hmmer2go help");
 my $progs = 0;
 for my $command (@menu) {
     next if $command =~ /^ *$|^Available/;
+    next unless $command =~ /\:/;
     $command =~ s/^\s+//;
     my ($prog, $desc) = split /\:/, $command;
     ++$progs if $prog;
