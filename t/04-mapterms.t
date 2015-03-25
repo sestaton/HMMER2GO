@@ -63,7 +63,7 @@ while (<$map>) {
     my ($gene, $goterms) = split;
     my @terms = split /\,/, $goterms;
     if ($gene eq 'sunf_NODE_1382672_length_702_cov_5_594017_11_1') {
-	is ( @terms, 5, 'Correct number of GO terms mapped' );
+	is ( @terms, 6, 'Correct number of GO terms mapped' );
     }
     elsif ($gene eq 'sunf_NODE_626818_length_211_cov_6_417062_4_1') {
 	is ( @terms, 2, 'Correct number of GO terms mapped' );
