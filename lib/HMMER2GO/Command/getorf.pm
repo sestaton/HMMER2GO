@@ -199,7 +199,8 @@ sub _find_prog {
 
 sub _seqct {
     my $f = shift;
-    open my $fh, "<", $f or die "\nERROR: Could not open file: $f\n";
+    #open my $fh, "<", $f or die "\nERROR: Could not open file: $f\n";
+    my $fh = _get_fh($f);
     my ($name, $comm, $seq, $qual);
     my @aux = undef;
     my $seqct = 0;
@@ -224,8 +225,9 @@ sub _seqct {
 sub _sort_seqs {
     my ($file, $sense, $allorfs) = @_;
  
-    open my $fh, "<", $file or die "\nERROR: Could not open file: $file\n";
-    
+    #open my $fh, "<", $file or die "\nERROR: Could not open file: $file\n";
+    my $fh = _get_fh($file);
+
     my ($name, $comm, $seq, $qual);
     my @aux = undef;
 
@@ -305,6 +307,24 @@ sub _revcom {
     my $revcom = reverse $seq;
     $revcom =~ tr/ACGTacgt/TGCAtgca/;
     return ($name, $revcom);
+}
+
+sub _get_fh {
+    my ($file) = @_;
+    my $fh;
+    if ($file =~ /\.gz$/) {
+	open $fh, '-|', 'zcat', $file or die "\nERROR: Could not open file: $file\n";
+    }
+    elsif ($file =~ /\.bz2$/) {
+	open $fh, '-|', 'bzcat', $file or die "\nERROR: Could not open file: $file\n";
+    }
+    elsif ($file =~ /^-$|STDIN/) {
+	open $fh, '< -' or die "\nERROR: Could not open STDIN\n";
+    }
+    else {
+	open $fh, '<', $file or die "\nERROR: Could not open file: $file\n";
+    }
+    return $fh;
 }
 
 1;

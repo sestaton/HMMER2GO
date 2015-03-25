@@ -6,7 +6,9 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use Cwd;
-use IPC::System::Simple qw(capture system);
+use IPC::System::Simple     qw(capture system);
+use IO::Uncompress::Bunzip2 qw(bunzip2 $Bunzip2Error);
+use IO::Uncompress::Gunzip  qw(gunzip $GunzipError);
 use File::Basename;
 use Try::Tiny;
 
@@ -49,6 +51,11 @@ sub execute {
 sub _run_hmmscan {
     my ($hmmscan, $infile, $database, $cpus) = @_;
 
+    my $tempfile;
+    if ($infile =~ /\.gz$|\.bz2/) {
+	$tempfile = _uncompress_input($infile);
+    }
+
     my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
     my ($dname, $dpath, $dsuffix) = fileparse($database, qr/\.[^.]*/);
     my $outfile   = $iname."_".$dname.".out";
@@ -61,27 +68,67 @@ sub _run_hmmscan {
 	die "\nERROR: $outfile already exists. Exiting.\n";
     }
     
-    my @hmmscan_cmd = "$hmmscan ".
+    my $hmmscan_cmd = "$hmmscan ".
 	              "-o $outfile ".
 		      "--tblout $tblout ".
 		      "--domtblout $domtblout ".
 		      "--acc ".
 		      "--noali ".
 		      "--cpu $cpus ".
-		      "$database ".
-		      "$infile";
+		      "$database";
+
+    if ($infile =~ /\.gz|\.bz2/) {
+	$hmmscan_cmd .= " $tempfile";
+    }
+    else {
+	$hmmscan_cmd .= " $infile";
+    }
 
     my $exit_value;
     try {
-	$exit_value = system([0..5], @hmmscan_cmd);
+	$exit_value = system([0..5], $hmmscan_cmd);
     }
     catch {
 	die "\nERROR: hmmscan exited with exit value $exit_value. Here is the exception: $_\n";
+    };
+
+    unlink $tempfile if defined $tempfile && -e $tempfile;
+}
+
+sub _uncompress_input {
+    my ($file) = @_;
+
+    my $cwd = getcwd();
+    my $unc_filename;
+    if ($file =~ /\.gz$/) {
+	my $infile = $file;
+	$infile =~ s/\.gz//;
+	my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
+	my $ucfile = File::Temp->new( TEMPLATE => $iname."_XXXX",
+				      DIR      => $cwd,
+				      SUFFIX   => $isuffix,
+				      UNLINK   => 0 );
+
+	$unc_filename = $ucfile->filename;
+	gunzip $file => $unc_filename or die "gunzip failed: $GunzipError\n";
     }
+    elsif ($file =~ /\.bz2$/) {
+	my $infile = $file;
+	$infile =~ s/\.bz2//;
+        my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
+        my $ucfile = File::Temp->new( TEMPLATE => $iname."_XXXX",
+                                      DIR      => $cwd,
+                                      SUFFIX   => $isuffix,
+                                      UNLINK   => 0 );
+
+        $unc_filename = $ucfile->filename;
+        bunzip2 $file => $unc_filename or die "bunzip2 failed: $Bunzip2Error\n";
+    }
+    return $unc_filename;
 }
 
 sub _find_prog {
-    my $prog = shift;
+    my ($prog) = @_;
     my $path = capture([0..5], "which $prog");
     chomp $path;
     
