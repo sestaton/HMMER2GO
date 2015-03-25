@@ -32,6 +32,7 @@ ok( -e $customdb, 'Expected HMM database created' );
 unlink $outfile;
 
 my @run_result = capture([0..5], "$hmmer2go run -i $infile -d $customdb" );
+say @run_result;
 ok( -e $outfile,   'Expected raw output of HMMscan from hmmer2go search' );
 ok( -e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search' );
 ok( -e $tblout,    'Expected hit table output of HMMscan from hmmer2go search' );
