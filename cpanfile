@@ -1,6 +1,9 @@
 requires 'IPC::System::Simple',    '1.21';
 requires 'App::Cmd',               '0.323';
 requires 'IO::Uncompress::Gunzip';
+requires 'IO::Uncompress::Bunzip';
+requires 'IO::Compress::Gzip';
+requires 'IO::Compress::Bzip2';
 requires 'File::Copy';
 requires 'Capture::Tiny';
 requires 'HTTP::Tiny';
