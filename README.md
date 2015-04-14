@@ -18,6 +18,11 @@ For Ubuntu/Debian as the OS:
     apt-get install -y emboss hmmer
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
+For RHEL/Fedora:
+
+    yum install -y EMBOSS hmmer
+    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
+
 Alternatively, download the latest [release](https://github.com/sestaton/HMMER2GO/releases) and run the following command in the top directory:
 
     perl Makefile.PL
