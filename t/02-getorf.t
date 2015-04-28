@@ -31,7 +31,7 @@ for my $opt (@menu) {
 
 is( $opts, 8, 'Correct number of options for hmmer2go getorf' );
 
-for my $file (qw($infile $infilegz $infilegz)) {
+for my $file (qw($infile $infilegz $infilebz)) {
     unlink $outfile_long if defined $outfile_long && -e $outfile_long;
     ## Find longest ORF only
     my @result_long = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_long -t 0");
