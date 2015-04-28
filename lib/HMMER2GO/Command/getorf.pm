@@ -119,55 +119,8 @@ sub _run_getorf {
     }
 }
 
-sub _readfq {
-    my ($fh, $aux) = @_;
-    @$aux = [undef, 0] if (!@$aux);
-    return if ($aux->[1]);
-    if (!defined($aux->[0])) {
-        while (<$fh>) {
-            chomp;
-            if (substr($_, 0, 1) eq '>' || substr($_, 0, 1) eq '@') {
-                $aux->[0] = $_;
-                last;
-            }
-        }
-        if (!defined($aux->[0])) {
-            $aux->[1] = 1;
-            return;
-        }
-    }
-    my ($name, $comm);
-    defined $_ && do {
-        ($name, $comm) = /^.(\S+)(?:\s+)(\S+)/ ? ($1, $2) : 
-	                 /^.(\S+)/ ? ($1, '') : ('', '');
-    };
-    my $seq = '';
-    my $c;
-    $aux->[0] = undef;
-    while (<$fh>) {
-        chomp;
-        $c = substr($_, 0, 1);
-        last if ($c eq '>' || $c eq '@' || $c eq '+');
-        $seq .= $_;
-    }
-    $aux->[0] = $_;
-    $aux->[1] = 1 if (!defined($aux->[0]));
-    return ($name, $comm, $seq) if ($c ne '+');
-    my $qual = '';
-    while (<$fh>) {
-        chomp;
-        $qual .= $_;
-        if (length($qual) >= length($seq)) {
-            $aux->[0] = undef;
-            return ($name, $comm, $seq, $qual);
-        }
-    }
-    $aux->[1] = 1;
-    return ($name, $seq);
-}
-
 sub _find_prog {
-    my $prog = shift;
+    my ($prog) = @_;
     my ($path, $err) = capture { system([0..5], "which $prog"); };
     chomp $path;
     
@@ -198,42 +151,51 @@ sub _find_prog {
 }
 
 sub _seqct {
-    my $f = shift;
-    #open my $fh, "<", $f or die "\nERROR: Could not open file: $f\n";
+    my ($f) = @_;
+
     my $fh = _get_fh($f);
-    my ($name, $comm, $seq, $qual);
-    my @aux = undef;
     my $seqct = 0;
     my %seqhash;
-    while (($name, $comm, $seq, $qual) = _readfq(\*$fh, \@aux)) {
-	$seqct++;
-	# EMBOSS uses characters in identifiers as delimiters, which can produce some
-        # unexpected renaming of sequences, so warn that it's not this script doing
-        # the renaming.
-	if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
-	    die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
+
+    { 
+	local $/ = '>';
+	while (my $line = <$fh>) {
+	    chomp $line;
+	    my ($name, @seqparts) = split /\n/, $line;
+	    my $seq = join '', @seqparts;
+	    next unless defined $name && defined $seq;
+	    # EMBOSS uses characters in identifiers as delimiters, which can produce some
+	    # unexpected renaming of sequences, so warn that it's not this script doing
+	    # the renaming.
+	    if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
+		die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
+	    }
+	    elsif ($name eq '') { 
+		say "WARNING: Sequences appear to have no identifiers. Continuing."; 
+	    }
+	    $seqhash{$name} = $seq;
+	    $seqct++;
 	}
-	elsif ($name eq '') { 
-	    say "WARNING: Sequences appear to have no identifiers. Continuing."; 
-	}
-	$seqhash{$name} = $seq;
+	close $fh;
     }
-    close $fh;
     return (\$seqct,\%seqhash);
 }
 
 sub _sort_seqs {
     my ($file, $sense, $allorfs) = @_;
  
-    #open my $fh, "<", $file or die "\nERROR: Could not open file: $file\n";
     my $fh = _get_fh($file);
-
-    my ($name, $comm, $seq, $qual);
-    my @aux = undef;
-
     my %seqhash;
-    while (($name, $comm, $seq, $qual) = _readfq(\*$fh, \@aux)) {
-	$seqhash{$name} = $seq;
+
+    { 
+	local $/ = '>';
+	while (my $line = <$fh>) {
+	    chomp $line;
+	    my ($name, @seqparts) = split /\n/, $line;
+	    my $seq = join '', @seqparts;
+	    next unless defined $name && defined $seq;
+	    $seqhash{$name} = $seq;
+	}
     }
     close $fh;
 
@@ -269,9 +231,7 @@ sub _getorf {
                                  UNLINK => 0);
 
     open my $fh, ">", $fname or die "\nERROR: Could not open file: $fname\n";
-
     print $fh join "\n", ">".$id, "$seq\n";
-
     close $fh;
 
     my $orffile = $fname."_orfs";
