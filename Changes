@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.13	4/28/2015	Vancouver, BC
+
+- Remove readfq library and fall back to supporting only FASTA format.
+  This is to fix issues with some sequence files generating warnings
+  during parsing (fixed now).
+
 0.12	3/25/2015	Vancouver, BC
 
 - Add compressed file support in the 'run' and 'getorf' command
