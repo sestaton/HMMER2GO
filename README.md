@@ -70,10 +70,6 @@ Also, the [HMMER2GO wiki](https://github.com/sestaton/HMMER2GO/wiki) is a source
 
 Report any issues at the HMMER2GO issue tracker: https://github.com/sestaton/HMMER2GO/issues
 
-**ATTRIBUTION**
-
-This project uses the [readfq](https://github.com/lh3/readfq) library written by Heng Li. The readfq code has been modified for error handling and to parse the comment line in the Casava header.
-
 **LICENSE AND COPYRIGHT**
 
 Copyright (C) 2014-2015 S. Evan Staton
