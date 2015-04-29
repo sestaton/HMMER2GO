@@ -263,10 +263,16 @@ sub _revcom {
 
     # If the sequence has been revcom'd 
     # we don't want the ID to say REVERSE. 
-    $name =~ s/\(R.*//;   
-    my $revcom = reverse $seq;
-    $revcom =~ tr/ACGTacgt/TGCAtgca/;
-    return ($name, $revcom);
+    $name =~ s/\(R.*// if $name =~ /\(REVERSE/i;   
+    if ($seq =~ /[atcg]/i) {
+	my $revcom = reverse $seq;
+	$revcom =~ tr/ACGTacgt/TGCAtgca/;
+	return ($name, $revcom);
+    }
+    else {
+	warn "Not going to reverse protein sequence.";
+	return ($name, $seq);
+    }
 }
 
 sub _get_fh {
