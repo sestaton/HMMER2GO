@@ -221,11 +221,11 @@ __END__
 
 =head1 NAME
                                                                        
- hmmer2go pfam-search - Search terms against Pfam entries and create a custom HMM database
+ hmmer2go pfamsearch - Search terms against Pfam entries and create a custom HMM database
 
 =head1 SYNOPSIS    
 
- hmmer2go pfam-search -t mads -o mads_pfam_results.txt -d
+ hmmer2go pfamsearch -t mads -o mads_pfam_results.txt -d
 
 =head1 DESCRIPTION
 
