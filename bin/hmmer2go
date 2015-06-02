@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use HMMER2GO;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 HMMER2GO->run;
 

@@ -8,11 +8,11 @@ HMMER2GO - Annotate DNA sequences for Gene Ontology terms
 
 =head1 VERSION
 
-Version 0.13
+Version 0.14
 
 =cut
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 sub global_opt_spec {
     [ 'man|m' => "Get the manual entry for a command" ];
