@@ -11,9 +11,9 @@ EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installi
 
 **INSTALLATION**
 
-Perl must be installed to use HMMER2GO, and there are a couple of external modules required. The installation can be done with the following  command (note that this requires [git](http://git-scm.com/)):
+Perl must be installed to use HMMER2GO, and there are a couple of external modules required. Please download and install the latest [HMMER](hmmer.org) executables manually. The system versions available from the package manager are incompatible with the latest model formats.
 
-**Note**: Please download and install the latest HMMER executables manually. The system versions available from the package manager are incompatible with the latest model formats.
+The installation can be done with the following  command (note that this requires [git](http://git-scm.com/)):
 
 For Ubuntu/Debian as the OS:
 
