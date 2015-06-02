@@ -13,14 +13,16 @@ EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installi
 
 Perl must be installed to use HMMER2GO, and there are a couple of external modules required. The installation can be done with the following  command (note that this requires [git](http://git-scm.com/)):
 
+**Note**: Please download and install the latest HMMER executables manually. The system versions available from the package manager are incompatible with the latest model formats.
+
 For Ubuntu/Debian as the OS:
 
-    apt-get install -y emboss hmmer
+    apt-get install -y emboss
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 For RHEL/Fedora:
 
-    yum install -y EMBOSS hmmer
+    yum install -y EMBOSS
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 Alternatively, download the latest [release](https://github.com/sestaton/HMMER2GO/releases) and run the following command in the top directory:
