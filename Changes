@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.14	6/02/2015	Vancouver, BC
+
+- Fix test resuls for Pfam search based on new entries in Pfam.
+- Modify tests to use the latest HMMER binaries instead of an older version from the package manager (which is incompatible with the latest models).
+
 0.13	4/28/2015	Vancouver, BC
 
 - Remove readfq library and fall back to supporting only FASTA format.
