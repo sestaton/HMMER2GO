@@ -1,6 +1,10 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.15	6/10/2015	Vancouver, BC
+
+- Fix bug in reporting Pfam search results for multiword search terms.
+
 0.14	6/02/2015	Vancouver, BC
 
 - Fix test resuls for Pfam search based on new entries in Pfam.
