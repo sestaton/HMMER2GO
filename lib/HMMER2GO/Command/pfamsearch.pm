@@ -60,7 +60,7 @@ sub _search_by_keyword {
     my ($terms, $outfile, $createdb, $dirname) = @_;
 
     my ($keyword, $dbname);
-    ($keyword = $terms) =~ s/,/+/g;
+    ($keyword = $terms) =~ s/\s+|,/+/g;
 
     my $urlbase  = "http://pfam.xfam.org/search/keyword?query=$keyword"; #&submit=Submit";
     my $response = HTTP::Tiny->new->get($urlbase);
@@ -124,7 +124,7 @@ sub _get_search_results {
 	if (/We found \<strong\>(\d+)\<\/strong\> unique results/) {
 	    $resultnum = $1;
 	}
-	if (/&quot\;\<em\>$keyword<\/em\>&quot\;\)\, in \<strong\>(\d+)\<\/strong\>/) {
+	if (/\(&quot\;\<em\>$keyword\<\/em\>&quot\;\)\, in \<strong\>(\d+)\<\/strong\>/) {
 	    $dbnum = $1;
 	}
     }
