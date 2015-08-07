@@ -1,6 +1,10 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.16 	8/07/2015	Vancouver, BC
+
+- Remove use of environment variables to build and install package.
+
 0.15	6/10/2015	Vancouver, BC
 
 - Fix bug in reporting Pfam search results for multiword search terms.
