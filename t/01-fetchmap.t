@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -8,7 +6,7 @@ use IPC::System::Simple qw(system capture);
 
 use Test::More tests => 2;
 
-my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @menu     = capture([0..5], "$hmmer2go help fetchmap");
 
 my $opts = 0;

@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -10,7 +8,7 @@ use File::Spec;
 
 use Test::More tests => 10;
 
-my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @menu     = capture([0..5], "$hmmer2go help pfamsearch");
 
 my $opts    = 0;

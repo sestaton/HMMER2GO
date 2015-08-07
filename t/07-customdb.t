@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -23,7 +21,7 @@ $db =~ s/,/+/g;
 $outdir .= "_hmms";
 my $customdb = File::Spec->catfile($outdir, $db.".hmm");
 
-my $hmmer2go    = File::Spec->catfile('bin', 'hmmer2go');
+my $hmmer2go    = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @result_long = capture([0..5], "$hmmer2go getorf -i $ntfile -o $infile -t 0");
 ok( -e $infile, 'Successfully ran getorf and produced the expected output' );
 

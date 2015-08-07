@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -14,7 +12,7 @@ BEGIN {
 
 diag( "Testing HMMER2GO $HMMER2GO::VERSION, Perl $], $^X" );
 
-my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 ok( -x $hmmer2go, 'Can execute hmmer2go' );
 
 my @menu = capture([0..5], "$hmmer2go help");

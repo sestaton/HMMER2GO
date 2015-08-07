@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 ##TODO: add tests unit tests for compressed input file,
 ##      which works but doesn't have tests.
 use 5.010;
@@ -15,7 +13,7 @@ use Net::FTP;
 
 use Test::More tests => 10;
 
-my $hmmer2go = File::Spec->catfile('bin', 'hmmer2go');
+my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @menu     = capture([0..5], "$hmmer2go help run");
 
 my $opts      = 0;
