@@ -9,9 +9,9 @@ if (eval ($ExtUtils::MakeMaker::VERSION) <= 6.55) {
     exit(1);
 }
 
-BEGIN {
-    system("chmod +x bin/hmmer2go");
-}
+#BEGIN {
+#    system("chmod +x bin/hmmer2go");
+#}
 
 WriteMakefile(
     NAME             => 'HMMER2GO',
@@ -35,7 +35,8 @@ WriteMakefile(
 	'XML::LibXML'         => 0,
 	'HTML::TableExtract'  => 0,
     },
-    INST_SCRIPT => 'bin',
+    INST_SCRIPT => 'blib/bin',
+    EXE_FILES   => [ 'bin/hmmer2go' ],
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     test  => { TESTS => 't/*.t' },
 );
