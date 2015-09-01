@@ -313,7 +313,7 @@ __END__
 =head1 DESCRIPTION
                                                                    
  Translate a nucleotide multi-fasta file in all 6 frames and select 
- the longest ORF, by defaul, or all ORFs for each sequence. The ORFs are 
+ the longest ORF, by default, or all ORFs for each sequence. The ORFs are 
  reported as nucleotide sequences by default, but translated may also be 
  reported. The minimum ORF length to report can be given as an option.
 
@@ -360,10 +360,10 @@ A file to place the translated sequences.
 =item -f, --find
 
  Determines what to report for each ORF. Argument may be one of [0-6]. (Default: 0).
- Descriptions copied straight from EMBOSS getorf help menu so there is no confusion.
+ The descriptions below are copied straight from EMBOSS getorf help menu so there is no confusion.
  The default option ('0') takes the same behavior as EMBOSS sixpack and produces
  the same output. N.B. getorf seems to treat [^ATCG] characters differently than
- getorf, so a translation from getorf may be a residue longer in my tests.
+ sixpack, so a translation from getorf may be a residue longer in my tests.
 
    Argument    Description
 
