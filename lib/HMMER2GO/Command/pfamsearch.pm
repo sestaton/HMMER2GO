@@ -70,13 +70,13 @@ sub _search_by_keyword {
     }
 
     my $pfamxml = "pfam_search_$keyword".".xml";
-    open my $pfout, '>', $pfamxml;
+    open my $pfout, '>', $pfamxml or die "\nERROR: Could not open file: $pfamxml";
     say $pfout $response->{content};
     close $pfout;
 
     my ($resultnum, $dbnum) = _get_search_results($keyword, $pfamxml);
 
-    if ($resultnum > 1) {
+    if (defined $resultnum && $resultnum > 1) {
 	$dbname = $keyword."_hmms" if !$dirname; # use expressive variable name
 	$dbname = $dirname if $dirname;
 	if (-d $dbname) {
