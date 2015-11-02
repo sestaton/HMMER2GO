@@ -49,7 +49,7 @@ sub execute {
     my $sense   = $opt->{sameframe};
     my $verbose = $opt->{verbose};
 
-    my $getorf = _find_prog("getorf");
+    my $getorf = _find_getorf();
 
     my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, 
 			     $allorfs, $nomet, $sense, $verbose);
@@ -120,34 +120,31 @@ sub _run_getorf {
 }
 
 sub _find_prog {
-    my ($prog) = @_;
-    my ($path, $err) = capture { system([0..5], "which $prog"); };
-    chomp $path;
-    
-    if ($path !~ /$prog$/) {
-	say "Couldn\'t find $prog in PATH. Will keep looking.";
-	$path = "/usr/local/emboss/latest/bin/getorf";           # path at zcluster
+    my ($getorf);
+    my @path = split /:|;/, $ENV{PATH};
+
+    for my $p (@path) {
+	my $prog = File::Spec->catfile($p, 'getorf');
+	
+	# Instead of just testing if getorf exists and is executable 
+	# we want to make sure we have permissions, so we try to 
+	# invoke getorf and examine the output. 
+	my ($getorf_path, $getorf_err) = capture { system([0..5], "$prog --help"); };
+
+	if ($getorf_err =~ /Version\: EMBOSS/) { 
+	    #say "Using getorf located at: $path";
+	    $getorf = $prog;
+	}
     }
 
-    # Instead of just testing if getorf exists and is executable 
-    # we want to make sure we have permissions, so we try to 
-    # invoke getorf and examine the output. 
-    my ($getorf_path, $getorf_err) = capture { system([0..5], "$path --help"); };
-
-    if ($getorf_err =~ /Version\: EMBOSS/) { 
-	say "Using getorf located at: $path"; 
-    }
-    elsif ($getorf_err =~ /^-bash: \/usr\/local\/emboss\/bin\/getorf\: No such file or directory$/) { 
-	die "Could not find getorf. Exiting.\n"; 
-    }
-    elsif ($getorf_err eq '') { 
-	die "Could not find getorf. Exiting.\n"; 
+    if (-e $getorf && -x $getorf) {
+	return $getorf;
     }
     else { 
 	die "Could not find getorf. ".
 	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n"; 
+	}
     }
-    return $path;
 }
 
 sub _seqct {
