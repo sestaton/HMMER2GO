@@ -68,25 +68,19 @@ sub _run_hmmscan {
 	die "\nERROR: $outfile already exists. Exiting.\n";
     }
     
-    my $hmmscan_cmd = "$hmmscan ".
-	              "-o $outfile ".
-		      "--tblout $tblout ".
-		      "--domtblout $domtblout ".
-		      "--acc ".
-		      "--noali ".
-		      "--cpu $cpus ".
-		      "$database";
+    my @hmmscan_cmd = ($hmmscan, "-o", $outfile, "--tblout", $tblout, "--domtblout", $domtblout,
+		       "--acc", "--noali", "--cpu", $cpus, $database);
 
     if ($infile =~ /\.gz|\.bz2/) {
-	$hmmscan_cmd .= " $tempfile";
+	push @hmmscan_cmd, $tempfile;
     }
     else {
-	$hmmscan_cmd .= " $infile";
+	push @hmmscan_cmd, $infile;
     }
 
     my $exit_value;
     try {
-	$exit_value = system([0..5], $hmmscan_cmd);
+	$exit_value = system([0..5], @hmmscan_cmd);
     }
     catch {
 	die "\nERROR: hmmscan exited with exit value $exit_value. Here is the exception: $_\n";
@@ -129,34 +123,24 @@ sub _uncompress_input {
 
 sub _find_prog {
     my ($prog) = @_;
-    my $path = capture([0..5], "which $prog");
-    chomp $path;
-    
-    if ($path !~ /$prog$/) {
-	say "Could not find $prog in PATH. Will keep looking.";
-	$path = "/usr/local/hmmer/latest/bin/$prog";           # path at work
+    my @path = split /:|;/, $ENV{PATH};
+
+    my $exepath;
+
+    for my $p (@path) {
+        my $exe = File::Spec->catfile($p, $prog);
+        
+	if (-e $exe) {
+	    $exepath = $exe;
+	}
     }
 
-    # Instead of just testing if hmmscan exists and is executable 
-    # we want to make sure we have permissions, so we try to 
-    # invoke hmmscan and examine the output. 
-    my @hmmscan_out = capture([0..5], "$path -h");
-
-    for my $hmm_out (@hmmscan_out) {
-	if ($hmm_out =~ /^\# $prog/) { 
-	    say "Using $prog located at: $path";
-	    return $path;
-	}
-	elsif ($hmm_out =~ /No such file or directory$/) { 
-	    die "Could not find $prog. Exiting.\n"; 
-	}
-	elsif ($hmm_out eq '') { 
-	    die "Could not find $prog. Exiting.\n"; 
-	}
-	else { 
-	    die "Could not find $prog. ".
-		"Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
-	}
+    if (-e $exepath && -x $exepath) {
+        return $exepath;
+    }
+    else { 
+        die "Could not find $prog. ".
+            "Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n";
     }
 }
 

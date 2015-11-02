@@ -119,20 +119,14 @@ sub _run_getorf {
     }
 }
 
-sub _find_prog {
-    my ($getorf);
+sub _find_getorf {
+    my $getorf;
     my @path = split /:|;/, $ENV{PATH};
 
     for my $p (@path) {
 	my $prog = File::Spec->catfile($p, 'getorf');
-	
-	# Instead of just testing if getorf exists and is executable 
-	# we want to make sure we have permissions, so we try to 
-	# invoke getorf and examine the output. 
-	my ($getorf_path, $getorf_err) = capture { system([0..5], "$prog --help"); };
 
-	if ($getorf_err =~ /Version\: EMBOSS/) { 
-	    #say "Using getorf located at: $path";
+	if (-e $prog) {
 	    $getorf = $prog;
 	}
     }
@@ -143,7 +137,6 @@ sub _find_prog {
     else { 
 	die "Could not find getorf. ".
 	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n"; 
-	}
     }
 }
 
@@ -175,7 +168,7 @@ sub _seqct {
 	}
 	close $fh;
     }
-    return (\$seqct,\%seqhash);
+    return (\$seqct, \%seqhash);
 }
 
 sub _sort_seqs {

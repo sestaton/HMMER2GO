@@ -154,7 +154,7 @@ sub _fetch_hmm {
 sub _run_hmmpress {
     my ($dbname, $keyword) = @_;
 
-    my $hmmpress = _find_prog("hmmpress");
+    my $hmmpress = _find_prog('hmmpress');
     my $hmmdb    = File::Spec->catfile($dbname, $keyword.".hmm");
     my @hmmfiles;
 
@@ -172,7 +172,7 @@ sub _run_hmmpress {
 
     my @hmm_res;
     try {
-	@hmm_res = capture([0..5], "$hmmpress $hmmdb");
+	@hmm_res = capture([0..5], $hmmpress, $hmmdb);
     }
     catch {
 	die "\nERROR: hmmpress exited. Here is the exception: $_\n";
@@ -182,35 +182,25 @@ sub _run_hmmpress {
 }
 
 sub _find_prog {
-    my $prog = shift;
-    my $path = capture([0..5], "which $prog");
-    chomp $path;
-    
-    if ($path !~ /$prog$/) {
-	say "Could not find $prog in PATH. Will keep looking.";
-	$path = "/usr/local/hmmer/latest/bin/$prog";           # path at work
+    my ($prog) = @_;
+    my @path = split /:|;/, $ENV{PATH};
+
+    my $exepath;
+
+    for my $p (@path) {
+        my $exe = File::Spec->catfile($p, $prog);
+        
+	if (-e $exe) {
+	    $exepath = $exe;
+	}
     }
 
-    # Instead of just testing if hmmscan exists and is executable 
-    # we want to make sure we have permissions, so we try to 
-    # invoke hmmscan and examine the output. 
-    my @hmmscan_out = capture([0..5], "$path -h");
-
-    for my $hmm_out (@hmmscan_out) {
-	if ($hmm_out =~ /^\# $prog/) { 
-	    #say "Using $prog located at: $path";
-	    return $path;
-	}
-	elsif ($hmm_out =~ /No such file or directory$/) { 
-	    die "Could not find $prog. Exiting.\n"; 
-	}
-	elsif ($hmm_out eq '') { 
-	    die "Could not find $prog. Exiting.\n"; 
-	}
-	else { 
-	    die "Could not find $prog. ".
-		"Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
-	}
+    if (-e $exepath && -x $exepath) {
+	return $exepath;
+    }
+    else { 
+	die "Could not find $prog. ".
+	    "Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
     }
 }
 
