@@ -16,7 +16,8 @@ for my $opt (@menu) {
     next if $opt =~ /^hmmer2go|^ *$/;
     $opt =~ s/^\s+//;
     my ($option, $desc) = split /\s+/, $opt;
-    ++$opts if $option;
+    ++$opts if $option =~ /^-/;
+    #    say STDERR $option;
 }
 
 is( $opts, 1, 'Correct number of options for hmmer2go fetchmap' );
