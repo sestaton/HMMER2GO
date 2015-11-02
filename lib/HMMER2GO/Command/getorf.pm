@@ -236,22 +236,14 @@ sub _getorf {
 
     my $orffile = $fname."_orfs";
 
-    my $getorfcmd = "$getorf ".
-	            "-sequence ".
-		    "$fname ".
-		    "-outseq ".
-		    "$orffile ".
-		    "-minsize ".
-		    "$orflen ".
-		    "-find ".
-		    "$find ".
-		    "-auto ";
+    my @getorfcmd = ($getorf, "-sequence", $fname, "-outseq", $orffile, "-minsize", $orflen, 
+		     "-find", $find, "-auto");
 
     if (defined $nomet) {
-	$getorfcmd .= "-nomethionine";
+	push @getorfcmd, "-nomethionine";
     }
 
-    my ($stdout, $stderr, @res) = capture { system([0..5], $getorfcmd); };
+    my ($stdout, $stderr, @res) = capture { system([0..5], @getorfcmd); };
 
     unlink $fname;
 
