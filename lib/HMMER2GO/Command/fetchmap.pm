@@ -5,7 +5,6 @@ use 5.010;
 use strict;
 use warnings;
 use HMMER2GO -command;
-use IPC::System::Simple qw(system);
 use File::Basename;
 use Net::FTP;
 use Carp;
