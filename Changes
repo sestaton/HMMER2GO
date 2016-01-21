@@ -1,6 +1,10 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.1	01/21/2016	Vancouver, BC
+
+- Fix bug in expected Pfam mappings based on new entries.
+
 0.17	11/02/2015	Vancouver, BC
 
 - Remove use of spawning a new shell for executing programs.
