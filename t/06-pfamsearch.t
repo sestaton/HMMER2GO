@@ -36,8 +36,8 @@ for my $res (@result) {
     }
 }
 
-is( $hmmnum, 13, 'Found the correct number of HMMs for the search term' );
-is( $dbnum,  4, 'Found the HMMs in the correct number of databases' );
+is( $hmmnum, 7, 'Found the correct number of HMMs for the search term' );
+is( $dbnum,  4,  'Found the HMMs in the correct number of databases' );
 
 ok( -s $outfile, 'Output file of descriptions produced' );
 
