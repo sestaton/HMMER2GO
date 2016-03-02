@@ -63,7 +63,8 @@ sub _run_getorf {
         # Because we are appending the ORFs from each sequence to the same output,
         # there is the possibility to add to existing data, if the file exists. So,
         # test to make sure it does not exist.
-	die "\nERROR: $outfile already exists. Exiting.\n";
+	say STDERR "\nERROR: $outfile already exists. Exiting.\n";
+	exit 1;
     }
 
     my $fcount = 0;
@@ -79,7 +80,8 @@ sub _run_getorf {
 	say "\n========== Searching for ORFs with minimum length of $orflen." if $verbose;
     } 
     else {
-	die "\nERROR: No sequences were found! Check input. Exiting.\n";
+	say STDERR "\nERROR: No sequences were found! Check input. Exiting.\n";
+	exit 1;
     }
 
     my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
@@ -135,8 +137,9 @@ sub _find_getorf {
 	return $getorf;
     }
     else { 
-	die "Could not find getorf. ".
-	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n"; 
+	say STDERR "\nERROR: Could not find getorf. ".
+	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n";
+	exit 1;
     }
 }
 
@@ -158,10 +161,11 @@ sub _seqct {
 	    # unexpected renaming of sequences, so warn that it's not this script doing
 	    # the renaming.
 	    if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
-		die "ERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting."; 
+		say STDERR "\nERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting.";
+		exit 1;
 	    }
 	    elsif ($name eq '') { 
-		say "WARNING: Sequences appear to have no identifiers. Continuing."; 
+		say STDERR "\nWARNING: Sequences appear to have no identifiers. Continuing."; 
 	    }
 	    $seqhash{$name} = $seq;
 	    $seqct++;
@@ -190,8 +194,6 @@ sub _sort_seqs {
     close $fh;
 
     if (!$allorfs) {
-	# modified from:
-	# http://stackoverflow.com/a/5958473
 	my $max;
 	my %hash_max;
 	keys %seqhash; # reset iterator
@@ -202,7 +204,12 @@ sub _sort_seqs {
 	    }
 	    $hash_max{$key} = $value if $max == length($value);
 	}
-	
+	my @orfs = keys %hash_max;
+	if (@orfs > 1) {
+	    say STDERR "\nWARNING: More than one ORF has the same max length, will report all ORFs with ".
+		"max length for this sequence.";
+	    say STDERR "The ORF identifiers are: ", join ", ", @orfs;
+	}
 	return \%hash_max;
     }
     else {
@@ -252,7 +259,7 @@ sub _revcom {
 	return ($name, $revcom);
     }
     else {
-	warn "Not going to reverse protein sequence.";
+	say STDERR "\nWARNING: Not going to reverse protein sequence.";
 	return ($name, $seq);
     }
 }
