@@ -12,8 +12,8 @@ my @menu     = capture([0..5], "$hmmer2go help getorf");
 
 my ($opts, $orfs) = (0, 0);
 my $infile        = File::Spec->catfile('t', 'test_data', 't_seqs_nt.fas');
-my $infilegz      = File::Spec->catfile('t', 'test_data', 't_seqs_nt_gz.fas');
-my $infilebz      = File::Spec->catfile('t', 'test_data', 't_seqs_nt_bz.fas');
+my $infilegz      = File::Spec->catfile('t', 'test_data', 't_seqs_nt_gz.fas.gz');
+my $infilebz      = File::Spec->catfile('t', 'test_data', 't_seqs_nt_bz.fas.bz2');
 my $outfile_long  = File::Spec->catfile('t', 'test_data', 't_orfs_long.faa');
 my $outfile_all   = File::Spec->catfile('t', 'test_data', 't_orfs_all.faa');
 unlink $outfile_long if -e $outfile_long;
@@ -29,10 +29,10 @@ for my $opt (@menu) {
 
 is( $opts, 8, 'Correct number of options for hmmer2go getorf' );
 
-for my $file (qw($infile $infilegz $infilebz)) {
+for my $file ($infile, $infilegz, $infilebz) {
     unlink $outfile_long if defined $outfile_long && -e $outfile_long;
     ## Find longest ORF only
-    my @result_long = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_long -t 0");
+    my @result_long = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0");
 
     ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
 
@@ -43,11 +43,11 @@ for my $file (qw($infile $infilegz $infilebz)) {
     }
     close $longin;
     
-    is( $orfs, 30, 'Expected number of ORFs found for test data when only keeping longest ORFs' );
+    is( $orfs, 50, 'Expected number of ORFs found for test data when only keeping longest ORFs' );
     $orfs = 0;
     
     ## Find all ORFs
-    my @result_all = capture([0..5], "$hmmer2go getorf -i $infile -o $outfile_all -t 0 -a");
+    my @result_all = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_all -t 0 -a");
  
     ok( -e $outfile_all, 'Successfully ran getorf and produced the expected output' );
 
@@ -59,7 +59,7 @@ for my $file (qw($infile $infilegz $infilebz)) {
     close $allin;
     unlink $outfile_all;
 
-    is( $orfs, 52, 'Expected number of ORFs found for test data when keeping all ORFs' );
+    is( $orfs, 172, 'Expected number of ORFs found for test data when keeping all ORFs' );
     $orfs = 0;
 }
 
