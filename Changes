@@ -1,6 +1,10 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.2	03/01/2016	Vancouver, BC
+
+- Fix bug in output of wrong type of ORF.
+
 0.17.1	01/21/2016	Vancouver, BC
 
 - Fix bug in expected Pfam mappings based on new entries.

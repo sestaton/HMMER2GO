@@ -13,14 +13,14 @@ use File::Temp;
 
 sub opt_spec {
     return (    
-	[ "infile|i=s",  "The fasta files to be translated"                       ],
-	[ "outfile|o=s", "A file to place the translated sequences"               ],
-	[ "orflen|l=i",  "The minimum length for which to report an ORF"          ],
-        [ "all|a",       "Annotate all the ORFs, not just the longest one"        ],
-	[ "translate|t", "Determines what to report for each ORF"                 ],
-	[ "sameframe|s", "Report all ORFs in the same (sense) frame"              ],
-	[ "nomet|nm",    "Do not report only those ORFs starting with Methionine" ],
-	[ "verbose|v",   "Print results to the terminal"                          ],
+	[ "infile|i=s",    "The fasta files to be translated"                       ],
+	[ "outfile|o=s",   "A file to place the translated sequences"               ],
+	[ "orflen|l=i",    "The minimum length for which to report an ORF"          ],
+        [ "all|a",         "Annotate all the ORFs, not just the longest one"        ],
+	[ "translate|t=i", "Determines what to report for each ORF"                 ],
+	[ "sameframe|s",   "Report all ORFs in the same (sense) frame"              ],
+	[ "nomet|nm",      "Do not report only those ORFs starting with Methionine" ],
+	[ "verbose|v",     "Print results to the terminal"                          ],
     );
 }
 
@@ -57,7 +57,7 @@ sub execute {
 
 sub _run_getorf {
     my ($getorf, $infile, $outfile, $find, 
-	$allorfs, $orflen, $nomet, $sense, $verbose) = @_;
+	$orflen, $allorfs, $nomet, $sense, $verbose) = @_;
 
     if (-e $outfile) { 
         # Because we are appending the ORFs from each sequence to the same output,
