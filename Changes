@@ -1,9 +1,9 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.17.2	03/01/2016	Vancouver, BC
+0.17.2	03/02/2016	Vancouver, BC
 
-- Fix bug in output of wrong type of ORF.
+- Fix bug in output of wrong type of ORF (previously only generating translated ORFs).
 - Fix syntax error in getorf tests that was keeping all the input files from being tested.
 - Add warning for getorf command for cases where multiple ORFs have the max length.
 
