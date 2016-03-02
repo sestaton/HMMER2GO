@@ -4,6 +4,7 @@ Version	Date	Location
 0.17.2	03/01/2016	Vancouver, BC
 
 - Fix bug in output of wrong type of ORF.
+- Fix syntax error in getorf tests that was keeping all the input files from being tested.
 
 0.17.1	01/21/2016	Vancouver, BC
 
