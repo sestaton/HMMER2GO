@@ -105,6 +105,8 @@ sub _get_term_file {
     $ftp->get($file) or die "get failed ", $ftp->message;
     my $lsize = -s $file;
 
+    $ftp->quit;
+
     die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
 	unless $rsize == $lsize;
 

@@ -174,6 +174,8 @@ sub _fetch_mappings {
     $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
+    $ftp->quit;
+
     warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
         unless $rsize == $lsize;
 
