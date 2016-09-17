@@ -10,9 +10,10 @@ perl:
 before_install: 
   - sudo apt-get update -qq
   - sudo apt-get install -qq emboss
+  - cpanm -n Devel::Cover::Report::Coveralls
   - ./build/ci/run_build.sh
 
-script: perl Makefile.PL && make && make test
+script: perl Makefile.PL && make && cover -test -report coveralls
 
 after_failure: cat /home/travis/.cpanm/build.log
 
