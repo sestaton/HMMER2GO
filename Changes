@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.3	09/17/2016	Vancouver, BC
+
+- Add --outfile flag to 'run' command to make the usage a bit easier to understand
+  since the output is required by other commands.
+
 0.17.2	03/02/2016	Vancouver, BC
 
 - Fix bug in output of wrong type of ORF (previously only generating translated ORFs).
