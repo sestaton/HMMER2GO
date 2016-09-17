@@ -3,7 +3,7 @@ HMMER2GO
 
 Annotate DNA sequences for Gene Ontology terms
 
-[![Build Status](https://travis-ci.org/sestaton/HMMER2GO.svg?branch=master)](https://travis-ci.org/sestaton/HMMER2GO)
+[![Build Status](https://travis-ci.org/sestaton/HMMER2GO.svg?branch=master)](https://travis-ci.org/sestaton/HMMER2GO) [![Coverage Status](https://coveralls.io/repos/github/sestaton/HMMER2GO/badge.svg?branch=master)](https://coveralls.io/github/sestaton/HMMER2GO?branch=master)
 
 **DEPENDENCIES**
 
