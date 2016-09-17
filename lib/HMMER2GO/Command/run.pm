@@ -14,10 +14,11 @@ use Try::Tiny;
 
 sub opt_spec {
     return (    
-	[ "program|p=s",  "The program to run for domain identification (NOT IMPLEMENTED: Defaults to hmmscan)"          ],
+	[ "program|p=s",  "The program to run for domain identification (NOT IMPLEMENTED: Defaults to hmmscan)" ],
 	[ "infile|i=s",   "The fasta file of translated amino acid sequences"     ],
 	[ "cpus|n=i",     "The number of CPUs to use for the search"              ],
 	[ "database|d=s", "The database to search against (typically Pfam-A.hmm)" ],
+	[ "outfile|o=s",  "The report file to store matches against the database" ],
     );
 }
 
@@ -30,7 +31,7 @@ sub validate_args {
     }
     else {
 	$self->usage_error("Too few arguments.") 
-	    unless $opt->{infile} && $opt->{database};
+	    unless $opt->{infile} && $opt->{database} && $opt->{outfile};
     }
 } 
 
@@ -42,14 +43,15 @@ sub execute {
     my $infile   = $opt->{infile};
     my $database = $opt->{database};
     my $cpus     = $opt->{cpus};
+    my $outfile  = $opt->{outfile};
 
     my $hmmscan = _find_prog("hmmscan");
 
-    my $result = _run_hmmscan($hmmscan, $infile, $database, $cpus);
+    my $result = _run_hmmscan($hmmscan, $infile, $database, $cpus, $outfile);
 }
 
 sub _run_hmmscan {
-    my ($hmmscan, $infile, $database, $cpus) = @_;
+    my ($hmmscan, $infile, $database, $cpus, $outfile) = @_;
 
     my $tempfile;
     if ($infile =~ /\.gz$|\.bz2/) {
@@ -58,9 +60,8 @@ sub _run_hmmscan {
 
     my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
     my ($dname, $dpath, $dsuffix) = fileparse($database, qr/\.[^.]*/);
-    my $outfile   = $iname."_".$dname.".out";
     my $domtblout = $iname."_".$dname.".domtblout";
-    my $tblout    = $iname."_".$dname.".tblout";
+    my $out = $iname."_".$dname.".out";
 
     $cpus //= 1;
 
@@ -68,7 +69,7 @@ sub _run_hmmscan {
 	die "\nERROR: $outfile already exists. Exiting.\n";
     }
     
-    my @hmmscan_cmd = ($hmmscan, "-o", $outfile, "--tblout", $tblout, "--domtblout", $domtblout,
+    my @hmmscan_cmd = ($hmmscan, "-o", $out, "--tblout", $outfile, "--domtblout", $domtblout,
 		       "--acc", "--noali", "--cpu", $cpus, $database);
 
     if ($infile =~ /\.gz|\.bz2/) {
@@ -155,7 +156,7 @@ __END__
 
 =head1 SYNOPSIS    
 
- hmmer2go run -i seqs.fas -db Pfam-A.hmm -n 4
+ hmmer2go run -i seqs.fas -db Pfam-A.hmm -n 4 -o seqs_orfs_Pfam-A.tsv
 
 =head1 DESCRIPTION
   
@@ -179,7 +180,15 @@ S. Evan Staton, C<< <statonse at gmail.com> >>
 
 =item -i, --infile
 
-The fasta file to be translated.
+ The fasta file to be translated.
+
+=item -d, --database
+
+ The database to search against (typically Pfam-A.hmm)
+
+=item -o, --outfile
+
+ The report file to store matches against the database
 
 =back
 

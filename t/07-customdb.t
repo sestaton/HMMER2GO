@@ -29,7 +29,7 @@ my @db_result = capture([0..5], "$hmmer2go pfamsearch -t $term -o $outfile -d");
 ok( -e $customdb, 'Expected HMM database created' );
 unlink $outfile;
 
-my @run_result = capture([0..5], "$hmmer2go run -i $infile -d $customdb" );
+my @run_result = capture([0..5], "$hmmer2go run -i $infile -d $customdb -o $tblout" );
 say @run_result;
 ok( -e $outfile,   'Expected raw output of HMMscan from hmmer2go search' );
 ok( -e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search' );

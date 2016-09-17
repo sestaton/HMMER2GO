@@ -33,7 +33,7 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is( $opts, 4, 'Correct number of options for hmmer2go run' );
+is( $opts, 5, 'Correct number of options for hmmer2go run' );
 
 SKIP: {
     skip 'skip lengthy tests', 9 unless $full_test; 
@@ -42,7 +42,7 @@ SKIP: {
     compress_files($infile, $infilegz, $infilebz);
  
     for my $file (qw($infile $infilegz $infilebz)) {
-	my @result = capture([0..5], "$hmmer2go run -i $infile -d $db");
+	my @result = capture([0..5], "$hmmer2go run -i $infile -d $db -o $tblout");
 	my $out = File::Spec->catfile('t', 'test_data', $outfile);
 	my $dom = File::Spec->catfile('t', 'test_data', $domtblout);
 	my $tbl = File::Spec->catfile('t', 'test_data', $tblout);
