@@ -44,7 +44,7 @@ Starting with a file of DNA sequences, we first want to get the longest open rea
 
 Next, we search our ORFs for coding domains. 
 
-    hmmer2go run -i genes_orfs.faa -d Pfam-A.hmm 
+    hmmer2go run -i genes_orfs.faa -d Pfam-A.hmm -o genes_orf_Pfam-A.tblout
 
 Now we can map the protein domain matches to GO terms.
 
