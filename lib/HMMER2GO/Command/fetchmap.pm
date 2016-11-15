@@ -76,13 +76,15 @@ sub _fetch_mappings {
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or warn "Cannot connect to $host: $@, will retry.";
 
-    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
-
+    $ftp->login 
+	or warn "Cannot login ", $ftp->message, " will retry.";
     $ftp->cwd($dir)
 	or warn "Cannot change working directory ", $ftp->message, " will retry.";
 
-    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
-    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
+    my $rsize = $ftp->size($file) 
+	or warn "Could not get size ", $ftp->message, " will retry.";
+    $ftp->get($file, $outfile) 
+	or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
     $ftp->quit;
