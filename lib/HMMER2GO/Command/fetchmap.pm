@@ -7,6 +7,7 @@ use warnings;
 use HMMER2GO -command;
 use File::Basename;
 use Net::FTP;
+use IPC::System::Simple qw(system);
 use Carp;
 
 sub opt_spec {
@@ -34,7 +35,10 @@ sub execute {
     my $outfile  = $opt->{outfile};
     my $attempts = 3;
  
-    my $result = _retry($attempts, \&_fetch_mappings, $outfile);
+    my $success = _retry($attempts, \&_fetch_mappings, $outfile);
+    unless ($success) {
+	_fetch_mappings_wget($outfile);
+    }
 }
 
 sub _retry {
@@ -56,7 +60,8 @@ sub _retry {
       redo attempt;
   }
 
-    croak "\nERROR: Failed to get mapping file after multiple attempts: $@";
+    warn "\nFailed to get mapping file after multiple attempts: $@. Will retry one more time.";
+    return 0;
 }
 
 sub _fetch_mappings {
@@ -64,9 +69,9 @@ sub _fetch_mappings {
 
     $outfile //= 'pfam2go';
 
-    my $host = "ftp.geneontology.org";
-    my $dir  = "/pub/go/external2go";
-    my $file = "pfam2go";
+    my $host = 'ftp.geneontology.org';
+    my $dir  = '/pub/go/external2go';
+    my $file = 'pfam2go';
 
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or warn "Cannot connect to $host: $@, will retry.";
@@ -82,10 +87,28 @@ sub _fetch_mappings {
 
     $ftp->quit;
 
-    warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
-	unless $rsize == $lsize;
-    
-    return 1 if $rsize == $lsize;
+    if (defined $lsize && $lsize == $rsize) {
+	return 1;
+    }
+    else {
+	$lsize //= 0;
+	warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
+	return 0;
+    }    
+}
+
+sub _fetch_mappings_wget {
+    my ($outfile) = @_;
+
+    my $host = 'ftp://ftp.geneontology.org';
+    my $dir  = 'pub/go/external2go';
+    my $file = 'pfam2go';
+    my $endpoint = join "/", $host, $dir, $file;
+
+    system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+
+    return;
 }
 
 1;
