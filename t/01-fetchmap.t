@@ -22,7 +22,7 @@ for my $opt (@menu) {
 
 is( $opts, 1, 'Correct number of options for hmmer2go fetchmap' );
 
-my $result = system([0..5], "$hmmer2go fetchmap -o $file");
+my @result_all = capture([0..5], "$hmmer2go fetchmap -o $file");
 
 ok( -e $file, 'Successfully fetched pfam2go mappings' );
 
