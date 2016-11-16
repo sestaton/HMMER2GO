@@ -60,7 +60,7 @@ sub _retry {
       redo attempt;
   }
 
-    warn "\nFailed to get mapping file after multiple attempts: $@. Will retry one more time.";
+    say STDERR "\nFailed to get mapping file after multiple attempts: $@. Will retry one more time.";
     return 0;
 }
 
@@ -94,7 +94,7 @@ sub _fetch_mappings {
     }
     else {
 	$lsize //= 0;
-	warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
+	say STDERR "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
 	return 0;
     }    
 }

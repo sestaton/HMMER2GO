@@ -42,13 +42,19 @@ sub execute {
     my $map      = $opt->{map};
     my $keep     = 1;
     my $attempts = 3;
+    my $mappings;
 
     if (!$pfam2go || ! -e $pfam2go) {
-	$pfam2go = _retry($attempts, \&_fetch_mappings);
+	#$pfam2go = _retry($attempts, \&_fetch_mappings);
+	$mappings = 'pfam2go';
+	my $success = _retry($attempts, \&_fetch_mappings, $mappings);
+	unless ($success) {
+	    _fetch_mappings_wget($mappings);
+	}
 	$keep--;
     }
 
-    my $result = _map_go_terms($infile, $pfam2go, $outfile, $map, $keep);
+    my $result = _map_go_terms($infile, $mappings, $outfile, $map, $keep);
 }
 
 sub _map_go_terms {
@@ -63,7 +69,7 @@ sub _map_go_terms {
     if ($map) {
 	$mapfile = $outfile;
 	$mapfile =~ s/\..*//g;
-	$mapfile .= "_GOterm_mapping.tsv";
+	$mapfile .= '_GOterm_mapping.tsv';
 	open $map_fh, '>', $mapfile or die "\nERROR: Could not open file: $mapfile\n";
     }
 
@@ -135,51 +141,75 @@ sub _map_go_terms {
 }
 
 sub _retry {
-    my ($attempts, $func) = @_;
-  attempt: {
-      my $result;
+    my ($attempts, $func, $outfile) = @_;
+    # this is modified from something by Kent Frederic
+    # http://stackoverflow.com/a/1071877/1543853
+    attempt : {
+	my $result;
 
       # if it works, return the result
-      return $result if eval { $result = $func->(); 1 };
+	return $result if eval { $result = $func->($outfile); 1 };
 
       # if we have 0 remaining attempts, stop trying.
-      last attempt if $attempts < 1;
+	last attempt if $attempts < 1;
 
       # sleep for 1 second, and then try again.
-      sleep 1;
-      $attempts--;
-      redo attempt;
-  }
+	sleep 1;
+	$attempts--;
+	redo attempt;
+    }
 
-    croak "\nERROR: Failed to get mapping file after multiple attempts: $@";
+    say STDERR "\nFailed to get mapping file after multiple attempts: $@. Will retry one more time.";
+    return 0;
 }
 
 sub _fetch_mappings {
-    my $outfile = 'pfam2go';
-    unlink $outfile if -e $outfile;
-    
-    my $host = "ftp.geneontology.org";
-    my $dir  = "/pub/go/external2go";
-    my $file = "pfam2go";
+    my ($outfile) = @_;
+
+    $outfile //= 'pfam2go';
+
+    my $host = 'ftp.geneontology.org';
+    my $dir  = '/pub/go/external2go';
+    my $file = 'pfam2go';
 
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-	or warn "Cannot connect to $host: $@ will retry.";
+	or warn "Cannot connect to $host: $@, will retry.";
 
-    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
-
+    $ftp->login 
+	or warn "Cannot login ", $ftp->message, " will retry.";
     $ftp->cwd($dir)
-        or warn "Cannot change working directory ", $ftp->message, " will retry.";
+	or warn "Cannot change working directory ", $ftp->message, " will retry.";
 
-    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
-    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
+    my $rsize = $ftp->size($file) 
+	or warn "Could not get size ", $ftp->message, " will retry.";
+    $ftp->get($file, $outfile) 
+	or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
     $ftp->quit;
 
-    warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
-        unless $rsize == $lsize;
+    if (defined $lsize && $lsize == $rsize) {
+	return 1;
+    }
+    else {
+	$lsize //= 0;
+	say STDERR "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
+	return 0;
+    }    
+}
 
-    return $outfile if $rsize == $lsize;
+sub _fetch_mappings_wget {
+    my ($outfile) = @_;
+
+    my $host = 'ftp://ftp.geneontology.org';
+    my $dir  = 'pub/go/external2go';
+    my $file = 'pfam2go';
+    my $endpoint = join "/", $host, $dir, $file;
+
+    system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+
+    return;
 }
 
 sub mk_key { join "~~", @_ }
