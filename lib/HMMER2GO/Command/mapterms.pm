@@ -42,19 +42,17 @@ sub execute {
     my $map      = $opt->{map};
     my $keep     = 1;
     my $attempts = 3;
-    my $mappings;
 
     if (!$pfam2go || ! -e $pfam2go) {
-	#$pfam2go = _retry($attempts, \&_fetch_mappings);
-	$mappings = 'pfam2go';
-	my $success = _retry($attempts, \&_fetch_mappings, $mappings);
+	$pfam2go = 'pfam2go';
+	my $success = _retry($attempts, \&_fetch_mappings, $pfam2go);
 	unless ($success) {
-	    _fetch_mappings_wget($mappings);
+	    _fetch_mappings_wget($pfam2go);
 	}
-	$keep--;
+	$keep--;	
     }
 
-    my $result = _map_go_terms($infile, $mappings, $outfile, $map, $keep);
+    my $result = _map_go_terms($infile, $pfam2go, $outfile, $map, $keep);
 }
 
 sub _map_go_terms {
