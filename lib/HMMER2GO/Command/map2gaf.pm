@@ -123,7 +123,7 @@ sub _get_term_file {
 sub _fetch_terms_wget {
     my ($outfile) = @_;
 
-    my $host = 'ftp.geneontology.org';
+    my $host = 'ftp://ftp.geneontology.org';
     my $dir  = '/pub/go/doc';
     my $file = 'GO.terms_alt_ids';
     my $endpoint = join "/", $host, $dir, $file;
