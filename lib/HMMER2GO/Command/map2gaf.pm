@@ -57,23 +57,23 @@ sub _generate_go_association {
     ##     That is where the hardcoded fields below come from, which works fine with
     ##     Ontologizer, though we may want to make this an option for other
     ##     purposes.
-    say $out "!gaf-version: 2.0";
+    say $out '!gaf-version: 2.0';
 
     my %gohash;
-    while (<$go>) {
-	chomp;
-	next if /^!/;
-	my @go_data = split;
+    while (my $line = <$go>) {
+	chomp $line;
+	next if $line =~ /^!/;
+	my @go_data = split /\t/, $line;
 	next unless defined $go_data[0] && defined $go_data[-1];
-	next if $go_data[-1] eq "obs";
+	next if $go_data[-1] eq 'obs';
 	$gohash{$go_data[0]} = $go_data[-1];
     }
     close $go;
 
-    while (<$in>) {
-	chomp;
-	my @go_mappings = split /\t/, $_;
-	my $dbstring = "db.".$go_mappings[0];
+    while (my $line = <$in>) {
+	chomp $line;
+	my @go_mappings = split /\t/, $line;
+	my $dbstring = 'db.'.$go_mappings[0];
 	my @go_terms = split /\,/, $go_mappings[1];
 	for my $term (@go_terms) {
 	    if (exists $gohash{$term}) {
@@ -89,28 +89,49 @@ sub _generate_go_association {
 }
 
 sub _get_term_file {
-    my $host = "ftp.geneontology.org";
-    my $dir  = "/pub/go/doc";
-    my $file = "GO.terms_alt_ids";
+    my $host = 'ftp.geneontology.org';
+    my $dir  = '/pub/go/doc';
+    my $file = 'GO.terms_alt_ids';
  
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or die "Cannot connect to $host: $@";
 
-    $ftp->login or die "Cannot login ", $ftp->message;
+    $ftp->login 
+	or die "Cannot login ", $ftp->message;
 
     $ftp->cwd($dir)
 	or die "Cannot change working directory ", $ftp->message;
 
-    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
-    $ftp->get($file) or die "get failed ", $ftp->message;
+    my $rsize = $ftp->size($file) 
+	or die "Could not get size ", $ftp->message;
+    $ftp->get($file) 
+	or die "get failed ", $ftp->message;
     my $lsize = -s $file;
 
     $ftp->quit;
 
-    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
-	unless $rsize == $lsize;
+    unless (defined $lsize && $lsize == $rsize) {
+	_fetch_terms_wget($file);
+    }
+
+    #die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+	#unless $rsize == $lsize;
 
     return $file;
+}
+
+sub _fetch_terms_wget {
+    my ($outfile) = @_;
+
+    my $host = 'ftp.geneontology.org';
+    my $dir  = '/pub/go/doc';
+    my $file = 'GO.terms_alt_ids';
+    my $endpoint = join "/", $host, $dir, $file;
+
+    system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+
+    return;
 }
 
 1;
