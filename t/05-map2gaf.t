@@ -25,8 +25,8 @@ for my $opt (@menu) {
 
 is( $opts, 4, 'Correct number of options for hmmer2go map2gaf' );
 
-my @result1 = capture([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
-#system([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
+#my @result1 = capture([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
+system([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
 ok( -e $outfile, 'Expected output from hmmer2go map2gaf' );
 unlink $infile;
 unlink $outfile;
