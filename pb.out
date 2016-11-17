@@ -1,0 +1,8 @@
+Fetching perl 5.22.2 as /home/statonse/perl5/perlbrew/dists/perl-5.22.2.tar.bz2
+Download http://www.cpan.org/src/5.0/perl-5.22.2.tar.bz2 to /home/statonse/perl5/perlbrew/dists/perl-5.22.2.tar.bz2
+Installing /home/statonse/perl5/perlbrew/build/perl-5.22.2 into ~/perl5/perlbrew/perls/perl-5.22.2
+
+This could take a while. You can run the following command on another shell to track the status:
+
+  tail -f ~/perl5/perlbrew/build.perl-5.22.2.log
+
