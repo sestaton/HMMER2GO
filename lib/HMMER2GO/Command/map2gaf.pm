@@ -85,7 +85,7 @@ sub _generate_go_association {
     close $in;
     close $out;
 
-    unlink $gofile;
+    #unlink $gofile;
 }
 
 sub _get_term_file {
@@ -97,15 +97,15 @@ sub _get_term_file {
 	or die "Cannot connect to $host: $@";
 
     $ftp->login 
-	or die "Cannot login ", $ftp->message;
+	or die "Cannot login: ", $ftp->message;
 
     $ftp->cwd($dir)
-	or die "Cannot change working directory ", $ftp->message;
+	or die "Cannot change working directory: ", $ftp->message;
 
     my $rsize = $ftp->size($file) 
-	or die "Could not get size ", $ftp->message;
+	or die "Could not get size: ", $ftp->message;
     $ftp->get($file) 
-	or die "get failed ", $ftp->message;
+	or die "FTP get failed with the message: ", $ftp->message;
     my $lsize = -s $file;
 
     $ftp->quit;
