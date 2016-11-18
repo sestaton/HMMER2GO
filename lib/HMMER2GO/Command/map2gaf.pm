@@ -110,12 +110,18 @@ sub _get_term_file {
 
     $ftp->quit;
 
+    undef $lsize;
     unless (defined $lsize && $lsize == $rsize) {
-	_fetch_terms_wget($file);
+	my $outfile = _fetch_terms_wget($file);
+	$lsize = -s $outfile;
+	if (defined $lsize && $lsize == $rsize) {
+            say STDERR "Successfully fetched complete file: $file (local size: $lsize, remote size: $rsize).";
+        }
+        else {
+            say STDERR "Failed to fetch complete file ($file) after multiple attempts. This is a bug, please report it. Exiting";
+	    exit(1);
+        }
     }
-
-    #die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
-	#unless $rsize == $lsize;
 
     return $file;
 }
@@ -131,7 +137,7 @@ sub _fetch_terms_wget {
     system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
 	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
-    return;
+    return $outfile;
 }
 
 1;

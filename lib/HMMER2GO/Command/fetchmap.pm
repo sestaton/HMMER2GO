@@ -35,9 +35,18 @@ sub execute {
     my $outfile  = $opt->{outfile};
     my $attempts = 3;
  
-    my $success = _retry($attempts, \&_fetch_mappings, $outfile);
+    my ($success, $rsize) = _retry($attempts, \&_fetch_mappings, $outfile);
+    $success = 0;
     unless ($success) {
-	_fetch_mappings_wget($outfile);
+	my $file = _fetch_mappings_wget($outfile);
+	my $lsize = -s $file;
+	if (defined $lsize && $lsize == $rsize) {
+	    say STDERR "Successfully fetched complete file: $file (local size: $lsize, remote size: $rsize).";
+	}
+	else {
+	    say STDERR "Failed to fetch complete file ($file) after multiple attempts. This is a bug, please report it. Exiting";
+	    exit(1);
+	}
     }
 }
 
@@ -46,10 +55,10 @@ sub _retry {
     # this is modified from something by Kent Frederic
     # http://stackoverflow.com/a/1071877/1543853
   attempt : {
-      my $result;
+      my ($result, $size);
 
       # if it works, return the result
-      return $result if eval { $result = $func->($outfile); 1 };
+      return ($result, $size) if eval { ($result, $size) = $func->($outfile); 1 };
 
       # if we have 0 remaining attempts, stop trying.
       last attempt if $attempts < 1;
@@ -90,12 +99,12 @@ sub _fetch_mappings {
     $ftp->quit;
 
     if (defined $lsize && $lsize == $rsize) {
-	return 1;
+	return (1, $rsize);
     }
     else {
 	$lsize //= 0;
 	say STDERR "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
-	return 0;
+	return (0, $rsize);
     }    
 }
 
@@ -110,7 +119,7 @@ sub _fetch_mappings_wget {
     system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
 	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
-    return;
+    return $outfile;
 }
 
 1;
