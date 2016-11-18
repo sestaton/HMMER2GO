@@ -77,14 +77,14 @@ sub _fetch_mappings {
 	or warn "Cannot connect to $host: $@, will retry.";
 
     $ftp->login 
-	or warn "Cannot login ", $ftp->message, " will retry.";
+	or warn "Cannot login: ", $ftp->message, " will retry.";
     $ftp->cwd($dir)
-	or warn "Cannot change working directory ", $ftp->message, " will retry.";
+	or warn "Cannot change working directory: ", $ftp->message, " will retry.";
 
     my $rsize = $ftp->size($file) 
-	or warn "Could not get size ", $ftp->message, " will retry.";
+	or warn "Could not get size: ", $ftp->message, " will retry.";
     $ftp->get($file, $outfile) 
-	or warn "get failed ", $ftp->message, " will retry.";
+	or warn "FTP get failed with the message: ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
     $ftp->quit;
