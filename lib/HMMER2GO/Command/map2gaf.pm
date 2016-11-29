@@ -133,8 +133,11 @@ sub _fetch_terms_wget {
     my $dir  = '/pub/go/doc';
     my $file = 'GO.terms_alt_ids';
     my $endpoint = join "/", $host, $dir, $file;
+    my $cmd = "wget -q -O $outfile $endpoint";
+    #say STDERR "CMD: $cmd";
 
-    system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+    #system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+    system([0..5], $cmd) == 0
 	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
     return $outfile;
