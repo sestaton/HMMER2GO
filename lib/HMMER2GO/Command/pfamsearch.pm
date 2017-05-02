@@ -7,13 +7,13 @@ use warnings;
 use HMMER2GO -command;
 use File::Spec;
 use File::Basename;
-use File::Path qw(make_path);
 use File::Find;
+use File::Path          qw(make_path);
+use IPC::System::Simple qw(system capture);
 use HTTP::Tiny;
+use Try::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
-use IPC::System::Simple qw(system capture);
-use Try::Tiny;
 
 sub opt_spec {
     return (    
@@ -69,8 +69,8 @@ sub _search_by_keyword {
         die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
     }
 
-    my $pfamxml = "pfam_search_$keyword".".xml";
-    open my $pfout, '>', $pfamxml or die "\nERROR: Could not open file: $pfamxml";
+    my $pfamxml = "pfam_search_$keyword.xml";
+    open my $pfout, '>', $pfamxml or die "\nERROR: Could not open file: $pfamxml\n";
     say $pfout $response->{content};
     close $pfout;
 
@@ -94,10 +94,10 @@ sub _search_by_keyword {
 	    say "Found $resultnum HMMs for $keyword in $dbnum database(s).";
 	}
 
-	open my $out, '>', $outfile;
+	open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
 	say $out "Accession\tID\tDescription";
 
-	my $te = HTML::TableExtract->new( headers => [qw(Accession ID Description Seq_info)] );
+	my $te = HTML::TableExtract->new( headers => [ qw(Accession ID Description Seq_info)] );
 	$te->parse_file($pfamxml);
 	
 	for my $ts ($te->tables) {
@@ -119,12 +119,13 @@ sub _get_search_results {
     my ($resultnum, $dbnum);
 
     $keyword =~ s/\+/ /g;
-    open my $in, '<', $pfamxml;
-    while (<$in>) {
-	if (/We found \<strong\>(\d+)\<\/strong\> unique results/) {
+    open my $in, '<', $pfamxml or die "\nERROR: Could not open file: $pfamxml\n";
+    while (my $line = <$in>) {
+	chomp $line;
+	if ($line =~ /We found \<strong\>(\d+)\<\/strong\> unique results/) {
 	    $resultnum = $1;
 	}
-	if (/\(&quot\;\<em\>$keyword\<\/em\>&quot\;\)\, in \<strong\>(\d+)\<\/strong\>/) {
+	if ($line =~ /\&quot\;\<em\>$keyword\<\/em\>\&quot\; in \<strong\>(\d+)\<\/strong\>/) {
 	    $dbnum = $1;
 	}
     }
@@ -146,7 +147,7 @@ sub _fetch_hmm {
     }
 
     my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
-    open my $hmmout, '>', $hmmfile;
+    open my $hmmout, '>', $hmmfile or die "\nERROR: Could not open file: $hmmfile\n";
     say $hmmout $response->{content};
     close $hmmout;
 }
@@ -199,8 +200,7 @@ sub _find_prog {
 	return $exepath;
     }
     else { 
-	die "Could not find $prog. ".
-	    "Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
+	die "Could not find $prog. Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
     }
 }
 
