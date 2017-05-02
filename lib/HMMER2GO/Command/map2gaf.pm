@@ -60,19 +60,19 @@ sub _generate_go_association {
     say $out "!gaf-version: 2.0";
 
     my %gohash;
-    while (<$go>) {
-	chomp;
-	next if /^!/;
-	my @go_data = split;
+    while (my $line = <$go>) {
+	chomp $line;
+	next if $line =~ /^!/;
+	my @go_data = split /\t/, $line;
 	next unless defined $go_data[0] && defined $go_data[-1];
 	next if $go_data[-1] eq "obs";
 	$gohash{$go_data[0]} = $go_data[-1];
     }
     close $go;
 
-    while (<$in>) {
-	chomp;
-	my @go_mappings = split /\t/, $_;
+    while (my $line = <$in>) {
+	chomp $line;
+	my @go_mappings = split /\t/, $line;
 	my $dbstring = "db.".$go_mappings[0];
 	my @go_terms = split /\,/, $go_mappings[1];
 	for my $term (@go_terms) {
@@ -89,9 +89,9 @@ sub _generate_go_association {
 }
 
 sub _get_term_file {
-    my $host = "ftp.geneontology.org";
-    my $dir  = "/pub/go/doc";
-    my $file = "GO.terms_alt_ids";
+    my $host = 'ftp.geneontology.org';
+    my $dir  = '/pub/go/doc';
+    my $file = 'GO.terms_alt_ids';
  
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or die "Cannot connect to $host: $@";
