@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.4	04/02/2017	Vancouver, BC
+
+- Fix regex for getting database number with 'pfamsearch' command (resolves #11).
+- Use lexical file handles everywhere.
+- Test that we can open file handles everywhere.
+
 0.17.3	09/17/2016	Vancouver, BC
 
 - Add --outfile flag to 'run' command to make the usage a bit easier to understand
