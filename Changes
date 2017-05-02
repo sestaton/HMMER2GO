@@ -1,7 +1,7 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.17.4	04/02/2017	Vancouver, BC
+0.17.4	05/02/2017	Vancouver, BC
 
 - Fix regex for getting database number with 'pfamsearch' command (resolves #11).
 - Use lexical file handles everywhere.
