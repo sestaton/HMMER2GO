@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use Cwd;
-use Capture::Tiny qw(:all);
+use Capture::Tiny       qw(:all);
 use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
@@ -72,7 +72,7 @@ sub _run_getorf {
     $find //= 0;
     $orflen //= 80;
 
-    open my $out, ">>", $outfile or die "\nERROR: Could not open file: $outfile";
+    open my $out, ">>", $outfile or die "\nERROR: Could not open file: $outfile\n";
 
     my ($fasnum, $seqhash) = _seqct($infile);
 
