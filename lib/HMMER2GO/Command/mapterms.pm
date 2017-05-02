@@ -73,7 +73,7 @@ sub _map_go_terms {
 	next if $line =~ /^\#/;
 	my ($target_name, $accession, $query_name, $accession_q, $E_value_full, 
 	    $score_full, $bias_full, $E_value_best, $score_best, $bias_best, 
-	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, @description_of_target) = split /\t/, $line;
+	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, @description_of_target) = split /\s+/, $line;
 	my $description = join q{ }, @description_of_target;
 	my $family = $accession;
 	$family =~ s/\..*//;
