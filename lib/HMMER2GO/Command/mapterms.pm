@@ -68,22 +68,18 @@ sub _map_go_terms {
     }
 
     my %pfamids;
-    while (<$in>) {
-	chomp;
-	next if /^\#/;
+    while (my $line = <$in>) {
+	chomp $line;
+	next if $line =~ /^\#/;
 	my ($target_name, $accession, $query_name, $accession_q, $E_value_full, 
 	    $score_full, $bias_full, $E_value_best, $score_best, $bias_best, 
-	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, @description_of_target) = split;
-	my $description = join " ", @description_of_target;
+	    $exp, $reg, $clu, $ov, $env, $dom, $rev, $inc, @description_of_target) = split /\t/, $line;
+	my $description = join q{ }, @description_of_target;
 	my $family = $accession;
 	$family =~ s/\..*//;
 	my $query_match_val = mk_key($family, $accession, $E_value_full, $description);
-	if (exists $pfamids{$query_name}) {
-	    push @{$pfamids{$query_name}}, $query_match_val;
-	}
-	else {
-	    $pfamids{$query_name} = [ $query_match_val ];
-	}
+
+	push @{$pfamids{$query_name}}, $query_match_val;
     }
     close $in;
 
