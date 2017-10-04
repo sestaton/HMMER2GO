@@ -98,13 +98,13 @@ sub _run_getorf {
 	    # sort to keep seqs with multiple ORFs together in the output
 	    for my $name (sort keys %$seqs) {
 		my $ntseq = $seqs->{$name};
-		$ntseq =~ s/.{60}\K/\n/g;
 		if (defined $sense) {
 		    my ($sense_name, $sense_seq) = _revcom($name, $ntseq);
 		    $sense_seq =~ s/.{60}\K/\n/g;
 		    say $out join "\n", ">".$sense_name, $sense_seq;
 		}
 		else {
+		    $ntseq =~ s/.{60}\K/\n/g;
 		    say $out join "\n", ">".$name, $ntseq;
 		}
 	    }
