@@ -1,6 +1,10 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.5	10/04/2017	Vancouver, BC
+
+- Fix bug with newlines being inserted into sequences when printing ORFs in the same frame.
+
 0.17.4	05/02/2017	Vancouver, BC
 
 - Fix regex for getting database number with 'pfamsearch' command (resolves #11).
