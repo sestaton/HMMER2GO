@@ -1,6 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.6	01//09/2018	Vancouver, BC
+
+- Add option to only report one ORF with the 'getorf' command when multiple ORFs have the same max
+  length.
+- Remove use of 'each' on hash in 'getorf' command in favor of the more stable 'keys' function.
+
 0.17.5	10/04/2017	Vancouver, BC
 
 - Fix bug with newlines being inserted into sequences when printing ORFs in the same frame.
