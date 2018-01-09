@@ -13,14 +13,15 @@ use File::Temp;
 
 sub opt_spec {
     return (    
-	[ "infile|i=s",    "The fasta files to be translated"                       ],
-	[ "outfile|o=s",   "A file to place the translated sequences"               ],
-	[ "orflen|l=i",    "The minimum length for which to report an ORF"          ],
-        [ "all|a",         "Annotate all the ORFs, not just the longest one"        ],
-	[ "translate|t=i", "Determines what to report for each ORF"                 ],
-	[ "sameframe|s",   "Report all ORFs in the same (sense) frame"              ],
-	[ "nomet|nm",      "Do not report only those ORFs starting with Methionine" ],
-	[ "verbose|v",     "Print results to the terminal"                          ],
+	[ "infile|i=s",    "The fasta files to be translated"                                     ],
+	[ "outfile|o=s",   "A file to place the translated sequences"                             ],
+	[ "orflen|l=i",    "The minimum length for which to report an ORF"                        ],
+        [ "all|a",         "Annotate all the ORFs, not just the longest one"                      ],
+	[ "translate|t=i", "Determines what to report for each ORF"                               ],
+	[ "sameframe|s",   "Report all ORFs in the same (sense) frame"                            ],
+	[ "nomet|nm",      "Do not report only those ORFs starting with Methionine"               ],
+	[ "choose|c",      "Pick only one ORF to report if multiple of the same length are found" ], 
+	[ "verbose|v",     "Print results to the terminal"                                        ],
     );
 }
 
@@ -40,24 +41,28 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     exit(0) if $self->app->global_options->{man};
-    my $infile  = $opt->{infile};
-    my $outfile = $opt->{outfile};
-    my $orflen  = $opt->{orflen};
-    my $allorfs = $opt->{all};
-    my $find    = $opt->{translate};
-    my $nomet   = $opt->{nomet};
-    my $sense   = $opt->{sameframe};
-    my $verbose = $opt->{verbose};
+    #my $infile  = $opt->{infile};
+    #my $outfile = $opt->{outfile};
+    #my $orflen  = $opt->{orflen};
+    #my $allorfs = $opt->{all};
+    #my $find    = $opt->{translate};
+    #my $nomet   = $opt->{nomet};
+    #my $sense   = $opt->{sameframe};
+    #my $verbose = $opt->{verbose};
 
-    my $getorf = _find_getorf();
-
-    my $result = _run_getorf($getorf, $infile, $outfile, $find, $orflen, 
-			     $allorfs, $nomet, $sense, $verbose);
+    #my $getorf = _find_getorf();
+    
+    my $result = _run_getorf($opt); #$getorf, $infile, $outfile, $find, $orflen, 
+    #$allorfs, $nomet, $sense, $verbose);
 }
 
 sub _run_getorf {
-    my ($getorf, $infile, $outfile, $find, 
-	$orflen, $allorfs, $nomet, $sense, $verbose) = @_;
+    my ($opt) = @_; #$getorf, $infile, $outfile, $find, 
+    #$orflen, $allorfs, $nomet, $sense, $verbose) = @_;
+
+    my $getorf = _find_getorf();
+    my ($infile, $outfile, $find, $orflen, $allorfs, $nomet, $sense, $verbose, $choose) = 
+	@{$opt}{qw(infile outfile translate orflen all nomet sameframe verbose choose)};
 
     if (-e $outfile) { 
         # Because we are appending the ORFs from each sequence to the same output,
@@ -69,14 +74,16 @@ sub _run_getorf {
 
     my $fcount = 0;
     my $orfseqstot = 0;
+    $choose //= 0;
     $find //= 0;
     $orflen //= 80;
+    
 
     open my $out, ">>", $outfile or die "\nERROR: Could not open file: $outfile\n";
 
     my ($fasnum, $seqhash) = _seqct($infile);
 
-    if ($$fasnum >= 1) {
+    if ($fasnum >= 1) {
 	say "\n========== Searching for ORFs with minimum length of $orflen." if $verbose;
     } 
     else {
@@ -93,7 +100,7 @@ sub _run_getorf {
 
 	if (-s $orffile) {
 	    $orfseqstot++;
-	    my $seqs = _sort_seqs($orffile, $sense, $allorfs);
+	    my $seqs = _sort_seqs($orffile, $sense, $allorfs, $choose);
 
 	    # sort to keep seqs with multiple ORFs together in the output
 	    for my $name (sort keys %$seqs) {
@@ -172,11 +179,11 @@ sub _seqct {
 	}
 	close $fh;
     }
-    return (\$seqct, \%seqhash);
+    return ($seqct, \%seqhash);
 }
 
 sub _sort_seqs {
-    my ($file, $sense, $allorfs) = @_;
+    my ($file, $sense, $allorfs, $choose) = @_;
  
     my $fh = _get_fh($file);
     my %seqhash;
@@ -197,18 +204,38 @@ sub _sort_seqs {
 	my $max;
 	my %hash_max;
 	keys %seqhash; # reset iterator
-	while (my ($key, $value) = each %seqhash) {
-	    if ( !defined $max || length($value) > $max ) {
+	#while (my ($key, $value) = each %seqhash) {
+	for my $key (keys %seqhash) { 
+	    if ( !defined $max || length($seqhash{$key}) > $max ) {
 		%hash_max = ();
-		$max = length($value);
+		$max = length($seqhash{$key});
 	    }
-	    $hash_max{$key} = $value if $max == length($value);
+	    $hash_max{$key} = $seqhash{$key} if $max == length($seqhash{$key});
 	}
 	my @orfs = keys %hash_max;
 	if (@orfs > 1) {
-	    say STDERR "\nWARNING: More than one ORF has the same max length, will report all ORFs with ".
-		"max length for this sequence.";
-	    say STDERR "The ORF identifiers are: ", join ", ", @orfs;
+	    if ($choose) {
+		my %one_seq;
+		for my $k (keys %hash_max) {
+		    if ($k !~ /reverse/i) { 
+			$one_seq{$k} = $hash_max{$k};
+			last;
+		    }
+		}
+		if (%one_seq) {
+		    return \%one_seq;
+		}
+		else {
+		    my $k = (keys %hash_max)[0];
+		    $one_seq{$k} = $hash_max{$k};
+		    return \%one_seq;
+		}
+	    }
+	    else {
+		say STDERR "\nWARNING: More than one ORF has the same max length, will report all ORFs with ".
+		    "max length for this sequence.";
+		say STDERR "The ORF identifiers are: ", join ", ", @orfs;
+	    }
 	}
 	return \%hash_max;
     }
@@ -235,7 +262,7 @@ sub _getorf {
 
     my @getorfcmd = ($getorf, "-sequence", $fname, "-outseq", $orffile, "-minsize", $orflen, 
 		     "-find", $find, "-auto");
-
+    
     if (defined $nomet) {
 	push @getorfcmd, "-nomethionine";
     }

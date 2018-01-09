@@ -27,7 +27,7 @@ for my $opt (@menu) {
     ++$opts if $option;
 }
 
-is( $opts, 8, 'Correct number of options for hmmer2go getorf' );
+is( $opts, 9, 'Correct number of options for hmmer2go getorf' );
 
 for my $file ($infile, $infilegz, $infilebz) {
     unlink $outfile_long if defined $outfile_long && -e $outfile_long;
