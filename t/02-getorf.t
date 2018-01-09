@@ -5,7 +5,7 @@ use File::Spec;
 use autodie             qw(open);
 use IPC::System::Simple qw(system capture);
 
-use Test::More tests => 13;
+use Test::More tests => 19;
 
 my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @menu     = capture([0..5], "$hmmer2go help getorf");
@@ -43,6 +43,22 @@ for my $file ($infile, $infilegz, $infilebz) {
     }
     close $longin;
     
+    is( $orfs, 50, 'Expected number of ORFs found for test data when only keeping longest ORFs' );
+    $orfs = 0;
+    unlink $outfile_long;
+
+    ## Find longest ORF only, choosing one if multiple exist at the same max length
+    @result_long = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0 -c");
+
+    ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
+
+    open my $longinc, '<', $outfile_long;
+
+    while (<$longinc>) {
+        ++$orfs if /^>/;
+    }
+    close $longinc;
+
     is( $orfs, 50, 'Expected number of ORFs found for test data when only keeping longest ORFs' );
     $orfs = 0;
     
