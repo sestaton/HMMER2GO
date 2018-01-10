@@ -15,7 +15,7 @@ if (eval ($ExtUtils::MakeMaker::VERSION) <= 6.55) {
 
 WriteMakefile(
     NAME             => 'HMMER2GO',
-    AUTHOR           => q{S. Evan Staton <statonse@gmail.com>},
+    AUTHOR           => q{S. Evan Staton <evan at evanstaton.com>},
     VERSION_FROM     => 'bin/hmmer2go',
     LICENSE          => 'MIT',
     PL_FILES         => {},

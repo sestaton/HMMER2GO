@@ -36,7 +36,7 @@ sub validate_args {
 
 =head1 AUTHOR
 
-S. Evan Staton, C<< <statonse at gmail.com> >>
+S. Evan Staton, C<< <evan at evanstaton.com> >>
 
 =head1 BUGS
 
@@ -54,7 +54,7 @@ You can find documentation for this module with the perldoc command.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2014-2016 S. Evan Staton
+Copyright (C) 2014-2018 S. Evan Staton
 
 This program is distributed under the MIT (X11) License, which should be distributed with the package. 
 If not, it can be found here: L<http://www.opensource.org/licenses/mit-license.php>
