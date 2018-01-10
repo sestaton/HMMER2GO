@@ -74,7 +74,7 @@ Report any issues at the HMMER2GO issue tracker: https://github.com/sestaton/HMM
 
 **LICENSE AND COPYRIGHT**
 
-Copyright (C) 2014-2016 S. Evan Staton
+Copyright (C) 2014-2018 S. Evan Staton
 
 This program is distributed under the MIT (X11) License, which should be distributed with the package. 
 If not, it can be found here: http://www.opensource.org/licenses/mit-license.php
