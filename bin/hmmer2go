@@ -52,7 +52,7 @@ on which Perls have been tested.
 The MIT License should included with the project. 
 If not, it can be found at: L<http://opensource.org/licenses/mit-license.php>
 
-Copyright (C) 2014-2015 S. Evan Staton
+Copyright (C) 2014-2018 S. Evan Staton
  
 =head1 TESTED WITH:
 
@@ -83,7 +83,7 @@ Perl 5.20 (Red Hat Enterprise Linux Server release 5.9 (Tikanga))
 
 =head1 AUTHOR 
 
-S. Evan Staton, C<< <statonse at gmail.com> >>
+S. Evan Staton, C<< <evan at evanstaton.com> >>
 
 =head1 REQUIRED ARGUMENTS
 
@@ -94,12 +94,14 @@ S. Evan Staton, C<< <statonse at gmail.com> >>
    commands: list the application's commands
        help: display a command's help screen
  
-      fetch: Download the latest Pfam2GO mappings.
-     getorf: Run EMBOSS getorf and extract longest reading frames.
-    map2gaf: Generate association file for gene and GO term mappings.
-   mapterms: Map PFAM IDs from HMMscan search to GO terms.
-     search: Run HMMscan on translated ORFs against Pfam database.
 
+    fetchmap: Download the latest Pfam2GO mappings.
+      getorf: Run EMBOSS getorf and extract the reading frames.
+     map2gaf: Generate association file for gene and GO term mappings.
+    mapterms: Map PFAM IDs from HMMscan search to GO terms.
+  pfamsearch: Search terms against Pfam entries and create a custom HMM database.
+         run: Run HMMscan on translated ORFs against Pfam database.
+    
 =back
 
 =head1 OPTIONS
