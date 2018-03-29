@@ -1,14 +1,17 @@
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
+use File::Basename;
 use File::Spec;
 use autodie             qw(open);
-use IPC::System::Simple qw(system capture);
+use IPC::System::Simple qw(system);
+use Capture::Tiny       qw(capture);
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 
 my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
-my @menu     = capture([0..5], "$hmmer2go help getorf");
+my @menu     = capture { system([0..5], "$hmmer2go help getorf"); };
+@menu = map { split /\n/, $_ } @menu;
 
 my ($opts, $orfs) = (0, 0);
 my $infile        = File::Spec->catfile('t', 'test_data', 't_seqs_nt.fas');
@@ -30,9 +33,18 @@ for my $opt (@menu) {
 is( $opts, 9, 'Correct number of options for hmmer2go getorf' );
 
 for my $file ($infile, $infilegz, $infilebz) {
+    my ($name, $path, $suffix) = fileparse($file, qr/\.[^.]*/);
     unlink $outfile_long if defined $outfile_long && -e $outfile_long;
+
     ## Find longest ORF only
-    my @result_long = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0");
+    #say STDERR "$hmmer2go getorf -i $file -o $outfile_long -t 0";
+    my @result_long = capture { system([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0"); };
+    @result_long = map { split /\n/, $_ } @result_long;
+    if ($name eq 't_seqs_nt' && @result_long) {
+	my @ct = map { /(changing to)/i } @result_long;
+	# we are just capturing the warning message but this tells us the IDs were changed as expected
+	is( @ct, 2, 'Can handle malformed IDs and transform them correctly' );
+    }
 
     ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
 
@@ -48,7 +60,7 @@ for my $file ($infile, $infilegz, $infilebz) {
     unlink $outfile_long;
 
     ## Find longest ORF only, choosing one if multiple exist at the same max length
-    @result_long = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0 -c");
+    @result_long = capture { system([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0 -c"); };
 
     ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
 
@@ -63,7 +75,7 @@ for my $file ($infile, $infilegz, $infilebz) {
     $orfs = 0;
     
     ## Find all ORFs
-    my @result_all = capture([0..5], "$hmmer2go getorf -i $file -o $outfile_all -t 0 -a");
+    my @result_all = capture { system([0..5], "$hmmer2go getorf -i $file -o $outfile_all -t 0 -a"); };
  
     ok( -e $outfile_all, 'Successfully ran getorf and produced the expected output' );
 
