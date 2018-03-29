@@ -41,24 +41,12 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     exit(0) if $self->app->global_options->{man};
-    #my $infile  = $opt->{infile};
-    #my $outfile = $opt->{outfile};
-    #my $orflen  = $opt->{orflen};
-    #my $allorfs = $opt->{all};
-    #my $find    = $opt->{translate};
-    #my $nomet   = $opt->{nomet};
-    #my $sense   = $opt->{sameframe};
-    #my $verbose = $opt->{verbose};
-
-    #my $getorf = _find_getorf();
     
-    my $result = _run_getorf($opt); #$getorf, $infile, $outfile, $find, $orflen, 
-    #$allorfs, $nomet, $sense, $verbose);
+    my $result = _run_getorf($opt);
 }
 
 sub _run_getorf {
-    my ($opt) = @_; #$getorf, $infile, $outfile, $find, 
-    #$orflen, $allorfs, $nomet, $sense, $verbose) = @_;
+    my ($opt) = @_;
 
     my $getorf = _find_getorf();
     my ($infile, $outfile, $find, $orflen, $allorfs, $nomet, $sense, $verbose, $choose) = 
@@ -167,9 +155,13 @@ sub _seqct {
 	    # EMBOSS uses characters in identifiers as delimiters, which can produce some
 	    # unexpected renaming of sequences, so warn that it's not this script doing
 	    # the renaming.
-	    if ($name =~ /\:|\;|\||\(|\)|\.|\s/) { 
-		say STDERR "\nERROR: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Exiting.";
-		exit 1;
+	    my $namefix;
+	    if ($name =~ /\:|\;|\||\(|\)|\[|\]|\.|\s|\\|\//) { 
+		my $namefix = $name;
+		$namefix =~ s/\:|\;|\||\(|\)|\[|\]|\.|\s|\\|\//_/g;
+		say STDERR "WARNING: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Changing to '$namefix'.";
+		$name = $namefix;
+		#exit 1;
 	    }
 	    elsif ($name eq '') { 
 		say STDERR "\nWARNING: Sequences appear to have no identifiers. Continuing."; 
@@ -179,6 +171,7 @@ sub _seqct {
 	}
 	close $fh;
     }
+
     return ($seqct, \%seqhash);
 }
 
