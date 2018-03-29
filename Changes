@@ -1,7 +1,12 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.17.6	01//09/2018	Vancouver, BC
+0.17.7	03/29/2018	Vancouver, BC
+
+- Add method to transform identifiers that may cause problems for EMBOSS. Added tests for the expected
+  results of the method.
+
+0.17.6	01/09/2018	Vancouver, BC
 
 - Add option to only report one ORF with the 'getorf' command when multiple ORFs have the same max
   length.
