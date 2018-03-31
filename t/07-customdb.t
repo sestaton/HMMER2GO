@@ -2,7 +2,8 @@ use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use autodie             qw(open);
-use IPC::System::Simple qw(system capture);
+use IPC::System::Simple qw(system);
+use Capture::Tiny       qw(capture);
 use File::Path          qw(remove_tree);
 use File::Spec;
 
@@ -22,15 +23,15 @@ $outdir .= "_hmms";
 my $customdb = File::Spec->catfile($outdir, $db.".hmm");
 
 my $hmmer2go    = File::Spec->catfile('blib', 'bin', 'hmmer2go');
-my @result_long = capture([0..5], "$hmmer2go getorf -i $ntfile -o $infile -t 0");
+my @result_long = capture { system([0..5], "$hmmer2go getorf -i $ntfile -o $infile -t 0"); };
 ok( -e $infile, 'Successfully ran getorf and produced the expected output' );
 
-my @db_result = capture([0..5], "$hmmer2go pfamsearch -t $term -o $outfile -d");
+my @db_result = capture { system([0..5], "$hmmer2go pfamsearch -t $term -o $outfile -d"); };
 ok( -e $customdb, 'Expected HMM database created' );
 unlink $outfile;
 
-my @run_result = capture([0..5], "$hmmer2go run -i $infile -d $customdb -o $tblout" );
-say @run_result;
+my @run_result = capture { system([0..5], "$hmmer2go run -i $infile -d $customdb -o $tblout" ); };
+
 ok( -e $outfile,   'Expected raw output of HMMscan from hmmer2go search' );
 ok( -e $domtblout, 'Expected domain table output of HMMscan from hmmer2go search' );
 ok( -e $tblout,    'Expected hit table output of HMMscan from hmmer2go search' );
