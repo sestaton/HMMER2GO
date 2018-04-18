@@ -152,6 +152,7 @@ sub _seqct {
 	    my ($name, @seqparts) = split /\n/, $line;
 	    my $seq = join '', @seqparts;
 	    next unless defined $name && defined $seq;
+	    $name =~ s/\s+$//;
 	    # EMBOSS uses characters in identifiers as delimiters, which can produce some
 	    # unexpected renaming of sequences, so warn that it's not this script doing
 	    # the renaming.
@@ -366,7 +367,7 @@ A file to place the translated sequences.
  miss most of the genes or domains. By specifying this option, you can return all ORFs
  for each input sequence above a certain length (see the '--orflen' option above).
 
-=item -f, --find
+=item -t, --translate
 
  Determines what to report for each ORF. Argument may be one of [0-6]. (Default: 0).
  The descriptions below are copied straight from EMBOSS getorf help menu so there is no confusion.
@@ -391,6 +392,10 @@ Report all ORFs in the same (sense) frame.
 =item -nm, --nomet
 
 Do not report only those ORFs starting with Methionine (Default: Yes).
+
+=item -c, --choose
+
+If more than one ORF of the same length exists, choose one (NB: experimental).
 
 =item -h, --help
 
