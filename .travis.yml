@@ -10,7 +10,7 @@ perl:
 
 before_install: 
   - sudo apt-get update -qq
-  - sudo apt-get install -qq emboss
+  - sudo apt-get install -qq emboss zlib1g-dev libxml2-dev
   - cpanm -n Devel::Cover::Report::Coveralls
   - ./build/ci/run_build.sh
 
