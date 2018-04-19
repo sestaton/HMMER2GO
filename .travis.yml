@@ -11,10 +11,11 @@ perl:
 before_install: 
   - sudo apt-get update -qq
   - sudo apt-get install -qq emboss zlib1g-dev libxml2-dev
-  - cpanm -n Devel::Cover::Report::Coveralls
+#  - cpanm -n Devel::Cover::Report::Coveralls
   - ./build/ci/run_build.sh
 
-script: perl Makefile.PL && make && cover -test -report coveralls
+script: perl Makefile.PL && make test
+#&& cover -test -report coveralls
 
 after_failure: cat /home/travis/.cpanm/build.log
 
