@@ -17,12 +17,12 @@ The installation can be done with the following  command (note that this require
 
 For Ubuntu/Debian as the OS:
 
-    apt-get install -y emboss
+    apt-get install -y emboss zlib1g-dev libxml2-dev
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 For RHEL/Fedora:
 
-    yum install -y EMBOSS
+    yum install -y EMBOSS zlib-devel libxml2-devel
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 Alternatively, download the latest [release](https://github.com/sestaton/HMMER2GO/releases) and run the following command in the top directory:
