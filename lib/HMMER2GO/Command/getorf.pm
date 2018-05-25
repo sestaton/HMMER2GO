@@ -109,7 +109,7 @@ sub _run_getorf {
     close $out;
 
     if ($verbose) {
-	my $with_orfs_perc = sprintf("%.2f",$orfseqstot/$$fasnum);
+	my $with_orfs_perc = sprintf("%.2f",$orfseqstot/$fasnum);
 	say "\n========== $fcount and $$fasnum sequences in $infile.";
 	say "\n========== $orfseqstot sequences processed with ORFs above $orflen.";
 	say "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.";
