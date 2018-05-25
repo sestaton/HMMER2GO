@@ -119,14 +119,10 @@ sub _map_go_terms {
     unlink $pfam2go unless $keep;
 
     if ($map) {
-	#while (my ($seqid, $terms) = each %goterms) {
-	while (my $seqid = keys %goterms) {
+	for my $seqid (keys %goterms) {
 	    $map_ct++;
-	    #my @terms = split /\,/, $terms; #bugfix for #4
-	    my @terms = split /\,/, $goterms{$seqid}; #bugfix for #4
-	    my $termct = @terms;
+	    my $termct = () = split /\,/, $goterms{$seqid}; #bugfix for #4
 	    $go_ct += $termct;
-	    #say $map_fh join "\t", $seqid, $terms;
 	    say $map_fh join "\t", $seqid, $goterms{$seqid};
 	}
 	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
