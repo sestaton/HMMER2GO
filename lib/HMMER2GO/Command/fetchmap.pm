@@ -35,8 +35,10 @@ sub execute {
     my $outfile  = $opt->{outfile};
     my $attempts = 3;
 
-    unless (_fetch_mappings_curl($outfile)) {
-	my $success = _retry($attempts, \&_fetch_mappings, $outfile);
+    unless (_retry($attempts, \&_fetch_mappings, $outfile)) {
+	$outfile = _fetch_mappings_curl($outfile);
+	#unless (_fetch_mappings_curl($outfile)) {
+	#my $success = _retry($attempts, \&_fetch_mappings, $outfile);
     }
 }
 
@@ -75,13 +77,16 @@ sub _fetch_mappings {
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or warn "Cannot connect to $host: $@, will retry.";
 
-    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
+    $ftp->login('anonymous', 'anonymous@foo.com') 
+	or warn "Cannot login ", $ftp->message, " will retry.";
 
     $ftp->cwd($dir)
 	or warn "Cannot change working directory ", $ftp->message, " will retry.";
 
-    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
-    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
+    my $rsize = $ftp->size($file) 
+	or warn "Could not get size ", $ftp->message, " will retry.";
+    $ftp->get($file, $outfile) 
+	or warn "get failed ", $ftp->message, " will retry.";
     my $lsize = -s $outfile;
 
     $ftp->quit;
@@ -104,7 +109,7 @@ sub _fetch_mappings_curl {
     my $file = 'pfam2go';
     my $endpoint = join "/", $host, $dir, $file;
 
-    system([0..5], 'curl', '-sL', '-o', $outfile, $endpoint) == 0
+    system([0..5], 'curl', '-u', 'anonymous:anonymous@foo.com', '-sL', '-o', $outfile, $endpoint) == 0
 	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
     return $outfile;

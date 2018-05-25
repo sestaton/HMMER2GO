@@ -93,14 +93,15 @@ sub _get_term_file {
     my $dir  = '/pub/go/doc';
     my $file = 'GO.terms_alt_ids';
 
-    if (_fetch_terms_file_curl($file)) {
-	return $file;
-    }
-    else {
+    #if (_fetch_terms_file_curl($file)) {
+	#return $file;
+    #}
+    #else {
 	my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	    or die "Cannot connect to $host: $@";
 	
-	$ftp->login or die "Cannot login ", $ftp->message;
+	$ftp->login('anonymous', 'anonymous@foo.com') 
+	    or die "Cannot login ", $ftp->message;
 	
 	$ftp->cwd($dir)
 	    or die "Cannot change working directory ", $ftp->message;
@@ -111,8 +112,12 @@ sub _get_term_file {
 	
 	$ftp->quit;
 	
-	die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
-	    unless $rsize == $lsize;
+    #die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+    #unless $rsize == $lsize;
+    #}
+    unless ($rsize == $lsize) {
+	say STDERR "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize). Will try with curl.";
+	my $outfile = _fetch_terms_file_curl($file)
     }
 
     return $file;
@@ -126,7 +131,7 @@ sub _fetch_terms_file_curl {
     my $file = 'GO.terms_alt_ids';
     my $endpoint = join "/", $host, $dir, $file;
 
-    system([0..5], 'curl', '-sL', '-o', $outfile, $endpoint) == 0
+    system([0..5], 'curl', '-u', 'anonymous:anonymous@foo.com', '-sL', '-o', $outfile, $endpoint) == 0
         or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
     return $outfile;
