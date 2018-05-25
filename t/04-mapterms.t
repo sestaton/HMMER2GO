@@ -73,19 +73,28 @@ while (<$map>) {
 close $map;
 unlink $pfam2go;
 
-my @result3 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile");
-ok( -e $outfile, 'Expected output from hmmer2go mapterms without mapping file' );
-
-open my $out3, '<', $outfile;
-while (<$out3>) {
-    chomp;
-    my @f = split;
-    $nomapfile{$f[0]}++;
+my $devtests = 0;
+if (defined $ENV{HMMER2GO_ENV} && $ENV{HMMER2GO_ENV} eq 'development') {
+    $devtests = 1;
 }
-close $out3;
 
-is_deeply( \%mapped, \%nomapfile, 
-	  'Same genes and GO term numbers returned with or without user-supplied mapping file' );
-unlink $outfile;
+SKIP: {
+    skip 'skip network tests', 2 unless $devtests;
+
+    my @result3 = capture([0..5], "$hmmer2go mapterms -i $infile -o $outfile");
+    ok( -e $outfile, 'Expected output from hmmer2go mapterms without mapping file' );
+
+    open my $out3, '<', $outfile;     
+    while (<$out3>) {
+        chomp;
+    	my @f = split;
+        $nomapfile{$f[0]}++;
+    }
+    close $out3;
+
+    is_deeply( \%mapped, \%nomapfile, 
+    	  'Same genes and GO term numbers returned with or without user-supplied mapping file' );
+    unlink $outfile;
+}
 
 done_testing();

@@ -22,8 +22,16 @@ for my $opt (@menu) {
 
 is( $opts, 1, 'Correct number of options for hmmer2go fetchmap' );
 
-my $result = system([0..5], "$hmmer2go fetchmap -o $file");
+my $devtests = 0;
+if (defined $ENV{HMMER2GO_ENV} && $ENV{HMMER2GO_ENV} eq 'development') {
+    $devtests = 1;
+}
 
-ok( -e $file, 'Successfully fetched pfam2go mappings' );
+SKIP: {
+    skip 'skip network tests', 1 unless $devtests;
+    my $result = system([0..5], "$hmmer2go fetchmap -o $file");
+
+    ok( -e $file, 'Successfully fetched pfam2go mappings' );
+}
 
 done_testing();

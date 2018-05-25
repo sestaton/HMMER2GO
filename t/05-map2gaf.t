@@ -25,9 +25,18 @@ for my $opt (@menu) {
 
 is( $opts, 4, 'Correct number of options for hmmer2go map2gaf' );
 
-my @result1 = capture([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
-ok( -e $outfile, 'Expected output from hmmer2go map2gaf' );
+my $devtests = 0;
+if (defined $ENV{HMMER2GO_ENV} && $ENV{HMMER2GO_ENV} eq 'development') {
+    $devtests = 1;
+}
+
+SKIP: {
+    skip 'skip network tests', 1 unless $devtests;
+
+    my @result1 = capture([0..5], "$hmmer2go map2gaf -i $infile -o $outfile -s $species");
+    ok( -e $outfile, 'Expected output from hmmer2go map2gaf' );
+    unlink $outfile;
+}
 unlink $infile;
-unlink $outfile;
 
 done_testing();
