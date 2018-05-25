@@ -14,11 +14,11 @@ echo "Fetching GO mapping files"
 
 curl --verbose --progress-bar --ipv4 --connect-timeout 8 \
      --max-time 120 --retry 128 --ftp-ssl --disable-epsv --ftp-pasv \
-     -u "travis:${TRAVIS_FTP_PASS}" ftp://ftp.geneontology.org/pub/go/external2go/pfam2go \
+     -u "anonymous:anonymous@foo.com" ftp://ftp.geneontology.org/pub/go/external2go/pfam2go \
      --output pfam2go
 
 curl --verbose --progress-bar --ipv4 --connect-timeout 8 \
      --max-time 120 --retry 128 --ftp-ssl --disable-epsv --ftp-pasv \
-     -u "travis:${TRAVIS_FTP_PASS}" ftp://ftp.geneontology.org/pub/go/doc/GO.terms_alt_ids \
+     -u "anonymous:anonymous@foo.com" ftp://ftp.geneontology.org/pub/go/doc/GO.terms_alt_ids \
      --output GO.terms_alt_ids
 
