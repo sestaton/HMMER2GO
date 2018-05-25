@@ -1,3 +1,5 @@
+sudo: required
+
 language: perl
 perl:
   - "5.22"
@@ -8,9 +10,15 @@ perl:
 #  - "5.12"
 #  - "5.10"
 
+addons:
+  apt:
+    packages:
+    - openvpn
+
 before_install: 
   - sudo apt-get update -qq
   - sudo apt-get install -qq emboss zlib1g-dev libxml2-dev
+  - sudo openvpn path/to/conf.ovpn &>>openvpn-client.log &
 #  - cpanm -n Devel::Cover::Report::Coveralls
   - ./build/ci/run_build.sh
 
