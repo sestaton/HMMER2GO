@@ -34,10 +34,9 @@ sub execute {
     exit(0) if $self->app->global_options->{man};
     my $outfile  = $opt->{outfile};
     my $attempts = 3;
- 
-    my $success = _retry($attempts, \&_fetch_mappings, $outfile);
-    unless ($success) {
-	_fetch_mappings_wget($outfile);
+
+    unless (_fetch_mappings_curl($outfile)) {
+	my $success = _retry($attempts, \&_fetch_mappings, $outfile);
     }
 }
 
@@ -97,7 +96,7 @@ sub _fetch_mappings {
     }    
 }
 
-sub _fetch_mappings_wget {
+sub _fetch_mappings_curl {
     my ($outfile) = @_;
 
     my $host = 'ftp://ftp.geneontology.org';
@@ -105,10 +104,10 @@ sub _fetch_mappings_wget {
     my $file = 'pfam2go';
     my $endpoint = join "/", $host, $dir, $file;
 
-    system([0..5], 'wget', '-q', '-O', $outfile, $endpoint) == 0
+    system([0..5], 'curl', '-sL', '-o', $outfile, $endpoint) == 0
 	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
 
-    return;
+    return $outfile;
 }
 
 1;

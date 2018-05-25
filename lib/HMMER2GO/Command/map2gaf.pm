@@ -92,25 +92,44 @@ sub _get_term_file {
     my $host = 'ftp.geneontology.org';
     my $dir  = '/pub/go/doc';
     my $file = 'GO.terms_alt_ids';
- 
-    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-	or die "Cannot connect to $host: $@";
 
-    $ftp->login or die "Cannot login ", $ftp->message;
-
-    $ftp->cwd($dir)
-	or die "Cannot change working directory ", $ftp->message;
-
-    my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
-    $ftp->get($file) or die "get failed ", $ftp->message;
-    my $lsize = -s $file;
-
-    $ftp->quit;
-
-    die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
-	unless $rsize == $lsize;
+    if (_fetch_terms_file_curl($file)) {
+	return $file;
+    }
+    else {
+	my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
+	    or die "Cannot connect to $host: $@";
+	
+	$ftp->login or die "Cannot login ", $ftp->message;
+	
+	$ftp->cwd($dir)
+	    or die "Cannot change working directory ", $ftp->message;
+	
+	my $rsize = $ftp->size($file) or die "Could not get size ", $ftp->message;
+	$ftp->get($file) or die "get failed ", $ftp->message;
+	my $lsize = -s $file;
+	
+	$ftp->quit;
+	
+	die "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize)"
+	    unless $rsize == $lsize;
+    }
 
     return $file;
+}
+
+sub _fetch_terms_file_curl {
+    my ($outfile) = @_;
+
+    my $host = 'ftp://ftp.geneontology.org';
+    my $dir  = '/pub/go/doc';
+    my $file = 'GO.terms_alt_ids';
+    my $endpoint = join "/", $host, $dir, $file;
+
+    system([0..5], 'curl', '-sL', '-o', $outfile, $endpoint) == 0
+        or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+
+    return $outfile;
 }
 
 1;
