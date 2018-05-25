@@ -5,8 +5,6 @@ Version	Date	Location
 
 - Bug fix for #15 with trying to dereference a scalar. This was caused by a changing the return value of
   a method and not handling the change in the code.
-- Use curl by default for fetching files. On older Linux systems or on some networks Net::FTP seems to 
-  have issues for some reason. The original code will be used as a fallback in case curl fails.
 
 0.17.7	03/29/2018	Vancouver, BC
 
