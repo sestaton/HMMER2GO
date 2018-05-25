@@ -119,12 +119,15 @@ sub _map_go_terms {
     unlink $pfam2go unless $keep;
 
     if ($map) {
-	while (my ($seqid, $terms) = each %goterms) {
+	#while (my ($seqid, $terms) = each %goterms) {
+	while (my $seqid = keys %goterms) {
 	    $map_ct++;
-	    my @terms = split /\,/, $terms; #bugfix for #4
+	    #my @terms = split /\,/, $terms; #bugfix for #4
+	    my @terms = split /\,/, $goterms{$seqid}; #bugfix for #4
 	    my $termct = @terms;
 	    $go_ct += $termct;
-	    say $map_fh join "\t", $seqid, $terms;
+	    #say $map_fh join "\t", $seqid, $terms;
+	    say $map_fh join "\t", $seqid, $goterms{$seqid};
 	}
 	say "\n$map_ct query sequences with $go_ct GO terms mapped in file $mapfile.\n";
     }
@@ -161,7 +164,8 @@ sub _fetch_mappings {
     my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
 	or warn "Cannot connect to $host: $@ will retry.";
 
-    $ftp->login or warn "Cannot login ", $ftp->message, " will retry.";
+    $ftp->login('anonymous', 'anonymous@foo.com')
+	or warn "Cannot login ", $ftp->message, " will retry.";
 
     $ftp->cwd($dir)
         or warn "Cannot change working directory ", $ftp->message, " will retry.";
