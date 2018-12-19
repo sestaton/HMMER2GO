@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.17.9	12/19/2018	Vancouver, BC
+
+- Change search of PATH for programs to take the first occurrence of program instead of last.
+  Suggestion on github issue #16.
+
 0.17.8	05/25/2018	Vancouver, BC
 
 - Bug fix for #15 with trying to dereference a scalar. This was caused by a changing the return value of
