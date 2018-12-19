@@ -125,6 +125,7 @@ sub _find_getorf {
 
 	if (-e $prog) {
 	    $getorf = $prog;
+	    last;
 	}
     }
 
