@@ -133,6 +133,7 @@ sub _find_prog {
         
 	if (-e $exe) {
 	    $exepath = $exe;
+	    last;
 	}
     }
 
