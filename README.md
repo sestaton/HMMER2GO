@@ -3,38 +3,23 @@ HMMER2GO
 
 Annotate DNA sequences for Gene Ontology terms
 
-[![Build Status](https://travis-ci.org/sestaton/HMMER2GO.svg?branch=master)](https://travis-ci.org/sestaton/HMMER2GO) [![Coverage Status](https://coveralls.io/repos/github/sestaton/HMMER2GO/badge.svg?branch=master)](https://coveralls.io/github/sestaton/HMMER2GO?branch=master)
+[![Build Status](https://travis-ci.org/sestaton/HMMER2GO.svg?branch=master)](https://travis-ci.org/sestaton/HMMER2GO) [![Coverage Status](https://coveralls.io/repos/github/sestaton/HMMER2GO/badge.svg?branch=master)](https://coveralls.io/github/sestaton/HMMER2GO?branch=master) [![GitHub version](https://badge.fury.io/gh/sestaton%2FTransposome.svg)](https://badge.fury.io/gh/sestaton%2FTransposome)
 
-**DEPENDENCIES**
+### What is HMMER2GO?
 
-EMBOSS and HMMER version 3+ must be installed to use HMMER2GO. See the [installing dependencies](https://github.com/sestaton/HMMER2GO/wiki/Installing-dependencies) wiki page for instructions how to install these programs (or see below for Linux installation).
+HMMER2GO is a command line application to map DNA sequences, typically transcripts, to [Gene Ontology](http://geneontology.org/) based on the similarity of the query sequences to curated HMM models for protein families represented in [Pfam](http://pfam.xfam.org/).
+
+These GO term mappings allow you to make inferences about the function of the gene products, or changes in function in the case of expression studies. The GAF mapping file that is produced can be used with Ontologizer or other tools, to visualize a graph of the term relationships along with their signifcance values.
 
 **INSTALLATION**
 
-Perl must be installed to use HMMER2GO, and there are a couple of external modules required. Please download and install the latest [HMMER](hmmer.org) executables manually. The system versions available from the package manager are incompatible with the latest model formats.
+It is recommended to use [Docker](https://www.docker.com), as shown below:
 
-The installation can be done with the following  command (note that this requires [git](http://git-scm.com/)):
+    docker run -it --name hmmer2go-con -v $(pwd)/db:/db:Z sestaton/hmmer2go
 
-For Ubuntu/Debian as the OS:
+That will create a container called "hmmer2go-con" and start an interactive shell. The above assumes you have a directory called db in the working directory that contains your database files (Pfam HMM file that is formatted), and the input sequences. To run the full analysis, change to the mounted directory with cd db in your container and run the commands shown below.
 
-    apt-get install -y emboss zlib1g-dev libxml2-dev
-    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
-
-For RHEL/Fedora:
-
-    yum install -y EMBOSS zlib-devel libxml2-devel
-    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
-
-Alternatively, download the latest [release](https://github.com/sestaton/HMMER2GO/releases) and run the following command in the top directory:
-
-    perl Makefile.PL
-
-If any Perl dependencies are listed after running this command, install them through the CPAN shell (or any method you like). Then build and install the package.
-
-    perl Makefile.PL
-    make
-    make test
-    make install
+Alternatively, you can follow the steps in the [INSTALL](https://github.com/sestaton/HMMER2GO/blob/master/INSTALL.md) file and install HMMER2GO on any Mac or Linux, and likely Windows (though I have not tested yet, advice is welcome).
 
 **BRIEF USAGE**
 
@@ -74,7 +59,7 @@ Report any issues at the HMMER2GO issue tracker: https://github.com/sestaton/HMM
 
 **LICENSE AND COPYRIGHT**
 
-Copyright (C) 2014-2018 S. Evan Staton
+Copyright (C) 2014-2019 S. Evan Staton
 
 This program is distributed under the MIT (X11) License, which should be distributed with the package. 
 If not, it can be found here: http://www.opensource.org/licenses/mit-license.php

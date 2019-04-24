@@ -1,10 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.17.9	12/19/2018	Vancouver, BC
+0.17.9	04/19/2019	Vancouver, BC
 
 - Change search of PATH for programs to take the first occurrence of program instead of last.
   Suggestion on github issue #16.
+- Add Docker image usage instructions and expand install methods.
 
 0.17.8	05/25/2018	Vancouver, BC
 
