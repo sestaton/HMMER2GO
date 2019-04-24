@@ -199,7 +199,7 @@ sub _sort_seqs {
 	my $max;
 	my %hash_max;
 	keys %seqhash; # reset iterator
-	#while (my ($key, $value) = each %seqhash) {
+
 	for my $key (keys %seqhash) { 
 	    if ( !defined $max || length($seqhash{$key}) > $max ) {
 		%hash_max = ();
