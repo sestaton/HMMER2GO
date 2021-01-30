@@ -12,7 +12,7 @@ use File::Basename;
 use File::Temp;
 #use Data::Dump::Color;
 
-our $VERSION = '0.17.9';
+our $VERSION = '0.18.0';
 
 sub opt_spec {
     return (    
