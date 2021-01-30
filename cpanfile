@@ -10,3 +10,4 @@ requires 'HTTP::Tiny';
 requires 'XML::LibXML';
 requires 'HTML::TableExtract';
 requires 'Net::FTP';
+requires 'Bio::DB::Taxonomy::entrez';
