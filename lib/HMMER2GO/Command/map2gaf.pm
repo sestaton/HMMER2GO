@@ -54,7 +54,7 @@ sub _generate_go_association {
     $gofile = _get_term_file() if !$gofile;
     
     unless (-s $gofile) {
-	say STDERR "\nERROR: Could not fetch GO term file. Try manually: http://purl.obolibrary.org/obo/go.obo.\n";
+	say STDERR "\n[ERROR]: Could not fetch GO term file. Try manually: http://purl.obolibrary.org/obo/go.obo.\n";
 	exit(1);
     }
 
@@ -127,7 +127,7 @@ sub _generate_go_association {
 sub _parse_obo_to_terms {
     my ($gofile) = @_;
 
-    open my $fh, '<', $gofile or die "\nERROR: Could not open file: $gofile\n";;
+    open my $fh, '<', $gofile or die "\n[ERROR]: Could not open file: $gofile\n";;
     local $/ = ""; 
 
     my ($format, $version);
@@ -163,7 +163,7 @@ sub _get_term_file {
     }
 
     my $gofile = 'go.obo';
-    open my $out, '>', $gofile or die "\nERROR: Could not open file: $gofile\n";
+    open my $out, '>', $gofile or die "\n[ERROR]: Could not open file: $gofile\n";
     say $out $response->{content};
     close $out;
 
@@ -179,7 +179,7 @@ sub _fetch_terms_file_curl {
     my $endpoint = join "/", $host, $dir, $file;
 
     system([0..5], 'curl', '-u', 'anonymous:anonymous@foo.com', '-sL', '-o', $outfile, $endpoint) == 0
-        or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+        or die "\n[ERROR]: 'wget' failed. Cannot fetch map file. Please report this error.";
 
     return $outfile;
 }

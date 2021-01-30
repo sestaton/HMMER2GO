@@ -55,16 +55,16 @@ sub _map_go_terms {
     my ($infile, $pfam2go, $outfile, $map, $keep) = @_;
 
     ## create filehandles, if possible
-    open my $in, '<', $infile or die "\nERROR: Could not open file: $infile\n";
-    open my $pfams, '<', $pfam2go or die "\nERROR: Could not open file: $pfam2go\n";
-    open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
+    open my $in, '<', $infile or die "\n[ERROR]: Could not open file: $infile\n";
+    open my $pfams, '<', $pfam2go or die "\n[ERROR]: Could not open file: $pfam2go\n";
+    open my $out, '>', $outfile or die "\n[ERROR]: Could not open file: $outfile\n";
 
     my ($mapfile, $map_fh);
     if ($map) {
 	$mapfile = $outfile;
 	$mapfile =~ s/\..*//g;
 	$mapfile .= "_GOterm_mapping.tsv";
-	open $map_fh, '>', $mapfile or die "\nERROR: Could not open file: $mapfile\n";
+	open $map_fh, '>', $mapfile or die "\n[ERROR]: Could not open file: $mapfile\n";
     }
 
     my %pfamids;
@@ -146,7 +146,7 @@ sub _retry {
       redo attempt;
   }
 
-    croak "\nERROR: Failed to get mapping file after multiple attempts: $@";
+    croak "\n[ERROR]: Failed to get mapping file after multiple attempts: $@";
 }
 
 sub _fetch_mappings {
@@ -172,7 +172,7 @@ sub _fetch_mappings {
 
     $ftp->quit;
 
-    warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
+    warn "\n[WARNING]: Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
         unless $rsize == $lsize;
 
     return $outfile if $rsize == $lsize;

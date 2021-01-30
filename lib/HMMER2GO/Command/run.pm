@@ -66,7 +66,7 @@ sub _run_hmmscan {
     $cpus //= 1;
 
     if (-e $outfile) { 
-	die "\nERROR: $outfile already exists. Exiting.\n";
+	die "\n[ERROR]: $outfile already exists. Exiting.\n";
     }
     
     my @hmmscan_cmd = ($hmmscan, "-o", $out, "--tblout", $outfile, "--domtblout", $domtblout,
@@ -84,7 +84,7 @@ sub _run_hmmscan {
 	$exit_value = system([0..5], @hmmscan_cmd);
     }
     catch {
-	die "\nERROR: hmmscan exited with exit value $exit_value. Here is the exception: $_\n";
+	die "\n[ERROR]: hmmscan exited with exit value $exit_value. Here is the exception: $_\n";
     };
 
     unlink $tempfile if defined $tempfile && -e $tempfile;
@@ -105,7 +105,7 @@ sub _uncompress_input {
 				      UNLINK   => 0 );
 
 	$unc_filename = $ucfile->filename;
-	gunzip $file => $unc_filename or die "gunzip failed: $GunzipError\n";
+	gunzip $file => $unc_filename or die "\n[ERROR]: gunzip failed: $GunzipError\n";
     }
     elsif ($file =~ /\.bz2$/) {
 	my $infile = $file;
@@ -117,7 +117,7 @@ sub _uncompress_input {
                                       UNLINK   => 0 );
 
         $unc_filename = $ucfile->filename;
-        bunzip2 $file => $unc_filename or die "bunzip2 failed: $Bunzip2Error\n";
+        bunzip2 $file => $unc_filename or die "\n[ERROR]: bunzip2 failed: $Bunzip2Error\n";
     }
     return $unc_filename;
 }
@@ -141,7 +141,7 @@ sub _find_prog {
         return $exepath;
     }
     else { 
-        die "Could not find $prog. ".
+        die "\n[ERROR]: Could not find $prog. ".
             "Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n";
     }
 }

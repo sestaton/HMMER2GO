@@ -48,7 +48,7 @@ sub execute {
 
 
     if ($createdb && $dirname && -d $dirname) {
-	say "\nERROR: $dirname exists so it will not be overwritten. ".
+	say "\n[ERROR]: $dirname exists so it will not be overwritten. ".
 	    "Please specify a different directory name. Exiting.\n";
 	exit(1);
     }
@@ -70,7 +70,7 @@ sub _search_by_keyword {
     }
 
     my $pfamxml = "pfam_search_$keyword.xml";
-    open my $pfout, '>', $pfamxml or die "\nERROR: Could not open file: $pfamxml\n";
+    open my $pfout, '>', $pfamxml or die "\n[ERROR]: Could not open file: $pfamxml\n";
     say $pfout $response->{content};
     close $pfout;
 
@@ -80,7 +80,7 @@ sub _search_by_keyword {
 	$dbname = $keyword."_hmms" if !$dirname; # use expressive variable name
 	$dbname = $dirname if $dirname;
 	if (-d $dbname) {
-	    say "\nERROR: $dbname exists. Please choose a directory name for the database ".
+	    say "\n[ERROR]: $dbname exists. Please choose a directory name for the database ".
 		"so that no data is destroyed. Exiting.\n";
 	    exit(1);
 	}
@@ -94,7 +94,7 @@ sub _search_by_keyword {
 	    say "Found $resultnum HMMs for $keyword in $dbnum database(s).";
 	}
 
-	open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
+	open my $out, '>', $outfile or die "\n[ERROR]: Could not open file: $outfile\n";
 	say $out "Accession\tID\tDescription";
 
 	my $te = HTML::TableExtract->new( headers => [ qw(Accession ID Description Seq_info)] );
@@ -119,7 +119,7 @@ sub _get_search_results {
     my ($resultnum, $dbnum);
 
     $keyword =~ s/\+/ /g;
-    open my $in, '<', $pfamxml or die "\nERROR: Could not open file: $pfamxml\n";
+    open my $in, '<', $pfamxml or die "\n[ERROR]: Could not open file: $pfamxml\n";
     while (my $line = <$in>) {
 	chomp $line;
 	if ($line =~ /We found \<strong\>(\d+)\<\/strong\> unique results/) {
@@ -147,7 +147,7 @@ sub _fetch_hmm {
     }
 
     my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
-    open my $hmmout, '>', $hmmfile or die "\nERROR: Could not open file: $hmmfile\n";
+    open my $hmmout, '>', $hmmfile or die "\n[ERROR]: Could not open file: $hmmfile\n";
     say $hmmout $response->{content};
     close $hmmout;
 }
@@ -163,10 +163,10 @@ sub _run_hmmpress {
 	push @hmmfiles, $File::Find::name if -f and /\.hmm$/i;
 	  }, $dbname);
 
-    open my $hmmout, '>>', $hmmdb or die "\nERROR: Could not open file: $hmmdb\n";
+    open my $hmmout, '>>', $hmmdb or die "\n[ERROR]: Could not open file: $hmmdb\n";
 
     for my $file (@hmmfiles) {
-	open my $in, '<', $file or die "\nERROR: Could not open file: $file\n";
+	open my $in, '<', $file or die "\n[ERROR]: Could not open file: $file\n";
 	print $hmmout $_ while <$in>;
 	close $in;
     }
@@ -176,7 +176,7 @@ sub _run_hmmpress {
 	@hmm_res = capture([0..5], $hmmpress, $hmmdb);
     }
     catch {
-	die "\nERROR: hmmpress exited. Here is the exception: $_\n";
+	die "\n[ERROR]: hmmpress exited. Here is the exception: $_\n";
     };
 
     return $hmmdb;
@@ -201,7 +201,7 @@ sub _find_prog {
 	return $exepath;
     }
     else { 
-	die "Could not find $prog. Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
+	die "\n[ERROR]: Could not find $prog. Trying installing HMMER3 or adding it's location to your PATH. Exiting.\n"; 
     }
 }
 

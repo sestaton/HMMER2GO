@@ -61,7 +61,7 @@ sub _retry {
       redo attempt;
   }
 
-    warn "\nFailed to get mapping file after multiple attempts: $@. Will retry one more time.";
+    warn "\n[WARNING]: Failed to get mapping file after multiple attempts: $@. Will retry one more time.";
     return 0;
 }
 
@@ -96,7 +96,7 @@ sub _fetch_mappings {
     }
     else {
 	$lsize //= 0;
-	warn "Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
+	warn "\n[WARNING]: Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
 	return 0;
     }    
 }
@@ -110,7 +110,7 @@ sub _fetch_mappings_curl {
     my $endpoint = join "/", $host, $dir, $file;
 
     system([0..5], 'curl', '-u', 'anonymous:anonymous@foo.com', '-sL', '-o', $outfile, $endpoint) == 0
-	or die "\nERROR: 'wget' failed. Cannot fetch map file. Please report this error.";
+	or die "\n[ERROR]: 'wget' failed. Cannot fetch map file. Please report this error.";
 
     return $outfile;
 }
