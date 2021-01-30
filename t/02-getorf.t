@@ -7,7 +7,7 @@ use autodie             qw(open);
 use IPC::System::Simple qw(system);
 use Capture::Tiny       qw(capture);
 
-use Test::More tests => 20;
+use Test::More tests => 19;
 
 my $hmmer2go = File::Spec->catfile('blib', 'bin', 'hmmer2go');
 my @menu     = capture { system([0..5], "$hmmer2go help getorf"); };
@@ -40,11 +40,11 @@ for my $file ($infile, $infilegz, $infilebz) {
     #say STDERR "$hmmer2go getorf -i $file -o $outfile_long -t 0";
     my @result_long = capture { system([0..5], "$hmmer2go getorf -i $file -o $outfile_long -t 0"); };
     @result_long = map { split /\n/, $_ } @result_long;
-    if ($name eq 't_seqs_nt' && @result_long) {
-	my $ct = () = map { /(changing to)/i } @result_long;
+    #if ($name eq 't_seqs_nt' && @result_long) {
+	#my $ct = () = map { /(changing to)/i } @result_long;
 	# we are just capturing the warning message but this tells us the IDs were changed as expected
-	is( $ct, 2, 'Can handle malformed IDs and transform them correctly' );
-    }
+	#is( $ct, 2, 'Can handle malformed IDs and transform them correctly' );
+    #}
 
     ok( -e $outfile_long, 'Successfully ran getorf and produced the expected output' );
 
