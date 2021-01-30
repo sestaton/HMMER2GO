@@ -10,6 +10,7 @@ use Capture::Tiny       qw(:all);
 use IPC::System::Simple qw(system);
 use File::Basename;
 use File::Temp;
+#use Data::Dump::Color;
 
 sub opt_spec {
     return (    
@@ -56,7 +57,7 @@ sub _run_getorf {
         # Because we are appending the ORFs from each sequence to the same output,
         # there is the possibility to add to existing data, if the file exists. So,
         # test to make sure it does not exist.
-	say STDERR "\nERROR: $outfile already exists. Exiting.\n";
+	say STDERR "\n[ERROR]: $outfile already exists. Exiting.\n";
 	exit 1;
     }
 
@@ -67,32 +68,33 @@ sub _run_getorf {
     $orflen //= 80;
     
 
-    open my $out, ">>", $outfile or die "\nERROR: Could not open file: $outfile\n";
-
-    my ($fasnum, $seqhash) = _seqct($infile);
+    my ($fasnum, $seqhash, $idmap) = _seqct($infile);
 
     if ($fasnum >= 1) {
 	say "\n========== Searching for ORFs with minimum length of $orflen." if $verbose;
     } 
     else {
-	say STDERR "\nERROR: No sequences were found! Check input. Exiting.\n";
+	say STDERR "\n[ERROR]: No sequences were found! Check input. Exiting.\n";
 	exit 1;
     }
 
+    open my $out, ">>", $outfile or die "\n[ERROR]: Could not open file: $outfile\n";
     my ($iname, $ipath, $isuffix) = fileparse($infile, qr/\.[^.]*/);
 
-    while (my ($id, $seq) = each %$seqhash) {
+    for my $seqname (keys %$seqhash) { 
 	$fcount++;
 	my $orffile = _getorf($getorf, $iname, $isuffix, $fcount, 
-			      $id, $seq, $find, $nomet, $orflen);
+			      $seqname, $seqhash->{$seqname}, $find, $nomet, $orflen);
 
 	if (-s $orffile) {
 	    $orfseqstot++;
 	    my $seqs = _sort_seqs($orffile, $sense, $allorfs, $choose);
-
+	    
 	    # sort to keep seqs with multiple ORFs together in the output
 	    for my $name (sort keys %$seqs) {
 		my $ntseq = $seqs->{$name};
+		$name =~ s/\_\d+\s+.*//;
+		$name = exists $idmap->{$name} ? $idmap->{$name} : $name;
 		if (defined $sense) {
 		    my ($sense_name, $sense_seq) = _revcom($name, $ntseq);
 		    $sense_seq =~ s/.{60}\K/\n/g;
@@ -114,6 +116,8 @@ sub _run_getorf {
 	say "\n========== $orfseqstot sequences processed with ORFs above $orflen.";
 	say "\n========== $with_orfs_perc percent of sequences contain ORFs above $orflen.";
     }
+
+    return;
 }
 
 sub _find_getorf {
@@ -133,7 +137,7 @@ sub _find_getorf {
 	return $getorf;
     }
     else { 
-	say STDERR "\nERROR: Could not find getorf. ".
+	say STDERR "\n[ERROR]: Could not find getorf. ".
 	    "Trying installing EMBOSS or adding it's location to your PATH. Exiting.\n";
 	exit 1;
     }
@@ -144,7 +148,7 @@ sub _seqct {
 
     my $fh = _get_fh($f);
     my $seqct = 0;
-    my %seqhash;
+    my (%seqhash, %idmap);
 
     { 
 	local $/ = '>';
@@ -160,21 +164,26 @@ sub _seqct {
 	    my $namefix;
 	    if ($name =~ /\:|\;|\||\(|\)|\[|\]|\.|\s|\\|\//) { 
 		my $namefix = $name;
-		$namefix =~ s/\:|\;|\||\(|\)|\[|\]|\.|\s|\\|\//_/g;
-		say STDERR "WARNING: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. Changing to '$namefix'.";
+		$namefix =~ s/\s+.*//;
+		$namefix =~ s/\:|\;|\||\(|\)|\[|\]|\.|\\|\//_/g;
+
+		# Way too verbose. We will use the original IDs in the output, so there is no reason to warn.
+		#say STDERR "\n[WARNING]: Identifiers such as '$name' will produce unexpected renaming with EMBOSS. ".
+		#".Changing to '$namefix'.";
+		$idmap{$namefix} = $name;
 		$name = $namefix;
-		#exit 1;
 	    }
 	    elsif ($name eq '') { 
-		say STDERR "\nWARNING: Sequences appear to have no identifiers. Continuing."; 
+		say STDERR "\n[WARNING]: Sequences appear to have no identifiers. Continuing."; 
 	    }
+
 	    $seqhash{$name} = $seq;
 	    $seqct++;
 	}
 	close $fh;
     }
 
-    return ($seqct, \%seqhash);
+    return ($seqct, \%seqhash, \%idmap);
 }
 
 sub _sort_seqs {
@@ -227,7 +236,7 @@ sub _sort_seqs {
 		}
 	    }
 	    else {
-		say STDERR "\nWARNING: More than one ORF has the same max length, will report all ORFs with ".
+		say STDERR "\n[WARNING]: More than one ORF has the same max length, will report all ORFs with ".
 		    "max length for this sequence.";
 		say STDERR "The ORF identifiers are: ", join ", ", @orfs;
 	    }
@@ -240,8 +249,7 @@ sub _sort_seqs {
 }
 
 sub _getorf {
-    my ($getorf, $iname, $isuffix, $fcount, 
-	$id, $seq, $find, $nomet, $orflen) = @_;
+    my ($getorf, $iname, $isuffix, $fcount, $id, $seq, $find, $nomet, $orflen) = @_;
     my $tmpiname = $iname."_".$fcount."_XXXX";
     my $cwd = getcwd();
     my $fname = File::Temp->new( TEMPLATE => $tmpiname,
@@ -249,8 +257,8 @@ sub _getorf {
                                  SUFFIX => $isuffix,
                                  UNLINK => 0);
 
-    open my $fh, ">", $fname or die "\nERROR: Could not open file: $fname\n";
-    print $fh join "\n", ">".$id, "$seq\n";
+    open my $fh, ">", $fname or die "\n[ERROR]: Could not open file: $fname\n";
+    say $fh join "\n", ">".$id, $seq;
     close $fh;
 
     my $orffile = $fname."_orfs";
@@ -275,31 +283,35 @@ sub _revcom {
     # If the sequence has been revcom'd 
     # we don't want the ID to say REVERSE. 
     $name =~ s/\(R.*// if $name =~ /\(REVERSE/i;   
+
     if ($seq =~ /[atcg]/i) {
 	my $revcom = reverse $seq;
 	$revcom =~ tr/ACGTacgt/TGCAtgca/;
-	return ($name, $revcom);
+	$seq = $revcom;
+	#return ($name, $revcom);
     }
     else {
-	say STDERR "\nWARNING: Not going to reverse protein sequence.";
-	return ($name, $seq);
+	say STDERR "\n[WARNING]: Not going to reverse protein sequence.";
+	#return ($name, $seq);
     }
+
+    return ($name, $seq);
 }
 
 sub _get_fh {
     my ($file) = @_;
     my $fh;
     if ($file =~ /\.gz$/) {
-	open $fh, '-|', 'zcat', $file or die "\nERROR: Could not open file: $file\n";
+	open $fh, '-|', 'zcat', $file or die "\n[ERROR]: Could not open file: $file\n";
     }
     elsif ($file =~ /\.bz2$/) {
-	open $fh, '-|', 'bzcat', $file or die "\nERROR: Could not open file: $file\n";
+	open $fh, '-|', 'bzcat', $file or die "\n[ERROR]: Could not open file: $file\n";
     }
     elsif ($file =~ /^-$|STDIN/) {
-	open $fh, '< -' or die "\nERROR: Could not open STDIN\n";
+	open $fh, '< -' or die "\n[ERROR]: Could not open STDIN\n";
     }
     else {
-	open $fh, '<', $file or die "\nERROR: Could not open file: $file\n";
+	open $fh, '<', $file or die "\n[ERROR]: Could not open file: $file\n";
     }
     return $fh;
 }
