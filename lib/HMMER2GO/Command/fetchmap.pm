@@ -10,6 +10,8 @@ use Net::FTP;
 use IPC::System::Simple qw(system);
 use Carp;
 
+our $VERSION = '0.17.9';
+
 sub opt_spec {
     return (    
 	[ "outfile|o=s",  "A file to place the Pfam2GO mappings" ],

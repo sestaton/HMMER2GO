@@ -12,6 +12,8 @@ use IO::Uncompress::Gunzip  qw(gunzip $GunzipError);
 use File::Basename;
 use Try::Tiny;
 
+our $VERSION = '0.17.9';
+
 sub opt_spec {
     return (    
 	[ "program|p=s",  "The program to run for domain identification (NOT IMPLEMENTED: Defaults to hmmscan)" ],

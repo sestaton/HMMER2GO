@@ -10,6 +10,8 @@ use Net::FTP;
 use File::Basename;
 use Carp;
 
+our $VERSION = '0.17.9';
+
 sub opt_spec {
     return (    
         [ "infile|i=s",  "The HMMscan output in table format (generated with '--tblout' option from HMMscan)."  ],

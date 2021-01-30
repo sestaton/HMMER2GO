@@ -15,6 +15,8 @@ use Try::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
 
+our $VERSION = '0.17.9';
+
 sub opt_spec {
     return (    
 	[ "terms|t=s",   "The term(s) to search against Pfam entries"                                        ],

@@ -12,6 +12,8 @@ use File::Basename;
 use File::Temp;
 #use Data::Dump::Color;
 
+our $VERSION = '0.17.9';
+
 sub opt_spec {
     return (    
 	[ "infile|i=s",    "The fasta files to be translated"                                     ],
