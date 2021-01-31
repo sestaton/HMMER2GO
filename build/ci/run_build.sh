@@ -17,8 +17,8 @@ curl --verbose --progress-bar --ipv4 --connect-timeout 8 \
      -u "anonymous:anonymous@foo.com" ftp://ftp.geneontology.org/pub/go/external2go/pfam2go \
      --output pfam2go
 
-curl --verbose --progress-bar --ipv4 --connect-timeout 8 \
-     --max-time 120 --retry 128 --ftp-ssl --disable-epsv --ftp-pasv \
-     -u "anonymous:anonymous@foo.com" ftp://ftp.geneontology.org/pub/go/doc/GO.terms_alt_ids \
-     --output GO.terms_alt_ids
+#curl --verbose --progress-bar --ipv4 --connect-timeout 8 \
+#     --max-time 120 --retry 128 http://purl.obolibrary.org/obo/go.obo \
+#     --output go.obo
+wget -O go.obo http://purl.obolibrary.org/obo/go.obo
 
