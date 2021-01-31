@@ -17,3 +17,4 @@
  - [x] make docker image to avoid installing deps
  - [ ] consider installing deps with a config class similar to how deps are 
        configured with Tephra
+ - [ ] make available on conda (issue #21)
