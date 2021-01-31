@@ -146,9 +146,9 @@ sub _find_getorf {
 }
 
 sub _seqct {
-    my ($f) = @_;
+    my ($infile) = @_;
 
-    my $fh = _get_fh($f);
+    my $fh = _get_fh($infile);
     my $seqct = 0;
     my (%seqhash, %idmap);
 
@@ -256,7 +256,7 @@ sub _getorf {
     my $cwd = getcwd();
     my $fname = File::Temp->new( TEMPLATE => $tmpiname,
                                  DIR => $cwd,
-                                 SUFFIX => $isuffix,
+                                 SUFFIX => '.fas',
                                  UNLINK => 0);
 
     open my $fh, ">", $fname or die "\n[ERROR]: Could not open file: $fname\n";
