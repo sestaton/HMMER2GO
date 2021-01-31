@@ -1,6 +1,21 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.18.0	01/30/2021	Saskatoon, SK
+
+Bug fixes:
+- Keep the original sequence IDs in the output from 'hmmer2go getorf' without the ORF number and location
+  appended to the ID. Fixes issue #23.
+- Omit obsolete terms from GO when writing GAF file with 'hmmer2go map2gaf' command.
+- Drop usage of 'each %hash' syntax because 'keys %hash' is safer.
+
+New features:
+- Add method to get the taxon ID from NCBI based on the input species name, rather than hard coding an ID.
+- For the 'hmmer2go map2gaf' command, add GAF header describing the date of the analysis, HMMER2GO version,
+  and the GO database version used to generate the data.
+- Get GO definitions from latest full GO database (i.e., go.obo) instead of the older GO alt-ids file that was being
+  used for the term mapping.
+  
 0.17.9	04/19/2019	Vancouver, BC
 
 - Change search of PATH for programs to take the first occurrence of program instead of last.
