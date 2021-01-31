@@ -90,5 +90,6 @@ for my $file ($infile, $infilegz, $infilebz) {
     is( $orfs, 172, 'Expected number of ORFs found for test data when keeping all ORFs' );
     $orfs = 0;
 }
+unlink $outfile_long;
 
 done_testing();
