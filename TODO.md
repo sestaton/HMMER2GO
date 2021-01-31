@@ -5,7 +5,8 @@
  - [ ] add option to choose translation table
  - [x] add option to pick one ORF if there are multiple of the same length
  - [ ] document better what the options are for reporting output ORFs
-
+ - [ ] set default to translation=1, between START and STOP, to enforce ORFs to start with Met (issue #22)
+ 
 ## `pfamsearch`
 
  - [ ] limit reporting and/or fetching models by what information is available (Pfam, Seq_info, Pdb, Interpro). If
