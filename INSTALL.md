@@ -10,17 +10,17 @@ The installation can be done with the following  command (note that this require
 
 For Ubuntu/Debian as the OS:
 
-    apt-get install -y emboss zlib1g-dev libxml2-dev
+    apt-get install -y emboss zlib1g-dev libxml2-dev libexpat1-dev libssl-dev
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 For RHEL/Fedora:
 
-    yum install -y EMBOSS zlib-devel libxml2-devel
+    yum install -y EMBOSS zlib-devel libxml2-devel openssl-devel expat-devel
     curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
 
 For MacOS, install the dependencies:
 
-    brew install libxml2 zlib
+    brew install libxml2 zlib expat openssl
     brew tap brewsci/science
     brew install emboss
 
