@@ -21,6 +21,8 @@ That will create a container called "hmmer2go-con" and start an interactive shel
 
 Alternatively, you can follow the steps in the [INSTALL](https://github.com/sestaton/HMMER2GO/blob/master/INSTALL.md) file and install HMMER2GO on any Mac or Linux, and likely Windows (though I have not tested yet, advice is welcome).
 
+Please see the wiki [Demonstration](https://github.com/sestaton/HMMER2GO/wiki/Demonstraton) page for full working example and demo script that will download and run HMMER2GO. This page also contains a brief description of how to begin analyzing the results.
+
 **BRIEF USAGE**
 
 Starting with a file of DNA sequences, we first want to get the longest open reading frame (ORF) for each gene and translate those sequences.
