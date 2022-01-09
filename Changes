@@ -4,7 +4,7 @@ Version	Date	Location
 0.18.1	01/09/2022	Saskatoon, SK
 
 Bug fixes:
-- Drop old FTP location of mapping files and GO ontology in favor of new location.
+- Drop old FTP location of mapping files and GO ontology in favor of new location (fixes #25).
 - Adjust test output for creating custom HMM database based on term search (update expected model number for the search).
 
 New features:
