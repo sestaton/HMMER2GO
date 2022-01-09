@@ -28,6 +28,7 @@ is( $opts, 4, 'Correct number of options for hmmer2go pfamsearch' );
 my ($hmmnum, $dbnum, $outdir);
 ($outdir = $term) =~ s/,/+/g;
 $outdir .= "_hmms";
+#say STDERR "CMD: $hmmer2go pfamsearch -t $term -o $outfile";
 my @result = capture([0..5], "$hmmer2go pfamsearch -t $term -o $outfile");
 
 for my $res (@result) {
@@ -36,7 +37,7 @@ for my $res (@result) {
     }
 }
 
-is( $hmmnum, 16, 'Found the correct number of HMMs for the search term' );
+is( $hmmnum, 103, 'Found the correct number of HMMs for the search term' );
 is( $dbnum,  4,  'Found the HMMs in the correct number of databases' );
 
 ok( -s $outfile, 'Output file of descriptions produced' );
