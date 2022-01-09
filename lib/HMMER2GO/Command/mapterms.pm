@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use IPC::System::Simple qw(system);
-use Net::FTP;
+use HTTP::Tiny;
 use File::Basename;
 use Carp;
 
@@ -150,34 +150,22 @@ sub _retry {
 
     croak "\n[ERROR]: Failed to get mapping file after multiple attempts: $@";
 }
-
 sub _fetch_mappings {
     my $outfile = 'pfam2go';
     unlink $outfile if -e $outfile;
     
-    my $host = "ftp.geneontology.org";
-    my $dir  = "/pub/go/external2go";
-    my $file = "pfam2go";
+    my $urlbase  = 'http://current.geneontology.org/ontology/external2go/pfam2go';
+    my $response = HTTP::Tiny->new->get($urlbase);
 
-    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-	or warn "Cannot connect to $host: $@ will retry.";
+    unless ($response->{success}) {
+	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
+    }
 
-    $ftp->login('anonymous', 'anonymous@foo.com')
-	or warn "Cannot login ", $ftp->message, " will retry.";
+    open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
+    say $out $response->{content};
+    close $out;
 
-    $ftp->cwd($dir)
-        or warn "Cannot change working directory ", $ftp->message, " will retry.";
-
-    my $rsize = $ftp->size($file) or warn "Could not get size ", $ftp->message, " will retry.";
-    $ftp->get($file, $outfile) or warn "get failed ", $ftp->message, " will retry.";
-    my $lsize = -s $outfile;
-
-    $ftp->quit;
-
-    warn "\n[WARNING]: Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry."
-        unless $rsize == $lsize;
-
-    return $outfile if $rsize == $lsize;
+    return $outfile;
 }
 
 sub mk_key { join "~~", @_ }

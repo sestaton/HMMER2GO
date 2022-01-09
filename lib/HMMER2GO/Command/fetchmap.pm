@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use HMMER2GO -command;
 use File::Basename;
-use Net::FTP;
+use HTTP::Tiny;
 use IPC::System::Simple qw(system);
 use Carp;
 
@@ -72,44 +72,27 @@ sub _fetch_mappings {
 
     $outfile //= 'pfam2go';
 
-    my $host = 'ftp.geneontology.org';
-    my $dir  = '/pub/go/external2go';
-    my $file = 'pfam2go';
+    my $urlbase  = 'http://current.geneontology.org/ontology/external2go/pfam2go';
+    my $response = HTTP::Tiny->new->get($urlbase);
 
-    my $ftp = Net::FTP->new($host, Passive => 1, Debug => 0)
-	or warn "Cannot connect to $host: $@, will retry.";
-
-    $ftp->login('anonymous', 'anonymous@foo.com') 
-	or warn "Cannot login ", $ftp->message, " will retry.";
-
-    $ftp->cwd($dir)
-	or warn "Cannot change working directory ", $ftp->message, " will retry.";
-
-    my $rsize = $ftp->size($file) 
-	or warn "Could not get size ", $ftp->message, " will retry.";
-    $ftp->get($file, $outfile) 
-	or warn "get failed ", $ftp->message, " will retry.";
-    my $lsize = -s $outfile;
-
-    $ftp->quit;
-
-    if (defined $lsize && $lsize == $rsize) {
-	return 1;
+    unless ($response->{success}) {
+	die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
     }
-    else {
-	$lsize //= 0;
-	warn "\n[WARNING]: Failed to fetch complete file: $file (local size: $lsize, remote size: $rsize), will retry.";
-	return 0;
-    }    
+
+    open my $out, '>', $outfile or die "\nERROR: Could not open file: $outfile\n";
+    say $out $response->{content};
+    close $out;
+
+    return $outfile;
 }
 
 sub _fetch_mappings_curl {
     my ($outfile) = @_;
 
-    my $host = 'ftp://ftp.geneontology.org';
-    my $dir  = 'pub/go/external2go';
+    my $host = 'http://current.geneontology.org';
+    my @dirs  = ('ontology', 'external2go');
     my $file = 'pfam2go';
-    my $endpoint = join "/", $host, $dir, $file;
+    my $endpoint = join "/", $host, @dirs, $file;
 
     system([0..5], 'curl', '-u', 'anonymous:anonymous@foo.com', '-sL', '-o', $outfile, $endpoint) == 0
 	or die "\n[ERROR]: 'wget' failed. Cannot fetch map file. Please report this error.";
