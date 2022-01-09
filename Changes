@@ -1,7 +1,7 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
-0.19.0	01/09/2022	Saskatoon, SK
+0.18.1	01/09/2022	Saskatoon, SK
 
 Bug fixes:
 - Drop old FTP location of mapping files and GO ontology in favor of new location.
