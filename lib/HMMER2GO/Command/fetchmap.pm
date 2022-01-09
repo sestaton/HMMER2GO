@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use IPC::System::Simple qw(system);
 use Carp;
 
-our $VERSION = '0.18.0';
+our $VERSION = '0.18.1';
 
 sub opt_spec {
     return (    
