@@ -1,6 +1,15 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.19.0	01/09/2022	Saskatoon, SK
+
+Bug fixes:
+- Drop old FTP location of mapping files and GO ontology in favor of new location.
+- Adjust test output for creating custom HMM database based on term search (update expected model number for the search).
+
+New features:
+- Use HTTP GET for fetching mapping and ontology files instead of FTP.
+
 0.18.0	01/30/2021	Saskatoon, SK
 
 Bug fixes:
