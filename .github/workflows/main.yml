@@ -15,7 +15,7 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl }}
-      - run: sudo apt-get install libdb-dev emboss
+      - run: sudo apt-get install libdb-dev emboss hmmer
       - run: perl -V
       - run: echo "n" | cpanm -n  Data::Stag DB_File Bio::Root::Version Bio::DB::Taxonomy::entrez
       - run: cpanm --installdeps .
