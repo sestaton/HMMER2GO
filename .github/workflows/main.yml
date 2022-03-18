@@ -16,6 +16,7 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
       - run: perl -V
+      - run: echo "n" | cpanm -n  Data::Stag DB_File Bio::Root::Version
       - run: cpanm --installdeps .
       - run: perl Makefile.PL && make
       - run: prove -lv t
