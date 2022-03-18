@@ -64,7 +64,7 @@ sub _search_by_keyword {
     my ($keyword, $dbname);
     ($keyword = $terms) =~ s/\s+|,/+/g;
 
-    my $urlbase  = "http://pfam.xfam.org/search/keyword?query=$keyword"; #&submit=Submit";
+    my $urlbase  = "https://pfam.xfam.org/search/keyword?query=$keyword"; #&submit=Submit";
     my $response = HTTP::Tiny->new->get($urlbase);
 
     unless ($response->{success}) {
@@ -141,7 +141,7 @@ sub _fetch_hmm {
 
     my ($accession, $id, $descripton, $seqinfo) = @$elem;
 
-    my $urlbase  = "http://pfam.xfam.org/family/$accession/hmm";
+    my $urlbase  = "https://pfam.xfam.org/family/$accession/hmm";
     my $response = HTTP::Tiny->new->get($urlbase);
 
     unless ($response->{success}) {
