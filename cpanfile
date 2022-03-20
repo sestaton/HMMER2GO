@@ -6,6 +6,8 @@ requires 'IO::Compress::Gzip';
 requires 'IO::Compress::Bzip2';
 requires 'File::Copy';
 requires 'Capture::Tiny';
+requires 'Net::SSLeay';
+requires 'IO::Socket::SSL';
 requires 'HTTP::Tiny';
 requires 'XML::LibXML';
 requires 'HTML::TableExtract';
