@@ -12,7 +12,7 @@ use File::Basename;
 use Bio::DB::Taxonomy;
 #use Data::Dump::Color;
 
-our $VERSION = '0.18.1';
+our $VERSION = '0.18.2';
 
 sub opt_spec {
     return (    
