@@ -11,12 +11,12 @@ The installation can be done with the following command (note that this requires
 For Ubuntu/Debian as the OS:
 
     apt-get install -y build-essential emboss hmmer zlib1g-dev libxml2-dev libexpat1-dev libssl-dev
-    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
+    curl -L cpanmin.us | perl -  https://github.com/sestaton/HMMER2GO/archive/refs/tags/v0.18.2.tar.gz
 
 For RHEL/Fedora:
 
     yum install -y EMBOSS zlib-devel libxml2-devel openssl-devel expat-devel
-    curl -L cpanmin.us | perl - git://github.com/sestaton/HMMER2GO.git
+    curl -L cpanmin.us | perl -  https://github.com/sestaton/HMMER2GO/archive/refs/tags/v0.18.2.tar.gz
 
 For MacOS, install the dependencies:
 
