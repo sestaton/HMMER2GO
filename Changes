@@ -1,6 +1,15 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.18.2	03/19/2022	Vancouver, BC
+
+Bug fixes:
+- Update new Pfam URLs that use https.
+
+New features:
+- Drop travis in favor of github actions for running test suite.
+- Update Perl deps for fetching data or searching over https.
+
 0.18.1	01/09/2022	Saskatoon, SK
 
 Bug fixes:
