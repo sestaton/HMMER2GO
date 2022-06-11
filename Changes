@@ -1,6 +1,11 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.18.3	06/11/2022	Saskatoon, SK
+
+Bug fixes:
+- Check for dependencies in Makefile.PL. Fixes #30.
+
 0.18.2	03/19/2022	Vancouver, BC
 
 Bug fixes:
