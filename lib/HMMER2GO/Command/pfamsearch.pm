@@ -15,7 +15,7 @@ use Try::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
 
-our $VERSION = '0.18.2';
+our $VERSION = '0.18.3';
 
 sub opt_spec {
     return (    

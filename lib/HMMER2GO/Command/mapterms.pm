@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use File::Basename;
 use Carp;
 
-our $VERSION = '0.18.2';
+our $VERSION = '0.18.3';
 
 sub opt_spec {
     return (    

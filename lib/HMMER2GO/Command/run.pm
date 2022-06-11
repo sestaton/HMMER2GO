@@ -12,7 +12,7 @@ use IO::Uncompress::Gunzip  qw(gunzip $GunzipError);
 use File::Basename;
 use Try::Tiny;
 
-our $VERSION = '0.18.2';
+our $VERSION = '0.18.3';
 
 sub opt_spec {
     return (    
