@@ -1,0 +1,63 @@
+{% set name = "HMMER2GO" %}
+{% set version = "0.18.2" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  git_url: https://github.com/sestaton/HMMER2GO.git
+  git_tag: v{{ version }}
+
+requirements:
+  host:
+    - zlib
+    - libxml2
+    - openssl
+    - perl >=5.32
+    - perl-bioperl >=1.7.8
+    - perl-app-cmd
+    - perl-io-uncompress-gunzip
+    - perl-io-uncompress-bunzip2
+    - perl-capture-tiny
+    - perl-net-ssleay
+    - perl-io-socket-ssl
+    - perl-http-tiny
+    - perl-xml-libxml
+    - perl-html-tableextract
+    - emboss
+    - hmmer>=3
+  build:
+    - make
+    - perl >=5.32
+  run:
+    - perl >=5.32
+    - perl-bioperl >=1.7.8
+    - perl-app-cmd
+    - perl-io-uncompress-gunzip
+    - perl-io-uncompress-bunzip2
+    - perl-capture-tiny
+    - perl-net-ssleay
+    - perl-io-socket-ssl
+    - perl-http-tiny
+    - perl-xml-libxml
+    - perl-html-tableextract
+    - emboss
+    - hmmer>=3
+
+test:
+  source_files:
+    - t/test_data
+
+about:
+  home: https://github.com/sestaton/HMMER2GO
+  license: MIT
+  license_file: LICENSE
+  summary: 'Annotate DNA sequences for Gene Ontology terms'
+  dev_url: https://github.com/sestaton/HMMER2GO
+  doc_url: https://github.com/sestaton/HMMER2GO/wiki
+
+extra:
+  maintainers:
+    - Frédéric Chevalier
+    - S. Evan Staton

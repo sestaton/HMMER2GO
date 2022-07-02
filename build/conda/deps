@@ -1,0 +1,14 @@
+perl-ipc-system-simple
+perl-app-cmd
+perl-io-uncompress-gunzip
+perl-io-uncompress-bunzip2
+perl-io-compress-gzip
+perl-io-compress-bzip2
+perl-file-copy
+perl-capture-tiny
+perl-net-ssleay
+perl-io-socket-ssl
+perl-http-tiny
+perl-xml-libxml
+perl-html-tableextract
+perl-bio-db-taxonomy-entrez
