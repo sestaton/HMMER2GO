@@ -14,8 +14,9 @@ use HTTP::Tiny;
 use Try::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
+use JSON::Tiny qw(decode_json);
 
-our $VERSION = '0.18.3';
+our $VERSION = '0.19.0';
 
 sub opt_spec {
     return (    
@@ -29,6 +30,7 @@ sub opt_spec {
 sub validate_args {
     my ($self, $opt, $args) = @_;
 
+
     my $command = __FILE__;
     if ($self->app->global_options->{man}) {
 	system([0..5], "perldoc $command");
@@ -41,6 +43,7 @@ sub validate_args {
 
 sub execute {
     my ($self, $opt, $args) = @_;
+
 
     exit(0) if $self->app->global_options->{man};
     my $terms     = $opt->{terms};
@@ -64,21 +67,22 @@ sub _search_by_keyword {
     my ($keyword, $dbname);
     ($keyword = $terms) =~ s/\s+|,/+/g;
 
-    my $urlbase  = "https://pfam.xfam.org/search/keyword?query=$keyword"; #&submit=Submit";
-    my $response = HTTP::Tiny->new->get($urlbase);
+    # Use EBI Search API to find InterPro entries, then extract Pfam entries
+    my $ebi_search_url = "https://www.ebi.ac.uk/ebisearch/ws/rest/interpro?query=$keyword&format=json&size=200";
+    my $response = HTTP::Tiny->new->get($ebi_search_url);
 
     unless ($response->{success}) {
-        die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
+        die "Can't get url $ebi_search_url -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
     }
 
-    my $pfamxml = "pfam_search_$keyword.xml";
-    open my $pfout, '>', $pfamxml or die "\n[ERROR]: Could not open file: $pfamxml\n";
-    say $pfout $response->{content};
-    close $pfout;
+    my $search_results = _parse_ebi_search_results($response->{content});
+    my $pfam_entries = _get_pfam_entries_from_interpro($search_results);
 
-    my ($resultnum, $dbnum) = _get_search_results($keyword, $pfamxml);
+    my $resultnum = scalar @$pfam_entries;
+    my $dbnum = 1; # All results come from InterPro now
 
-    if (defined $resultnum && $resultnum > 1) {
+    if ($resultnum > 0) {
+        say "Found $resultnum HMMs for $keyword in $dbnum database(s)." if !$createdb;
 	$dbname = $keyword."_hmms" if !$dirname; # use expressive variable name
 	$dbname = $dirname if $dirname;
 	if (-d $dbname) {
@@ -99,21 +103,73 @@ sub _search_by_keyword {
 	open my $out, '>', $outfile or die "\n[ERROR]: Could not open file: $outfile\n";
 	say $out "Accession\tID\tDescription";
 
-	my $te = HTML::TableExtract->new( headers => [ qw(Accession ID Description Seq_info)] );
-	$te->parse_file($pfamxml);
-	
-	for my $ts ($te->tables) {
-	    for my $row ($ts->rows) {
-		my @elem = grep { defined } @$row;
-		say $out join "\t", @elem[0..2];
-		_fetch_hmm($dbname, \@elem, $createdb) if $createdb;
+	for my $entry (@$pfam_entries) {
+	    say $out join "\t", @$entry;
+	    if ($createdb) {
+		my @elem = @$entry;
+		_fetch_hmm($dbname, \@elem, $createdb);
 	    }
 	}
 	close $out;
     }
-    unlink $pfamxml;
+    else {
+	say "No Pfam entries found for search term: $keyword";
+	# Create empty output file
+	open my $out, '>', $outfile or die "\n[ERROR]: Could not open file: $outfile\n";
+	say $out "Accession\tID\tDescription";
+	close $out;
+	return;
+    }
 
     _run_hmmpress($dbname, $keyword) if $createdb;
+}
+
+sub _parse_ebi_search_results {
+    my ($json_content) = @_;
+    
+    my $data = decode_json($json_content);
+    my @entry_ids = ();
+    
+    if ($data->{entries} && ref $data->{entries} eq 'ARRAY') {
+        for my $entry (@{$data->{entries}}) {
+            push @entry_ids, $entry->{id} if $entry->{id};
+        }
+    }
+    
+    return \@entry_ids;
+}
+
+sub _get_pfam_entries_from_interpro {
+    my ($interpro_ids) = @_;
+    
+    my @pfam_entries = ();
+    
+    for my $interpro_id (@$interpro_ids) {
+        # Get InterPro entry details to find associated Pfam entries
+        my $interpro_url = "https://www.ebi.ac.uk/interpro/api/entry/interpro/$interpro_id/";
+        my $response = HTTP::Tiny->new->get($interpro_url);
+        
+        if ($response->{success}) {
+            eval {
+                my $data = decode_json($response->{content});
+                
+                # Extract Pfam entries from member_databases
+                if ($data->{metadata} && $data->{metadata}->{member_databases} && $data->{metadata}->{member_databases}->{pfam}) {
+                    my $pfam_entries_ref = $data->{metadata}->{member_databases}->{pfam};
+                    
+                    for my $pfam_acc (keys %$pfam_entries_ref) {
+                        my $pfam_desc = $pfam_entries_ref->{$pfam_acc};
+                        push @pfam_entries, [$pfam_acc, $pfam_acc, $pfam_desc];
+                    }
+                }
+            };
+            if ($@) {
+                warn "Warning: Could not parse InterPro entry $interpro_id: $@\n";
+            }
+        }
+    }
+    
+    return \@pfam_entries;
 }
     
 sub _get_search_results {
@@ -137,21 +193,43 @@ sub _get_search_results {
 }
 
 sub _fetch_hmm {
-    my ($dbname, $elem) = @_;
+    my ($dbname, $elem, $createdb) = @_;
+    
+    return unless $createdb;
 
-    my ($accession, $id, $descripton, $seqinfo) = @$elem;
+    my ($accession, $id, $descripton) = @$elem;
 
-    my $urlbase  = "https://pfam.xfam.org/family/$accession/hmm";
-    my $response = HTTP::Tiny->new->get($urlbase);
-
-    unless ($response->{success}) {
-        die "Can't get url $urlbase -- Status: ", $response->{status}, " -- Reason: ", $response->{reason};
+    # Try the new InterPro API first, fall back to old URL if needed
+    my @urls = (
+        "https://www.ebi.ac.uk/interpro/api/entry/pfam/$accession/?format=hmm",
+        "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz",
+        "http://pfam.xfam.org/family/$accession/hmm"
+    );
+    
+    for my $urlbase (@urls) {
+        my $response = HTTP::Tiny->new->get($urlbase);
+        
+        if ($response->{success} && $response->{content}) {
+            my $content = $response->{content};
+            
+            # If it's the full database, extract just this entry
+            if ($urlbase =~ /Pfam-A\.hmm\.gz$/) {
+                # This would require gunzip and parsing - skip for now
+                next;
+            }
+            
+            # Check if we got HMM content
+            if ($content =~ /^HMMER3/m) {
+                my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
+                open my $hmmout, '>', $hmmfile or die "\n[ERROR]: Could not open file: $hmmfile\n";
+                say $hmmout $content;
+                close $hmmout;
+                return;
+            }
+        }
     }
-
-    my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
-    open my $hmmout, '>', $hmmfile or die "\n[ERROR]: Could not open file: $hmmfile\n";
-    say $hmmout $response->{content};
-    close $hmmout;
+    
+    warn "Warning: Could not fetch HMM file for $accession\n";
 }
 
 sub _run_hmmpress {
