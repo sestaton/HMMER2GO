@@ -1,6 +1,22 @@
 Revision history for HMMER2GO
 
 Version	Date	Location
+0.19.0	08/16/2025	RTP, NC USA
+
+Bug fixes:
+- Fix pfamsearch functionality broken by Pfam migration to InterPro. The original Pfam search API 
+  (pfam.xfam.org) is no longer functional, causing pfamsearch to return undef instead of results.
+- Updated pfamsearch to use EBI Search API to find InterPro entries and extract associated Pfam entries.
+- Updated test expectations to match new API results (4 HMMs from 1 database vs 103 HMMs from 4 databases).
+
+New features:
+- Add JSON::Tiny dependency for lightweight JSON parsing of InterPro API responses.
+- Modernize pfamsearch to work with current InterPro infrastructure.
+
+Known issues:
+- Database creation functionality (-d flag) for pfamsearch needs additional work as HMM file fetching 
+  from the new APIs is not yet implemented.
+
 0.18.3	06/11/2022	Saskatoon, SK
 
 Bug fixes:
