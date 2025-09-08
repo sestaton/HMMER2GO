@@ -34,6 +34,7 @@ WriteMakefile(
 	'Capture::Tiny'             => 0,
 	'XML::LibXML'               => 0,
 	'HTML::TableExtract'        => 0,
+	'JSON::Tiny'                => 0,
 	'IO::Uncompress::Gunzip'    => 0,
 	'IO::Uncompress::Bunzip2'   => 0,
         'IO::Compress::Gzip'        => 0,

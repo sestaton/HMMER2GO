@@ -11,5 +11,6 @@ requires 'IO::Socket::SSL';
 requires 'HTTP::Tiny';
 requires 'XML::LibXML';
 requires 'HTML::TableExtract';
+requires 'JSON::Tiny';
 requires 'Bio::DB::Taxonomy::entrez';
 
