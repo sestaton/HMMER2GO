@@ -12,7 +12,7 @@ Version 0.18.3
 
 =cut
 
-our $VERSION = '0.18.3';
+our $VERSION = '0.19.0';
 
 sub opt_spec {
     my ( $class, $app ) = @_;
