@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
-LABEL maintainer "S. Evan Staton"
-LABEL image_type "HMMER2GO: Annotate DNA sequences for Gene Ontology terms"
+LABEL maintainer="S. Evan Staton"
+LABEL image_type="HMMER2GO: Annotate DNA sequences for Gene Ontology terms"
 
 ARG latest_tag
 ENV latest_tag=$latest_tag
