@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use IPC::System::Simple qw(system);
 use Carp;
 
-our $VERSION = '0.18.3';
+our $VERSION = '0.19.0';
 
 sub opt_spec {
     return (    
@@ -72,7 +72,7 @@ sub _fetch_mappings {
 
     $outfile //= 'pfam2go';
 
-    my $urlbase  = 'http://current.geneontology.org/ontology/external2go/pfam2go';
+    my $urlbase  = 'https://current.geneontology.org/ontology/external2go/pfam2go';
     my $response = HTTP::Tiny->new->get($urlbase);
 
     unless ($response->{success}) {

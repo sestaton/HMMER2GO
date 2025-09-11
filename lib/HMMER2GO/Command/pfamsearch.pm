@@ -15,6 +15,8 @@ use Try::Tiny;
 use XML::LibXML;
 use HTML::TableExtract;
 use JSON::Tiny qw(decode_json);
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
+use File::Temp qw(tempfile);
 
 our $VERSION = '0.19.0';
 
@@ -197,40 +199,83 @@ sub _fetch_hmm {
     
     return unless $createdb;
 
-    my ($accession, $id, $descripton) = @$elem;
+    my ($accession, $id, $description) = @$elem;
 
-    # Try the new InterPro API first, fall back to old URL if needed
-    my @urls = (
-        "https://www.ebi.ac.uk/interpro/api/entry/pfam/$accession/?format=hmm",
-        "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz",
-        "http://pfam.xfam.org/family/$accession/hmm"
-    );
+    # Download individual HMM model using InterPro API
+    my $hmm_content = _download_individual_hmm($accession);
     
-    for my $urlbase (@urls) {
-        my $response = HTTP::Tiny->new->get($urlbase);
+    if ($hmm_content) {
+        my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
+        open my $hmmout, '>', $hmmfile or die "\n[ERROR]: Could not open file: $hmmfile\n";
+        print $hmmout $hmm_content;
+        close $hmmout;
+        return 1;
+    }
+    
+    warn "Warning: Could not download HMM model for $accession\n";
+    return 0;
+}
+
+sub _download_individual_hmm {
+    my ($accession) = @_;
+    
+    my $url = "https://www.ebi.ac.uk/interpro/api/entry/pfam/$accession?annotation=hmm";
+    
+    # Try download with retries
+    for my $attempt (1..3) {
+        say "Downloading HMM for $accession (attempt $attempt/3)...";
         
-        if ($response->{success} && $response->{content}) {
-            my $content = $response->{content};
-            
-            # If it's the full database, extract just this entry
-            if ($urlbase =~ /Pfam-A\.hmm\.gz$/) {
-                # This would require gunzip and parsing - skip for now
-                next;
+        my $response = HTTP::Tiny->new(
+            timeout => 120,  # 2 minutes timeout for slow responses
+            default_headers => {
+                'Accept-Encoding' => 'gzip'  # Request gzip compression
             }
+        )->get($url);
+        
+        if ($response->{success}) {
+            # Content is gzipped, decompress it
+            my $hmm_content = _decompress_gzip_content($response->{content});
             
-            # Check if we got HMM content
-            if ($content =~ /^HMMER3/m) {
-                my $hmmfile = File::Spec->catfile($dbname, $accession.".hmm");
-                open my $hmmout, '>', $hmmfile or die "\n[ERROR]: Could not open file: $hmmfile\n";
-                say $hmmout $content;
-                close $hmmout;
-                return;
+            if ($hmm_content && $hmm_content =~ /^HMMER3/m) {
+                say "Successfully downloaded HMM for $accession";
+                return $hmm_content;
+            } else {
+                warn "Downloaded content for $accession is not a valid HMM file\n";
+            }
+        } else {
+            warn "Attempt $attempt failed: $response->{status} $response->{reason}\n";
+            
+            # Exponential backoff: wait 2, 4, 8 seconds
+            if ($attempt < 3) {
+                my $wait_time = 2 ** $attempt;
+                say "Waiting ${wait_time}s before retry...";
+                sleep($wait_time);
             }
         }
     }
     
-    warn "Warning: Could not fetch HMM file for $accession\n";
+    return; # Failed after all retries
 }
+
+sub _decompress_gzip_content {
+    my ($gzipped_content) = @_;
+    
+    # Use a temporary file approach since IO::Uncompress::Gunzip 
+    # can be finicky with in-memory strings
+    my ($temp_fh, $temp_filename) = tempfile(UNLINK => 1);
+    binmode($temp_fh);
+    print $temp_fh $gzipped_content;
+    close($temp_fh);
+    
+    my $decompressed_content;
+    gunzip $temp_filename => \$decompressed_content or do {
+        warn "Failed to decompress gzipped HMM content: $GunzipError\n";
+        return;
+    };
+    
+    return $decompressed_content;
+}
+
 
 sub _run_hmmpress {
     my ($dbname, $keyword) = @_;

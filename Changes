@@ -8,14 +8,15 @@ Bug fixes:
   (pfam.xfam.org) is no longer functional, causing pfamsearch to return undef instead of results.
 - Updated pfamsearch to use EBI Search API to find InterPro entries and extract associated Pfam entries.
 - Updated test expectations to match new API results (4 HMMs from 1 database vs 103 HMMs from 4 databases).
+- Fully restored database creation functionality (-d flag) using individual HMM downloads via InterPro API.
+- Updated pfam2go URL in fetchmap and mapterms commands to use current Gene Ontology location:
+  https://current.geneontology.org/ontology/external2go/pfam2go
 
 New features:
 - Add JSON::Tiny dependency for lightweight JSON parsing of InterPro API responses.
-- Modernize pfamsearch to work with current InterPro infrastructure.
-
-Known issues:
-- Database creation functionality (-d flag) for pfamsearch needs additional work as HMM file fetching 
-  from the new APIs is not yet implemented.
+- Implement individual HMM model downloads using ?annotation=hmm parameter for efficient database creation.
+- Add retry logic with exponential backoff and timeout handling for robust network operations.
+- Modernize pfamsearch to work with current InterPro infrastructure with full functionality restored.
 
 0.18.3	06/11/2022	Saskatoon, SK
 

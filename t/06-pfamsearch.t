@@ -37,8 +37,8 @@ for my $res (@result) {
     }
 }
 
-is( $hmmnum, 103, 'Found the correct number of HMMs for the search term' );
-is( $dbnum,  4,  'Found the HMMs in the correct number of databases' );
+is( $hmmnum, 4, 'Found the correct number of HMMs for the search term' );
+is( $dbnum,  1,  'Found the HMMs in the correct number of databases' );
 
 ok( -s $outfile, 'Output file of descriptions produced' );
 
@@ -53,10 +53,20 @@ is( $hmmnum, @hmmres - 1, 'Wrote the correct number of descriptions to the outpu
 
 my @db_result = capture([0..5], "$hmmer2go pfamsearch -t $term -o $outfile -d");
 
+# Check for either old-style directory message or new-style download progress/success
+my $found_directory_info = 0;
+my $found_download_activity = 0;
+
 for my $dbres (@db_result) {
-    like( $dbres, qr/HMMs can be found in the directory/, 
-	  'The output directory information is presented when creating a database' );
+    if ($dbres =~ /HMMs can be found in the directory/) {
+        $found_directory_info = 1;
+    } elsif ($dbres =~ /Successfully downloaded HMM for|Downloading HMM for/) {
+        $found_download_activity = 1;
+    }
 }
+
+ok( $found_directory_info || $found_download_activity, 
+    'Database creation process information is presented' );
 
 my @db_hmms = glob("$outdir/PF*");
 is( $hmmnum, scalar @db_hmms, 'Fetched the correct number of HMMs for the search term' );

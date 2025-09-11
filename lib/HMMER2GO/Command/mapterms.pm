@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use File::Basename;
 use Carp;
 
-our $VERSION = '0.18.3';
+our $VERSION = '0.19.0';
 
 sub opt_spec {
     return (    
@@ -154,7 +154,7 @@ sub _fetch_mappings {
     my $outfile = 'pfam2go';
     unlink $outfile if -e $outfile;
     
-    my $urlbase  = 'http://current.geneontology.org/ontology/external2go/pfam2go';
+    my $urlbase  = 'https://current.geneontology.org/ontology/external2go/pfam2go';
     my $response = HTTP::Tiny->new->get($urlbase);
 
     unless ($response->{success}) {
@@ -206,7 +206,7 @@ The HMMscan output in table format (generated with "--tblout" option from HMMsca
 =item -p, --pfam2go
 
 The PFAMID->GO mapping file provided by the Gene Ontology. 
-Direct link: http://www.geneontology.org/external2go/pfam2go
+Direct link: https://current.geneontology.org/ontology/external2go/pfam2go
 
 =item -o, --outfile
 
