@@ -3,7 +3,7 @@ HMMER2GO
 
 Annotate DNA sequences for Gene Ontology terms
 
-[![CI](https://github.com/sestaton/HMMER2GO/actions/workflows/main.yml/badge.svg)](https://github.com/sestaton/HMMER2GO/actions/workflows/main.yml) | [![Version](https://img.shields.io/badge/version-0.19.0-blue.svg)](https://github.com/sestaton/HMMER2GO)
+[![CI](https://github.com/sestaton/HMMER2GO/actions/workflows/main.yml/badge.svg)](https://github.com/sestaton/HMMER2GO/actions/workflows/main.yml) [![Version](https://img.shields.io/badge/version-0.19.0-blue.svg)](https://github.com/sestaton/HMMER2GO)
 
 ### What is HMMER2GO?
 
